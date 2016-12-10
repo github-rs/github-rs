@@ -4,25 +4,14 @@ branches:
 environment:
   SSL_CERT_FILE: "C:\\OpenSSL\\cacert.pem"
   matrix:
-    # 1.1.0, 64/32 bit
     - TARGET: i686-pc-windows-gnu
       BITS: 32
       MSYS2: 1
       OPENSSL_VERSION: 1_1_0c
-    - TARGET: x86_64-pc-windows-msvc
-      BITS: 64
-      OPENSSL_VERSION: 1_1_0c
-      OPENSSL_DIR: C:\OpenSSL
-
-    # 1.0.2, 64/32 bit
     - TARGET: x86_64-pc-windows-gnu
       BITS: 64
       MSYS2: 1
       OPENSSL_VERSION: 1_0_2j
-    - TARGET: i686-pc-windows-msvc
-      BITS: 32
-      OPENSSL_VERSION: 1_0_2j
-      OPENSSL_DIR: C:\OpenSSL
 install:
   # install OpenSSL
   - ps: Start-FileDownload "http://slproweb.com/download/Win${env:BITS}OpenSSL-${env:OPENSSL_VERSION}.exe"
