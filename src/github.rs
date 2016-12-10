@@ -108,7 +108,7 @@ use requests::*;
 // want them to know they've been logically grouped and that they can make calls real nice and
 // easy. No work for them.
 pub use activity::Activity;
-// pub use git_data::Git_Data;
+pub use git_data::GitData;
 // pub use enterprise::Enterprise;
 // pub use gists::Gists;
 // pub use issues::Issues;

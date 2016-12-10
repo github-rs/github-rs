@@ -228,3 +228,56 @@ pub struct Org {
     pub avatar_url: String,
     pub url: String,
 }
+
+// Git Data Types
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub struct Blob {
+    pub content: String,
+    pub encoding: String,
+    pub url: String,
+    pub sha: String,
+    pub size: u64,
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub struct BlobCreate {
+    pub content: String,
+    pub encoding: String,
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub struct Commit {
+    pub sha: String,
+    pub url: String,
+    pub author: Author,
+    pub committer: Committer,
+    pub message: String,
+    pub tree: Tree,
+    pub parents: Vec<Parent>,
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub struct Author {
+    pub date: String,
+    pub name: String,
+    pub email: String,
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub struct Committer {
+    pub date: String,
+    pub name: String,
+    pub email: String,
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub struct Tree {
+    pub url: String,
+    pub sha: String,
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub struct Parent {
+    pub url: String,
+    pub sha: String,
+}
