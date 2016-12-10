@@ -14,5 +14,5 @@ install:
 build: false
 
 test_script:
-  - cargo build -V
+  - cargo build
   - cargo test
