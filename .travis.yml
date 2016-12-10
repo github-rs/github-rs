@@ -26,7 +26,6 @@ before_install:
 script:
 - cargo build && cargo test
 after_success: |
-- |
     if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz &&
       tar xzf master.tar.gz &&
