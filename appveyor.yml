@@ -40,8 +40,8 @@ install:
 build: false
 
 test_script:
-  - cargo build --target %TARGET%
-  - cargo test --target %TARGET%
+  - cargo build
+  - cargo test
 
 cache:
   - target
