@@ -20,6 +20,16 @@ Since there are nightly features are being used and because taking the
 time to get syntex working for stable is a larger undertaking this
 software only compiles on nightly for now.
 
+## Dependencies and Support
+github-rs is intended to work on all tier 1 supported Rust systems:
+
+- Windows
+- Linux
+- MacOSX
+
+You'll need OpenSSL installed on your machine since it's an underlying
+library that requires it. This is true for all platforms.
+
 ## Project Aims
 - Have a robust API where everything is error handled properly to avoid
   panics of any kind. A library is the base of an application and should
