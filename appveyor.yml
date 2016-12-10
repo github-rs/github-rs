@@ -3,10 +3,10 @@ branches:
     - gh_pages
 environment:
   matrix:
-  - TARGET: x86_64-pc-windows-msvc
+  - TARGET: nightly-x86_64-pc-windows-msvc
 install:
   - curl -sSf -o rustup-init.exe https://win.rustup.rs/
-  - rustup-init.exe -y --default-host %TARGET%
+  - rustup-init.exe -y --default-toolchain=%TARGET%
   - set PATH=%PATH%;C:\Users\appveyor\.cargo\bin
   - rustc -V
   - cargo -V
@@ -14,5 +14,5 @@ install:
 build: false
 
 test_script:
-  - cargo build
+  - cargo build -V
   - cargo test
