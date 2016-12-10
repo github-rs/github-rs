@@ -5,25 +5,44 @@ environment:
   SSL_CERT_FILE: "C:\\OpenSSL\\cacert.pem"
   matrix:
     # 1.1.0, 64/32 bit
+    - TARGET: i686-pc-windows-gnu
+      BITS: 32
+      MSYS2: 1
+      OPENSSL_VERSION: 1_1_0c
     - TARGET: x86_64-pc-windows-msvc
       BITS: 64
       OPENSSL_VERSION: 1_1_0c
       OPENSSL_DIR: C:\OpenSSL
+
+    # 1.0.2, 64/32 bit
+    - TARGET: x86_64-pc-windows-gnu
+      BITS: 64
+      MSYS2: 1
+      OPENSSL_VERSION: 1_0_2j
+    - TARGET: i686-pc-windows-msvc
+      BITS: 32
+      OPENSSL_VERSION: 1_0_2j
+      OPENSSL_DIR: C:\OpenSSL
 install:
-    # Install OpenSSL
+  # install OpenSSL
   - ps: Start-FileDownload "http://slproweb.com/download/Win${env:BITS}OpenSSL-${env:OPENSSL_VERSION}.exe"
   - Win%BITS%OpenSSL-%OPENSSL_VERSION%.exe /SILENT /VERYSILENT /SP- /DIR="C:\OpenSSL"
   - ps: Start-FileDownload "https://curl.haxx.se/ca/cacert.pem" -FileName "C:\OpenSSL\cacert.pem"
 
-    # Install Rust
+  # Install Rust
   - curl -sSf -o rustup-init.exe https://win.rustup.rs/
   - rustup-init.exe -y --default-toolchain=nightly-%TARGET%
   - set PATH=%PATH%;C:\Users\appveyor\.cargo\bin
+  - if defined MSYS2 set PATH=C:\msys64\mingw%BITS%\bin;%PATH%
   - rustc -V
   - cargo -V
 
 build: false
 
 test_script:
-  - cargo build
-  - cargo test
+  - cargo build --target %TARGET%
+  - cargo test --target %TARGET%
+
+cache:
+  - target
+  - C:\Users\appveyor\.cargo\registry
