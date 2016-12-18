@@ -55,8 +55,9 @@ pub struct User {
     pub owned_private_repos: Option<u64>,
     pub disk_usage: Option<u64>,
     pub collaborators: Option<u64>,
-    pub plan: Option<Plan>, /* Can't use because type is a reserved word
-                             * pub type: String, */
+    pub plan: Option<Plan>,
+    #[serde(rename="type")]
+    pub type_: String,
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
@@ -193,8 +194,8 @@ pub struct Markdown {
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Event {
-    // Can't use this field since type is a reserved word
-    // pub type: String,
+    #[serde(rename="type")]
+    pub type_: String,
     pub public: bool,
     pub payload: Vec<String>, // Correct type?
     pub repo: Repo,
@@ -280,4 +281,20 @@ pub struct Tree {
 pub struct Parent {
     pub url: String,
     pub sha: String,
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub struct Ref {
+    #[serde(rename="ref")]
+    pub ref_: String,
+    pub url: String,
+    pub object: Object,
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub struct Object {
+    #[serde(rename="type")]
+    pub type_: String,
+    pub sha: String,
+    pub url: String,
 }

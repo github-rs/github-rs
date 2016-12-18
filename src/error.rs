@@ -78,6 +78,8 @@ pub enum GithubError {
     QueryLimit,
     /// While performing an IO action within the github-rs library an error occured.
     LibIo(io::Error),
+    /// The Github API returned a 404 object.
+    Github404,
     /// The catch all error. If it's not one of the above then something in the implementation of
     /// github-rs went absolutely wrong. A bug report is greatly appreciated if you encounter this error.
     LibError,
@@ -112,6 +114,7 @@ impl error::Error for GithubError {
             Request => "Something went wrong while connecting. We are unsure what the problem is.",
             // Github-rs Specific Errors not due to other libraries
             LibIo(..) => "Error occured while performing internal library Io Actions",
+            Github404 => "Message: Not Found, Documentation URL: https://developer.github.com/v3",
             NonJsonBody => "JSON was not returned",
             InvalidFields => "You've made a request with invalid fields",
             Unauthorized => "Your request was unauthorized. Check your OAuth Token.",
