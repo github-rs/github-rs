@@ -1,7 +1,5 @@
 //! Structs related to JSON serialization/deserialization
 #![allow(missing_docs)]
-extern crate serde;
-extern crate serde_json;
 
 /// Information related to a user on Github is stored in this struct.
 #[derive(Debug, PartialEq, Serialize, Deserialize)]

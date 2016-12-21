@@ -1,13 +1,10 @@
 //! Trait definition related to Miscellaneous items on Github
-
-extern crate hyper;
-extern crate serde_json;
-
 use json::{GitIgnore, RateLimit, Meta, Markdown};
 use requests::*;
 use error::*;
 use types::HTML;
 use github::Client;
+use serde_json;
 
 /// Trait used to specify function hearders for endpoints grouped under Miscellaneous in the Github
 /// API specification
@@ -79,7 +76,7 @@ impl Misc for Client {
     /// Returns a `Meta` struct which contains information about the Github service
     fn get_meta(&self) -> Result<Meta> {
         let url = "https://api.github.com/meta";
-        let data = get(url, self.headers.clone())?;
+        let data = get(url, self.get_headers().clone())?;
         try_serde!(serde_json::from_str(&data))
     }
 
@@ -92,7 +89,7 @@ impl Misc for Client {
     /// Note hiting this endpoint with a request does not count against that limit.
     fn get_rate_limit(&self) -> Result<RateLimit> {
         let url = "https://api.github.com/rate_limit";
-        let data = get(url, self.headers.clone())?;
+        let data = get(url, self.get_headers().clone())?;
         try_serde!(serde_json::from_str(&data))
     }
 
@@ -104,7 +101,7 @@ impl Misc for Client {
     /// Returns a vector of the languages that have gitignore templates on Github.
     fn get_gitignore_templates(&self) -> Result<Vec<String>> {
         let url = "https://api.github.com/gitignore/templates";
-        let data = get(url, self.headers.clone())?;
+        let data = get(url, self.get_headers().clone())?;
         try_serde!(serde_json::from_str(&data))
     }
 
@@ -119,7 +116,7 @@ impl Misc for Client {
     fn get_gitignore_templates_lang(&self, lang: &str) -> Result<GitIgnore> {
         let mut url = String::from("https://api.github.com/gitignore/templates/");
         url.push_str(lang);
-        let data = get(&url, self.headers.clone())?;
+        let data = get(&url, self.get_headers().clone())?;
         try_serde!(serde_json::from_str(&data))
     }
 
@@ -132,7 +129,7 @@ impl Misc for Client {
     fn post_markdown(&self, data: Markdown) -> Result<HTML> {
         let url = "https://api.github.com/markdown";
         let data = post(url,
-                        self.headers.clone(),
+                        self.get_headers().clone(),
                         serde_json::to_string(&data)?)?;
         try_serde!(serde_json::from_str(&data))
     }
@@ -149,14 +146,14 @@ impl Misc for Client {
     fn post_markdown_raw(&self, data: Markdown) -> Result<HTML> {
         let url = "https://api.github.com/markdown/raw";
         let data = post(url,
-                        self.headers.clone(),
+                        self.get_headers().clone(),
                         serde_json::to_string(&data)?)?;
         try_serde!(serde_json::from_str(&data))
     }
 
     // fn get_emojis(&self) -> String {
     //     let url = "https://api.github.com/emojis";
-    //     let data = get(url, self.headers.clone())
+    //     let data = get(url, self.get_headers().clone())
     // }
 
     // Experimental come back when stabilized

@@ -1,6 +1,3 @@
-extern crate hyper;
-extern crate serde_json;
-
 // We only are using thses crates to transform Hyper errors
 use solicit::http::HttpError;
 use url::ParseError;
@@ -80,6 +77,8 @@ pub enum GithubError {
     LibIo(io::Error),
     /// The Github API returned a 404 object.
     Github404,
+    /// The github-rs library encountered an error making a Mime type for the header.
+    Mime,
     /// The catch all error. If it's not one of the above then something in the implementation of
     /// github-rs went absolutely wrong. A bug report is greatly appreciated if you encounter this error.
     LibError,
@@ -119,6 +118,7 @@ impl error::Error for GithubError {
             InvalidFields => "You've made a request with invalid fields",
             Unauthorized => "Your request was unauthorized. Check your OAuth Token.",
             QueryLimit => "You've hit your query limit to the API.",
+            Mime => "While making a Mime type for the Header an error occurred",
             LibError => {
                 "The github-rs lib has caused an error. Please file a bug report with your \
                  request, what you expected, and what method you used that failed."
@@ -186,6 +186,19 @@ macro_rules! try_hyper {
             Ok(x) => x,
             // Like try we want to return on error immediately
             Err(err) => return Err(GithubError::from(err)),
+        }
+    );
+}
+
+// Unwrapping macro for Mime types
+// It acts like try but unlike our serde or hyper macro it's used for the internal library. This just
+// unwraps the value like try but converts to a GithubError otherwise
+macro_rules! try_mime {
+    ($x:expr) => (
+        match $x {
+            Ok(x) => x,
+            // Like try we want to return on error immediately
+            Err(_) => return Err(GithubError::Mime),
         }
     );
 }

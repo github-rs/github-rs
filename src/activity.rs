@@ -104,7 +104,7 @@ impl Activity for Client {
     /// Returns a vector of recent `Event`s from the API
     fn get_events(&self) -> Result<Vec<Event>> {
         let url = "https://api.github.com/events";
-        let data = get(url, self.headers.clone())?;
+        let data = get(url, self.get_headers().clone())?;
 
         // If the auth token is wrong we want this to panic.
         try_serde!(serde_json::from_str(&data))
@@ -123,7 +123,7 @@ impl Activity for Client {
         url.push('/');
         url.push_str(repo);
         url.push_str("/events");
-        let data = get(&url, self.headers.clone())?;
+        let data = get(&url, self.get_headers().clone())?;
 
         try_serde!(serde_json::from_str(&data))
     }
@@ -140,7 +140,7 @@ impl Activity for Client {
         url.push('/');
         url.push_str(repo);
         url.push_str("/issues/events");
-        let data = get(&url, self.headers.clone())?;
+        let data = get(&url, self.get_headers().clone())?;
 
         try_serde!(serde_json::from_str(&data))
     }
@@ -157,7 +157,7 @@ impl Activity for Client {
         url.push('/');
         url.push_str(repo);
         url.push_str("/events");
-        let data = get(&url, self.headers.clone())?;
+        let data = get(&url, self.get_headers().clone())?;
 
         try_serde!(serde_json::from_str(&data))
     }
@@ -172,7 +172,7 @@ impl Activity for Client {
         let mut url = String::from("https://api.github.com/orgs/");
         url.push_str(org);
         url.push_str("/events");
-        let data = get(&url, self.headers.clone())?;
+        let data = get(&url, self.get_headers().clone())?;
 
         try_serde!(serde_json::from_str(&data))
 
@@ -189,7 +189,7 @@ impl Activity for Client {
         let mut url = String::from("https://api.github.com/users/");
         url.push_str(username);
         url.push_str("/received_events");
-        let data = get(&url, self.headers.clone())?;
+        let data = get(&url, self.get_headers().clone())?;
 
         try_serde!(serde_json::from_str(&data))
 
@@ -205,7 +205,7 @@ impl Activity for Client {
         let mut url = String::from("https://api.github.com/users/");
         url.push_str(username);
         url.push_str("/received_events/public");
-        let data = get(&url, self.headers.clone())?;
+        let data = get(&url, self.get_headers().clone())?;
 
         try_serde!(serde_json::from_str(&data))
     }
@@ -221,7 +221,7 @@ impl Activity for Client {
         let mut url = String::from("https://api.github.com/users/");
         url.push_str(username);
         url.push_str("/events");
-        let data = get(&url, self.headers.clone())?;
+        let data = get(&url, self.get_headers().clone())?;
 
         try_serde!(serde_json::from_str(&data))
     }
@@ -237,7 +237,7 @@ impl Activity for Client {
         let mut url = String::from("https://api.github.com/users/");
         url.push_str(username);
         url.push_str("/events/public");
-        let data = get(&url, self.headers.clone())?;
+        let data = get(&url, self.get_headers().clone())?;
 
         try_serde!(serde_json::from_str(&data))
     }
@@ -254,7 +254,7 @@ impl Activity for Client {
         url.push_str(username);
         url.push_str("/events/orgs/");
         url.push_str(org);
-        let data = get(&url, self.headers.clone())?;
+        let data = get(&url, self.get_headers().clone())?;
 
         try_serde!(serde_json::from_str(&data))
 

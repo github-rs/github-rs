@@ -94,13 +94,12 @@
 //! ```
 //!
 
-extern crate hyper;
-use hyper::header::Headers;
+use hyper::header::{Accept, UserAgent, Authorization, Headers, qitem};
 
 // Under no circumstances do we want this exposed. This is the internal library used to build calls
 // to the API and it contains some things needed for other modules to work.
 use requests::*;
-
+pub use requests::MediaType;
 // Imports for all of the traits that contain the calls to the API
 // that are used by the Github struct. This hides the implementation and puts all of the
 // documentation as part of one module. This is exactly what we want. We don't want the user to
@@ -134,14 +133,14 @@ pub struct Client {
     /// Token generated from [here on Github](https://github.com/settings/tokens)
     /// that grants the `Client` access to various parts of the API
     /// depending on what is allowed with that token.
-    pub token: AccessToken,
+    token: AccessToken,
     /// Headers that are automatically defined and used in API Calls to the GithubAPI via
     /// the new function. If you wish to define your own to change how you make calls you should
     /// modify this variable. However, this is discouraged as the automatically created Headers
     /// contain the `Authorization`, API Version, Media type, and `UserAgent` headers for you.
     /// If you must do so it might cause undefined behavior for the API and errors encountered are
     /// not tested for and not the fault of the library authors
-    pub headers: Headers,
+    headers: Headers,
 }
 
 impl Client {
@@ -153,5 +152,43 @@ impl Client {
             token: acc_token,
             headers: default_headers(cloned)?,
         })
+    }
+
+    /// Get headers of a `Client`
+    pub fn get_headers(&self) -> &Headers {
+        &self.headers
+    }
+
+    /// Get token of a `Client`
+    pub fn get_token(&self) -> &AccessToken {
+        &self.token
+    }
+
+    /// Change headers of a `Client`
+    pub fn set_header(&mut self, headers: Headers) {
+        self.headers = headers;
+    }
+
+    /// Change `AccessToken` of a `Client`
+    pub fn set_token(&mut self, acc_token: AccessToken) {
+        self.token = acc_token;
+    }
+
+    /// Create a new `Client` with more control then the
+    /// default `new` method
+    pub fn new_custom(acc_token: AccessToken, media: MediaType, user_agent: &str) -> Result<Client> {
+        let mime = media_to_mime(media)?;
+        let token = String::from("token ") + &acc_token;
+
+        let mut custom_headers = Headers::new();
+        custom_headers.set(UserAgent(String::from(user_agent)));
+        custom_headers.set(Authorization(token));
+        custom_headers.set(Accept(vec![qitem(mime)]));
+
+        Ok(Client {
+            token: acc_token,
+            headers: custom_headers,
+        })
+
     }
 }

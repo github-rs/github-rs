@@ -1,5 +1,3 @@
-//! Trait definition related to Repositories on Github
-
 use requests::*;
 use github::Client;
 use error::*;
@@ -36,7 +34,7 @@ impl Repos for Client {
     fn post_org_repos(&self, organization: String, repo: RepoCreate) -> Result<Repo> {
         let url = format!("https://api.github.com/orgs/{}/repos", organization);
         let res = post(&url,
-                       self.headers.clone(),
+                       self.get_headers().clone(),
                        serde_json::to_string(&repo)?)?;
         try_serde!(serde_json::from_str(&res))
     }
@@ -50,7 +48,7 @@ impl Repos for Client {
     fn post_user_repos(&self, repo: RepoCreate) -> Result<Repo> {
         let url = "https://api.github.com/user/repos";
         let res = post(url,
-                       self.headers.clone(),
+                       self.get_headers().clone(),
                        serde_json::to_string(&repo)?)?;
         try_serde!(serde_json::from_str(&res))
     }

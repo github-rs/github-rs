@@ -73,7 +73,7 @@ impl GitData for Client {
     //             "https://api.github.com/repos/{}/{}/git/blobs/{}",
     //             owner, repo, sha
     //         );
-    //     let data = get(&url, self.headers.clone())?;
+    //     let data = get(&url, self.get_headers().clone())?;
     //     try_serde!(serde_json::from_str(&data))
     // }
 
@@ -83,7 +83,7 @@ impl GitData for Client {
                 "https://api.github.com/repos/{}/{}/git/commits/{}",
                 owner, repo, sha
             );
-        let data = get(&url, self.headers.clone())?;
+        let data = get(&url, self.get_headers().clone())?;
         try_serde!(serde_json::from_str(&data))
     }
 
@@ -93,7 +93,7 @@ impl GitData for Client {
                 "https://api.github.com/repos/{}/{}/git/refs/{}",
                 owner, repo, _ref
             );
-        let data = get(&url, self.headers.clone())?;
+        let data = get(&url, self.get_headers().clone())?;
 
         if data.contains("Not Found") {
             Err(GithubError::Github404)
@@ -108,7 +108,7 @@ impl GitData for Client {
                 "https://api.github.com/repos/{}/{}/git/refs/{}",
                 owner, repo, _ref
             );
-        let data = get(&url, self.headers.clone())?;
+        let data = get(&url, self.get_headers().clone())?;
         if data.contains("Not Found") {
             Err(GithubError::Github404)
         } else {
@@ -122,7 +122,7 @@ impl GitData for Client {
                 "https://api.github.com/repos/{}/{}/git/refs",
                 owner, repo
             );
-        let data = get(&url, self.headers.clone())?;
+        let data = get(&url, self.get_headers().clone())?;
         if data.contains("Not Found") {
             Err(GithubError::Github404)
         } else {
