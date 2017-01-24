@@ -1,23 +1,19 @@
 branches:
   except:
     - gh_pages
+os:
+  - Visual Studio 2015
 environment:
-  SSL_CERT_FILE: "C:\\OpenSSL\\cacert.pem"
   matrix:
-    - TARGET: i686-pc-windows-gnu
+    - TARGET: i686-pc-windows-msvc
       BITS: 32
-      MSYS2: 1
-      OPENSSL_VERSION: 1_1_0c
-    - TARGET: x86_64-pc-windows-gnu
+    - TARGET: x86_64-pc-windows-msvc
       BITS: 64
-      MSYS2: 1
-      OPENSSL_VERSION: 1_0_2j
 install:
   # Install Rust
   - curl -sSf -o rustup-init.exe https://win.rustup.rs/
   - rustup-init.exe -y --default-toolchain=stable-%TARGET%
   - set PATH=%PATH%;C:\Users\appveyor\.cargo\bin
-  - if defined MSYS2 set PATH=C:\msys64\mingw%BITS%\bin;%PATH%
   - rustc -V
   - cargo -V
 
@@ -25,10 +21,6 @@ build: false
 
 test_script:
   - cargo build
-  # There's some problems with windows for this so it's commented out
-  # for now
-  - cargo test
-
 cache:
   - target
   - C:\Users\appveyor\.cargo\registry
