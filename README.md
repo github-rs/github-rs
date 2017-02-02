@@ -11,13 +11,9 @@
 Pure Rust bindings to the Github API using Hyper and Serde
 
 ## Incomplete Bindings
-This is in no way close to being done for most of the Github API. That
-being said it's in a usable state for some things and can be
-extended to cover other parts of the API easily now that requests and
-error handling underlying the API are stabilized for now.
-
-This will eventually build on stable once procedural macros is
-stabilized. It's thought to be ready for Rust 1.15
+This is in no way close to being done for most of the Github API, but
+the functionality that is available does do a lot of the work that one
+would expect when accessing the API.
 
 ## Dependencies and Support
 github-rs is intended to work on all tier 1 supported Rust systems:
@@ -26,8 +22,8 @@ github-rs is intended to work on all tier 1 supported Rust systems:
 - Linux
 - MacOSX
 
-You'll need OpenSSL installed on your machine since it's an underlying
-library that requires it. This is true for all platforms.
+github-rs only supports the Rust compiler from stable versions 1.15 onwards
+due to using Custom Derive.
 
 ## Project Aims
 - Have a robust API where everything is error handled properly to avoid

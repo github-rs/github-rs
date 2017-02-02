@@ -4,7 +4,7 @@ os:
   - linux
   - osx
 rust:
-  - nightly
+  - stable
 cache: cargo
 addons:
   apt:
