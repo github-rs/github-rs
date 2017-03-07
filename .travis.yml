@@ -1,43 +1,9 @@
-sudo: true
+sudo: false
 language: rust
 os:
   - linux
   - osx
 rust:
-  - stable
-cache: cargo
-addons:
-  apt:
-    packages:
-    - libcurl4-openssl-dev
-    - libelf-dev
-    - libdw-dev
-    - cmake
-    - gcc
-    - binutils-dev
-before_install:
-- openssl aes-256-cbc -K $encrypted_b63566236b41_key -iv $encrypted_b63566236b41_iv
-  -in auth_token.enc -out tests/auth_token -d
+  - nightly
 script:
-- cargo build && cargo test
-after_success: |
-    if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz &&
-      tar xzf master.tar.gz &&
-      cd kcov-master &&
-      mkdir build &&
-      cd build &&
-      cmake .. &&
-      make &&
-      sudo make install &&
-      cd ../.. &&
-      rm -rf kcov-master &&
-      for file in target/debug/github_rs-*; do mkdir -p "target/cov/$(basename $file)"; kcov --exclude-pattern=/.cargo,/usr/lib --verify "target/cov/$(basename $file)" "$file"; done &&
-      for file in target/debug/harness-*; do mkdir -p "target/cov/$(basename $file)"; kcov --exclude-pattern=/.cargo,/usr/lib --verify "target/cov/$(basename $file)" "$file"; done &&
-      bash <(curl -s https://codecov.io/bash) &&
-      echo "Uploaded code coverage"
-    fi
-env:
-  global:
-  - TRAVIS_CARGO_NIGHTLY_FEATURE=""
-  - secure: eKQz20maPDDAiUR1gMdqrGrcQZAI00XdNuMQkcaOnzViaCW3f46+nCUijqpQGHyjfPT6/7zE+yr4haORHDYjYPxQPq8E+IPyaDI8vJ1CQS7c1tdRvWbYjvnuNXcGW2YrFzquLWD/d7wrYOp5zfklC+Y35rZllQeuqf0cN5+IGDV9tH+bd1OGZnHnw7FDZApBy5Ftx28qrrDmak3abl9sU4rYKR8SKlf0eYfq+x9D7v1ImgdvsbEUr2uVFlukrSme5xe4F+RGSwzl4o5BheRa8EM8M9ww8UluMYWrj2Nj+el5rlnMC48pjPjx6fDdFAjBO0KTAaaA163KVu2/K2l8+HqKDvoHsvRssCTr1OKXeFvQ14j4duY7tkOafro8UYByezDpPPlbr7ifdtPYJDPXsQ+bfq632+7hT0KifQq1VPtfTFlhVm/d/FeZtKQhzZy8r+6T/lpd4S1Nd1LbATpsNsxDNbwmnzeHW+bkwv2xh9nY+J/5YREu0XVM6ZnbSEM55zGzTJmY3X6d8OE4oJb+nkpXjTBesdHEDCxSRXU3XDmG1Vna7rCyvByHMAbb8gPJcgV2zcMhqJqVDCZON+m1bcHLmvvl4B+YHA+zOVajV082R01+FwPPKJRD3Y4DI8NoNy+Iu5JaWj5adB1SoWErb+MEF+IdTtfF/FRlA2oUlh4=
+- cargo build

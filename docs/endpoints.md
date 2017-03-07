@@ -1,0 +1,475 @@
+GitHub V3 API
+--------------------------------------------------------------------------------
+
+## GET
+- [ ] /emojis
+- [ ] /events
+- [ ] /feeds
+- [ ] /gists
+- [ ] /gists/:gist_id/comments
+- [ ] /gists/:gist_id/comments/:id
+- [ ] /gists/:id
+- [ ] /gists/:id/:commits
+- [ ] /gists/:id/forks
+- [ ] /gists/:id/:sha
+- [ ] /gists/:id/star
+- [ ] /gists/public
+- [ ] /gists/starred
+- [ ] /gitignore/templates
+- [ ] /gitignore/templates/:lang
+- [ ] /issues
+- [ ] /meta
+- [ ] /networks/:owner/:repo/events
+- [ ] /notifications
+- [ ] /notifications/threads/:id
+- [ ] /notifications/threads/:id/subscription
+- [ ] /organizations
+- [ ] /orgs/:org
+- [ ] /orgs/:org/events
+- [ ] /orgs/:org/hooks
+- [ ] /orgs/:org/hooks/:id
+- [ ] /orgs/:org/issues
+- [ ] /orgs/:org/members
+- [ ] /orgs/:org/members/:username
+- [ ] /orgs/:org/memberships/:username
+- [ ] /orgs/:org/public_members
+- [ ] /orgs/:org/public_members/:username
+- [ ] /orgs/:org/repos
+- [ ] /orgs/:org/teams
+- [ ] /rate_limit
+- [ ] /repos/:owner/:repo
+- [ ] /repos/:owner/:repo/:archive_format/:ref
+- [ ] /repos/:owner/:repo/assignees
+- [ ] /repos/:owner/:repo/assignees/:assignee
+- [ ] /repos/:owner/:repo/branches
+- [ ] /repos/:owner/:repo/branches/:branch
+- [ ] /repos/:owner/:repo/branches/:branch/protection
+- [ ] /repos/:owner/:repo/branches/:branch/protection/restrictions
+- [ ] /repos/:owner/:repo/branches/:branch/protection/restrictions/teams
+- [ ] /repos/:owner/:repo/branches/:branch/protection/restrictions/users
+- [ ] /repos/:owner/:repo/branches/:branch/protection/required_pull_request_reviews
+- [ ] /repos/:owner/:repo/branches/:branch/required_status_checks
+- [ ] /repos/:owner/:repo/branches/:branch/required_status_checks/contexts
+- [ ] /repos/:owner/:repo/collaborators
+- [ ] /repos/:owner/:repo/collaborators/:username
+- [ ] /repos/:owner/:repo/comments
+- [ ] /repos/:owner/:repo/comments/:id
+- [ ] /repos/:owner/:repo/commits
+- [ ] /repos/:owner/:repo/commits/:ref
+- [ ] /repos/:owner/:repo/commits/:ref/comments
+- [ ] /repos/:owner/:repo/commits/:ref/status
+- [ ] /repos/:owner/:repo/commits/:ref/statuses
+- [ ] /repos/:owner/:repo/commits/:sha
+- [ ] /repos/:owner/:repo/compare/:base...:head
+- [ ] /repos/:owner/:repo/contents/:path
+- [ ] /repos/:owner/:repo/contributors
+- [ ] /repos/:owner/:repo/deployments
+- [ ] /repos/:owner/:repo/deployments/:deployment_id
+- [ ] /repos/:owner/:repo/deployments/:id/statuses
+- [ ] /repos/:owner/:repo/events
+- [ ] /repos/:owner/:repo/forks
+- [ ] /repos/:owner/:repo/git/blobs/:sha
+- [ ] /repos/:owner/:repo/git/commits/:sha
+- [ ] /repos/:owner/:repo/git/refs
+- [ ] /repos/:owner/:repo/git/refs/:ref
+- [ ] /repos/:owner/:repo/git/tags/:sha
+- [ ] /repos/:owner/:repo/git/trees/:sha
+- [ ] /repos/:owner/:repo/hooks
+- [ ] /repos/:owner/:repo/hooks/:id
+- [ ] /repos/:owner/:repo/issues
+- [ ] /repos/:owner/:repo/issues/comments
+- [ ] /repos/:owner/:repo/issues/comments/:id
+- [ ] /repos/:owner/:repo/issues/events
+- [ ] /repos/:owner/:repo/issues/events/:id
+- [ ] /repos/:owner/:repo/issues/issue_number/events
+- [ ] /repos/:owner/:repo/issues/:number
+- [ ] /repos/:owner/:repo/issues/:number/comments
+- [ ] /repos/:owner/:repo/issues/:number/labels
+- [ ] /repos/:owner/:repo/keys
+- [ ] /repos/:owner/:repo/keys/:id
+- [ ] /repos/:owner/:repo/labels
+- [ ] /repos/:owner/:repo/labels/:name
+- [ ] /repos/:owner/:repo/languages
+- [ ] /repos/:owner/:repo/milestones
+- [ ] /repos/:owner/:repo/milestones/:number
+- [ ] /repos/:owner/:repo/milestones/:number/labels
+- [ ] /repos/:owner/:repo/notifications
+- [ ] /repos/:owner/:repo/pages/builds
+- [ ] /repos/:owner/:repo/pages/builds/:id
+- [ ] /repos/:owner/:repo/pages/builds/latest
+- [ ] /repos/:owner/:repo/pulls
+- [ ] /repos/:owner/:repo/pulls/comments
+- [ ] /repos/:owner/:repo/pulls/comments/:id
+- [ ] /repos/:owner/:repo/pulls/:number
+- [ ] /repos/:owner/:repo/pulls/:number/comments
+- [ ] /repos/:owner/:repo/pulls/:number/commits
+- [ ] /repos/:owner/:repo/pulls/:number/files
+- [ ] /repos/:owner/:repo/pulls/:number/requested_reviewers
+- [ ] /repos/:owner/:repo/pulls/:number/merge
+- [ ] /repos/:owner/:repo/readme
+- [ ] /repos/:owner/:repo/releases
+- [ ] /repos/:owner/:repo/releases/assets/:id
+- [ ] /repos/:owner/:repo/releases/:id
+- [ ] /repos/:owner/:repo/releases/:id/assets
+- [ ] /repos/:owner/:repo/releases/latest
+- [ ] /repos/:owner/:repo/releases/tags/:tag
+- [ ] /repos/:owner/:repo/stargazers
+- [ ] /repos/:owner/:repo/stats/code_frequency
+- [ ] /repos/:owner/:repo/stats/commit_activity
+- [ ] /repos/:owner/:repo/stats/contributors
+- [ ] /repos/:owner/:repo/stats/participation
+- [ ] /repos/:owner/:repo/stats/punch_card
+- [ ] /repos/:owner/:repo/subscribers
+- [ ] /repos/:owner/:repo/subscription
+- [ ] /repos/:owner/:repo/tags
+- [ ] /repos/:owner/:repo/teams
+- [ ] /repos/:owner/:repo/traffic/clones
+- [ ] /repos/:owner/:repo/traffic/popular/paths
+- [ ] /repos/:owner/:repo/traffic/popular/referrers
+- [ ] /repos/:owner/:repo/traffic/views
+- [ ] /repositories
+- [ ] /search/code
+- [ ] /search/issues
+- [ ] /search/repositories
+- [ ] /search/users
+- [ ] /teams/:id
+- [ ] /teams/:id/members
+- [ ] /teams/:id/memberships/:username
+- [ ] /teams/:id/repos
+- [X] /user
+- [X] /user/emails
+- [X] /user/followers
+- [X] /user/following
+- [X] /user/following/:username
+- [ ] /user/issues
+- [X] /user/keys
+- [X] /user/keys/:id
+- [ ] /user/orgs
+- [X] /user/repos
+- [ ] /user/starred
+- [ ] /user/starred/:owner/:repo
+- [ ] /user/subscriptions
+- [X] /users
+- [X] /users/:username
+- [ ] /users/:username/events
+- [ ] /users/:username/events/orgs/:org
+- [ ] /users/:username/events/public
+- [X] /users/:username/followers
+- [X] /users/:username/following
+- [X] /users/:username/following/:target_user
+- [ ] /users/:username/gists
+- [X] /users/:username/keys
+- [ ] /users/:username/orgs
+- [ ] /users/:username/received_events
+- [ ] /users/:username/received_events/public
+- [X] /users/:username/repos
+- [ ] /users/:username/starred
+- [ ] /users/:username/subscriptions
+
+## POST
+- [ ] /gists
+- [ ] /gists/:id/forks
+- [ ] /gists/:gist_id/comments
+- [ ] /hub
+- [ ] /markdown
+- [ ] /markdown/raw
+- [ ] /orgs/:org/hooks
+- [ ] /orgs/:org/hooks/:id/pings
+- [ ] /orgs/:org/repos
+- [ ] /repos/:owner/:repo/branches/:branch/protection/restrictions/teams
+- [ ] /repos/:owner/:repo/branches/:branch/protection/restrictions/users
+- [ ] /repos/:owner/:repo/branches/:branch/required_status_checks/contexts
+- [ ] /repos/:owner/:repo/commits/:sha/comments
+- [ ] /repos/:owner/:repo/deployments
+- [ ] /repos/:owner/:repo/deployments/:id/statuses
+- [ ] /repos/:owner/:repo/forks
+- [ ] /repos/:owner/:repo/git/blobs
+- [ ] /repos/:owner/:repo/git/commits
+- [ ] /repos/:owner/:repo/git/refs
+- [ ] /repos/:owner/:repo/git/tags
+- [ ] /repos/:owner/:repo/git/trees
+- [ ] /repos/:owner/:repo/hooks
+- [ ] /repos/:owner/:repo/hooks/:id/pings
+- [ ] /repos/:owner/:repo/hooks/:id/tests
+- [ ] /repos/:owner/:repo/issues
+- [ ] /repos/:owner/:repo/issues/:number/assignees
+- [ ] /repos/:owner/:repo/issues/:number/comments
+- [ ] /repos/:owner/:repo/issues/:number/labels
+- [ ] /repos/:owner/:repo/keys
+- [ ] /repos/:owner/:repo/labels
+- [ ] /repos/:owner/:repo/merges
+- [ ] /repos/:owner/:repo/milestones
+- [ ] /repos/:owner/:repo/pulls
+- [ ] /repos/:owner/:repo/pulls/comments
+- [ ] /repos/:owner/:repo/releases
+- [ ] /repos/:owner/:repo/statuses/:sha
+- [ ] /user/emails
+- [ ] /user/keys
+- [ ] /user/repos
+- [ ] https://<upload_url>/repos/:owner/:repo/releases/:id/assets?name=foo.zip
+
+## PUT
+- [ ] /gists/:id/star
+- [ ] /notifications
+- [ ] /notifications/threads/:id/subscription
+- [ ] /orgs/:org/memberships/:username
+- [ ] /orgs/:org/public_members/:username
+- [ ] /orgs/:org/teams
+- [ ] /repos/:owner/:repo/branches/:branch/protection
+- [ ] /repos/:owner/:repo/branches/:branch/protection/restrictions/teams
+- [ ] /repos/:owner/:repo/branches/:branch/protection/restrictions/users
+- [ ] /repos/:owner/:repo/branches/:branch/required_status_checks/contexts
+- [ ] /repos/:owner/:repo/collaborators/:username
+- [ ] /repos/:owner/:repo/contents/:path
+- [ ] /repos/:owner/:repo/issues/:number/labels
+- [ ] /repos/:owner/:repo/issues/:number/lock
+- [ ] /repos/:owner/:repo/labels/:name
+- [ ] /repos/:owner/:repo/notifications
+- [ ] /repos/:owner/:repo/pulls/:number/merge
+- [ ] /repos/:owner/:repo/subscription
+- [ ] /teams/:id/memberships/:username
+- [ ] /user/following/:username
+- [ ] /user/starred/:owner/:repo
+
+## DELETE
+- [ ] /gists/:id
+- [ ] /gists/:id/star
+- [ ] /gists/:gist_id/comments/:id
+- [ ] /notifications/threads/:id/subscription
+- [ ] /orgs/:org/hooks/:id
+- [ ] /orgs/:org/members/:username
+- [ ] /orgs/:org/memberships/:username
+- [ ] /orgs/:org/public_members/:username
+- [ ] /repos/:owner/:repo
+- [ ] /repos/:owner/:repo/branches/:branch/protection
+- [ ] /repos/:owner/:repo/branches/:branch/protection/restrictions
+- [ ] /repos/:owner/:repo/branches/:branch/protection/restrictions/teams
+- [ ] /repos/:owner/:repo/branches/:branch/protection/restrictions/users
+- [ ] /repos/:owner/:repo/branches/:branch/protection/required_pull_request_reviews
+- [ ] /repos/:owner/:repo/branches/:branch/required_status_checks
+- [ ] /repos/:owner/:repo/branches/:branch/required_status_checks/contexts
+- [ ] /repos/:owner/:repo/collaborators/:username
+- [ ] /repos/:owner/:repo/comments/:id
+- [ ] /repos/:owner/:repo/contents/:path
+- [ ] /repos/:owner/:repo/issues/comments/:id
+- [ ] /repos/:owner/:repo/issues/:number/assignees
+- [ ] /repos/:owner/:repo/issues/:number/labels
+- [ ] /repos/:owner/:repo/issues/:number/labels/:name
+- [ ] /repos/:owner/:repo/issues/:number/lock
+- [ ] /repos/:owner/:repo/git/refs/:ref
+- [ ] /repos/:owner/:repo/hooks/:id
+- [ ] /repos/:owner/:repo/keys/:id
+- [ ] /repos/:owner/:repo/milestones/:number
+- [ ] /repos/:owner/:repo/pulls/comments/:id
+- [ ] /repos/:owner/:repo/releases/assets/:id
+- [ ] /repos/:owner/:repo/releases/:id
+- [ ] /repos/:owner/:repo/subscription
+- [ ] /teams/:id
+- [ ] /teams/:id/memberships/:username
+- [ ] /user/emails
+- [ ] /user/following/:username
+- [ ] /user/keys/:id
+- [ ] /user/starred/:owner/:repo
+
+## PATCH
+- [ ] /gists/:id
+- [ ] /gists/:gist_id/comments/:id
+- [ ] /notifications/threads/:id
+- [ ] /orgs/:org
+- [ ] /orgs/:org/hooks/:id
+- [ ] /repos/:owner/:repo
+- [ ] /repos/:owner/:repo/branches/:branch/protection/required_pull_request_reviews
+- [ ] /repos/:owner/:repo/branches/:branch/required_status_checks
+- [ ] /repos/:owner/:repo/comments/:id
+- [ ] /repos/:owner/:repo/git/refs/:ref
+- [ ] /repos/:owner/:repo/hooks/:id
+- [ ] /repos/:owner/:repo/issues/comments/:id
+- [ ] /repos/:owner/:repo/issues/:number
+- [ ] /repos/:owner/:repo/labels/:name
+- [ ] /repos/:owner/:repo/milestones/:number
+- [ ] /repos/:owner/:repo/pulls/comments/:id
+- [ ] /repos/:owner/:repo/pulls/:number
+- [ ] /repos/:owner/:repo/releases/assets/:id
+- [ ] /repos/:owner/:repo/releases/:id
+- [ ] /teams/:id
+- [ ] /user
+- [ ] /user/email/visibility
+
+GitHub V3 API Pre-release
+--------------------------------------------------------------------------------
+
+## GET
+- [ ] /integration/installations
+- [ ] /integration/repositories
+- [ ] /licenses
+- [ ] /licenses/:license
+- [ ] /orgs/:org/blocks
+- [ ] /orgs/:org/blocks/:username
+- [ ] /orgs/:org/invitations
+- [ ] /orgs/:org/outside_collaborators
+- [ ] /orgs/:org/projects
+- [ ] /projects/columns/cards/:id
+- [ ] /projects/columns/:column_id/cards
+- [ ] /projects/columns/:id
+- [ ] /projects/:id
+- [ ] /projects/:project_id/columns
+- [ ] /repos/:owner/:repo <-- Will return license with license header
+- [ ] /repos/:owner/:repo/collaborators/:username/permission
+- [ ] /repos/:owner/:repo/comments/:id/reactions
+- [ ] /repos/:owner/:repo/commits/:sha
+- [ ] /repos/:owner/:repo/deployments/:id/statuses/:status_id
+- [ ] /repos/:owner/:repo/import
+- [ ] /repos/:owner/:repo/import/authors
+- [ ] /repos/:owner/:repo/import/large_files
+- [ ] /repos/:owner/:repo/issues/comments/:id/reactions
+- [ ] /repos/:owner/:repo/issues/:issue_number/timeline
+- [ ] /repos/:owner/:repo/issues/:number/reactions
+- [ ] /repos/:owner/:repo/license
+- [ ] /repos/:owner/:repo/pages
+- [ ] /repos/:owner/:repo/projects
+- [ ] /repos/:owner/:repo/pulls/comments/:id/reactions
+- [ ] /repos/:owner/:repo/pulls/:number/reviews
+- [ ] /repos/:owner/:repo/pulls/:number/reviews/:id
+- [ ] /repos/:owner/:repo/pulls/:number/reviews/:id/comments
+- [ ] /repos/:owner/:repo/git/commits/:sha
+- [ ] /repos/:owner/:repo/git/tags/:sha
+- [ ] /repositories/:repo_id/community/profile
+- [ ] /repositories/:repo_id/invitations
+- [ ] /search/commits
+- [ ] /teams/:id/invitations
+- [ ] /teams/:id/repos/:owner/:repo
+- [ ] /user/blocks
+- [ ] /user/blocks/:username
+- [ ] /user/gpg_keys
+- [ ] /user/gpg_keys/:id
+- [ ] /user/memberships/orgs
+- [ ] /user/memberships/orgs/:org
+- [ ] /user/repository_invitations
+- [ ] /user/teams
+- [ ] /users/:username/gpg_keys
+
+## POST
+- [ ] /installations/:installation_id/access_tokens
+- [ ] /orgs/:org/projects
+- [ ] /projects/columns/cards/:id/moves
+- [ ] /projects/columns/:column_id/cards
+- [ ] /projects/columns/:id/moves
+- [ ] /projects/:project_id/columns
+- [ ] /repos/:owner/:repo/comments/:id/reactions
+- [ ] /repos/:owner/:repo/issues/comments/:id/reactions
+- [ ] /repos/:owner/:repo/issues/:number/reactions
+- [ ] /repos/:owner/:repo/pages/builds
+- [ ] /repos/:owner/:repo/projects
+- [ ] /repos/:owner/:repo/pulls/comments/:id/reactions
+- [ ] /repos/:owner/:repo/pulls/:number/requested_reviewers
+- [ ] /repos/:owner/:repo/pulls/:number/reviews
+- [ ] /repos/:owner/:repo/pulls/:number/reviews/:id/events
+- [ ] /user/emails
+- [ ] /user/gpg_keys
+
+## PUT
+- [ ] /installations/:installation_id/repositories/:repository_id
+- [ ] /orgs/:org/blocks/:username
+- [ ] /orgs/:org/outside_collaborator/:username
+- [ ] /repos/:owner/:repo/pulls/:number/reviews/:id/dismissals
+- [ ] /teams/:id/repos/:org/:repo
+- [ ] /user/blocks/:username
+
+## DELETE
+- [ ] /installations/:installation_id/repositories/:repository_id
+- [ ] /orgs/:org/blocks/:username
+- [ ] /orgs/:org/outside_collaborator/:username
+- [ ] /projects/columns/cards/:id
+- [ ] /projects/columns/:id
+- [ ] /projects/:id
+- [ ] /reactions/:id
+- [ ] /repos/:owner/:repo/import
+- [ ] /repos/:owner/:repo/pulls/:number/requested_reviewers
+- [ ] /repos/:owner/:repo/pulls/:number/reviews/:id
+- [ ] /repositories/:repo_id/invitations/:invitation_id
+- [ ] /teams/:id/repos/:owner/:repo
+- [ ] /user/blocks/:username
+- [ ] /user/emails
+- [ ] /user/gpg_keys/:id
+- [ ] /user/repository_invitations/:invitation_id
+
+## PATCH
+- [ ] /projects/columns/cards/:id
+- [ ] /projects/columns/:id
+- [ ] /projects/:id
+- [ ] /repos/:owner/:repo/import
+- [ ] /repos/:owner/:repo/import/authors/:author_id
+- [ ] /repos/:owner/:repo/import/lfs
+- [ ] /repositories/:repo_id/invitations/:invitation_id
+- [ ] /user
+- [ ] /user/email/visibility
+- [ ] /user/memberships/orgs/:org
+- [ ] /user/repository_invitations/:invitation_id
+
+GitHub V3 API Enterprise
+--------------------------------------------------------------------------------
+
+## GET
+- [ ] /enterprise/stats/:type
+- [ ] /enterprise/settings/license
+- [ ] /setup/api/configcheck
+- [ ] /setup/api/maintenance
+- [ ] /setup/api/settings
+- [ ] /setup/api/settings/authorized-keys
+
+## PUT
+- [ ] /setup/api/settings
+- [ ] /users/:username/site_admin
+- [ ] /users/:username/suspended
+
+## POST
+- [ ] /admin/ldap/users/:username/sync
+- [ ] /admin/ldap/teams/:team_id/sync
+- [ ] /admin/organizations
+- [ ] /setup/api/configure
+- [ ] /setup/api/maintenance
+- [ ] /setup/api/settings/authorized-keys
+- [ ] /setup/api/start
+- [ ] /setup/api/upgrade
+- [ ] /staff/indexing_jobs
+
+## DELETE
+- [ ] /setup/api/settings/authorized-keys
+- [ ] /users/:username/site_admin
+- [ ] /users/:username/suspended
+
+## PATCH
+- [ ] /admin/ldap/users/:username/mapping
+- [ ] /admin/ldap/teams/:team_id/mapping
+
+GitHub V3 API Enterprise Preview
+--------------------------------------------------------------------------------
+
+## GET
+- [ ] /admin/pre-receive-environments/:id
+- [ ] /admin/pre-receive-environments/:id/downloads/latest
+- [ ] /admin/pre_receive_environments
+- [ ] /admin/pre-receive-hooks/:id
+- [ ] /admin/pre_receive_hooks
+- [ ] /orgs/:org/migrations
+- [ ] /orgs/:org/migrations/:id
+- [ ] /orgs/:org/migrations/:id/archive
+
+## PUT
+
+## POST
+- [ ] /admin/pre-receive-environments/:id/downloads
+- [ ] /admin/pre_receive_environments
+- [ ] /admin/pre_receive_environments/:id
+- [ ] /admin/pre-receive-hooks
+- [ ] /hub
+- [ ] /orgs/:org/migrations
+
+## DELETE
+- [ ] /admin/pre_receive_environments/:id
+- [ ] /admin/pre_receive_hooks/:id
+- [ ] /orgs/:org/migrations/:id/archive
+- [ ] /orgs/:org/migrations/:id/repos/:repo_name/lock
+
+## PATCH
+- [ ] /admin/pre_receive_hooks/:id

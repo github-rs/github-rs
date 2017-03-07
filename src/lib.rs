@@ -1,49 +1,34 @@
 //! Library to used to access the Github API with Rust
-#![cfg_attr(feature = "dev", plugin(clippy))]
+#![allow(dead_code)] // Until every starting struct gets used
 
-// This allows for better enforc
-// unstable_features add one day when custom derive is stableed style and project features
-#![deny(missing_docs,
-        missing_debug_implementations,
-        missing_copy_implementations,
-        trivial_casts,
-        trivial_numeric_casts,
+#![deny(//missing_docs,
         unsafe_code,
         unused_import_braces,
         unused_qualifications)]
 
 #[macro_use]
-extern crate serde_derive;
+extern crate error_chain;
+extern crate hyper;
+extern crate hyper_tls;
+extern crate futures;
+extern crate tokio_core;
 extern crate serde;
 extern crate serde_json;
-extern crate hyper;
-extern crate hyper_rustls;
 
-// Only here for error handling with hyper
-extern crate url;
+#[macro_use] mod macros;
+mod util;
+pub mod errors {
+    error_chain!{}
+}
+pub mod client;
+pub mod gists;
+pub mod issues;
+pub mod misc;
+pub mod notifications;
+pub mod orgs;
+pub mod repos;
+pub mod search;
+pub mod teams;
+pub mod users;
 
-// This has to be here so the macros are available everywhere
-#[macro_use]
-mod macros;
-#[macro_use]
-mod error;
-
-mod activity;
-mod enterprise;
-mod gists;
-pub mod github;
-mod git_data;
-mod issues;
-mod json;
-mod migration;
-mod miscellaneous;
-mod organizations;
-mod pull_requests;
-mod reactions;
-mod repositories;
-mod requests;
-mod review;
-mod search;
-mod types;
-mod users;
-mod collaborators;
+pub type Json = serde_json::Value;

@@ -8,12 +8,11 @@
 | CodeCov   | [![codecov](https://codecov.io/gh/mgattozzi/github-rs/branch/master/graph/badge.svg)](https://codecov.io/gh/mgattozzi/github-rs)      |
 | crates.io | ![crates.io](https://img.shields.io/crates/v/github-rs.svg)
 
-Pure Rust bindings to the Github API using Hyper and Serde
+Pure Rust bindings to the Github API
 
 ## Incomplete Bindings
-This is in no way close to being done for most of the Github API, but
-the functionality that is available does do a lot of the work that one
-would expect when accessing the API.
+Please look at the [endpoints](./docs/endpoints.md) docs to see which endpoints
+are currently covered in the API.
 
 ## Dependencies and Support
 github-rs is intended to work on all tier 1 supported Rust systems:
@@ -21,9 +20,6 @@ github-rs is intended to work on all tier 1 supported Rust systems:
 - Windows
 - Linux
 - MacOSX
-
-github-rs only supports the Rust compiler from stable versions 1.15 onwards
-due to using Custom Derive.
 
 ## Project Aims
 - Have a robust API where everything is error handled properly to avoid
@@ -41,31 +37,61 @@ due to using Custom Derive.
 - Documentation of everything so not only is it easy to hack on but
   finding out how to use the library should be easy to find.
 
+## Getting Started
+Add the following to your `Cargo.toml`
+
+```toml
+[dependencies]
+github-rs = "0.5"
+```
+
+Then in your `lib.rs` or `main.rs` file add:
+
+```rust
+extern crate github_rs
+use github_rs::client::Github;
+```
+
+Now you can start making queries. Here's a small example to get your user
+information:
+
+```rust
+extern crate github_rs;
+use github_rs::client::Github;
+
+fn main() {
+    let mut client = Github::new("API TOKEN");
+    let me = client.get()
+                   .user()
+                   .execute();
+    match me {
+        Ok((status, json)) => {
+            println!("{}", status);
+            println!("{}", json);
+        },
+        Err(e) => println!("{}", e)
+    }
+}
+```
+
 ## Hacking on the Library
-- [API Reference Docs](https://developer.github.com/v3/)
-- Each of the overarching groupings of the endpoints in the
-  Github documentation have a corresponding .rs file under the `src`
-  directory. If you wish to add endpoints or modify how one works that
-  would be the place to go to.
-- `src/types.rs` contains all new types and aliased types that are used
-  throughout github-rs.
-- `src/json.rs` contains all of the structures that represent the JSON
-  that are either returned from or sent to the API.
-- `src/error.rs` contains all code related to error handling including
-  types
-- `src/github.rs` contains the client code as well as top level
-  documentation of the library. Most code is publicly reexported here.
-- Any new additions must contain corresponding documentation comments
-  explaining their use.
-- All endpoint requests must be wrapped in a Result type. The Result
-  type alias we use is located in `src/error.rs`
-- No submitted code may use `unwrap` or `expect`.
-- Use cargo clippy to determine if any other errors or lints pop up.
-  cargo build --feature "dev" will build it with clippy
-- Code when compiled may not emit warnings unless it's an underlying
-  library imported into github-rs.
+- [GitHub API Reference Docs](https://developer.github.com/v3/)
+- See the [design docs](./docs/design) for more information.
+
+## Contributing
+See [CONTRIBUTING.md](CONTRIBUTING.md) for more information.
 
 ## License
-All code is licensed under The MIT License. By submitting code you not
-only agree to submit it under the same license, but are also saying that
-the code you submitted is your own.
+
+Licensed under either of
+
+ * Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
+ * MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
+
+at your option.
+
+### Licensing
+
+Unless you explicitly state otherwise, any contribution intentionally submitted
+for inclusion in the work by you, as defined in the Apache-2.0 license, shall be
+dual licensed as above, without any additional terms or conditions.
