@@ -160,7 +160,7 @@ GitHub V3 API
 - [X] /users/:username/gists
 - [X] /users/:username/keys
 - [X] /users/:username/orgs
-- [ ] /users/:username/received_events
+- [X] /users/:username/received_events
 - [ ] /users/:username/received_events/public
 - [X] /users/:username/repos
 - [ ] /users/:username/starred

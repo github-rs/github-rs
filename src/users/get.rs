@@ -27,6 +27,7 @@ new_type!(UsersKeys);
 new_type!(UserUsername);
 new_type!(UsersUsername);
 new_type!(Repos);
+new_type!(ReceivedEvents);
 new_type!(Issues);
 new_type!(Public);
 new_type!(Starred);
@@ -52,6 +53,7 @@ from!(Keys, Executor);
 from!(KeysId, Executor);
 from!(Orgs, Executor);
 from!(Public, Executor);
+from!(ReceivedEvents, Executor);
 from!(Subscriptions, Executor);
 from!(Starred, Executor);
 from!(Starred, StarredOwner);
@@ -82,6 +84,7 @@ from!(UsersUsername, Gists, "gists");
 from!(UsersUsername, UsersOrgs, "orgs");
 from!(UsersUsername, UsersKeys, "keys");
 from!(UsersUsername, Repos, "repos");
+from!(UsersUsername, ReceivedEvents, "received_events");
 from!(UsersUsername, Executor);
 from!(User, Repos, "repos");
 from!(Repos, Executor);
@@ -129,6 +132,7 @@ impl<'a> UsersUsername<'a> {
     func!(gists, Gists);
     func!(orgs, UsersOrgs);
     func!(keys, UsersKeys);
+    func!(received_events, ReceivedEvents);
     func!(repos, Repos);
     exec!();
 }
@@ -152,6 +156,10 @@ impl<'a> Keys<'a> {
 impl<'a> Following<'a> {
     // This is a status based call, will need to figure out
     func!(username, Following, username_str);
+    exec!();
+}
+
+impl<'a> ReceivedEvents<'a> {
     exec!();
 }
 
