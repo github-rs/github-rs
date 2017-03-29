@@ -152,7 +152,7 @@ GitHub V3 API
 - [X] /users
 - [X] /users/:username
 - [X] /users/:username/events
-- [ ] /users/:username/events/orgs/:org
+- [X] /users/:username/events/orgs/:org
 - [ ] /users/:username/events/public
 - [X] /users/:username/followers
 - [X] /users/:username/following

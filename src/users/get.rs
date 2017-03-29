@@ -19,6 +19,8 @@ new_type!(Orgs);
 new_type!(User);
 new_type!(Users);
 new_type!(Events);
+new_type!(EventsOrgs);
+new_type!(EventsOrgsName);
 new_type!(UsersKeys);
 new_type!(UserUsername);
 new_type!(UsersUsername);
@@ -32,6 +34,9 @@ new_type!(Subscriptions);
 // From implementations for conversion
 from!(Emails, Executor);
 from!(Events, Executor);
+from!(Events, EventsOrgs, "orgs");
+from!(EventsOrgs, EventsOrgsName);
+from!(EventsOrgsName, Executor);
 from!(Followers, Executor);
 from!(Following, FollowingUser);
 from!(Following, Executor);
@@ -118,7 +123,12 @@ impl<'a> UsersUsername<'a> {
 }
 
 impl<'a> Events<'a> {
+    func!(orgs, EventsOrgs);
     exec!();
+}
+
+impl<'a> EventsOrgs<'a> {
+    func!(org, EventsOrgsName, org_name_str);
 }
 
 impl<'a> Keys<'a> {
@@ -135,6 +145,7 @@ impl<'a> Following<'a> {
 
 exec!(UsersKeys);
 exec!(Emails);
+exec!(EventsOrgsName);
 exec!(FollowingUser);
 exec!(Issues);
 exec!(KeysId);
