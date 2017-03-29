@@ -86,6 +86,7 @@ from!(UsersUsername, Gists, "gists");
 from!(UsersUsername, UsersOrgs, "orgs");
 from!(UsersUsername, UsersKeys, "keys");
 from!(UsersUsername, Repos, "repos");
+from!(UsersUsername, Subscriptions, "subscriptions");
 from!(UsersUsername, UsersStarred, "starred");
 from!(UsersUsername, ReceivedEvents, "received_events");
 from!(UsersUsername, Executor);
@@ -138,6 +139,7 @@ impl<'a> UsersUsername<'a> {
     func!(received_events, ReceivedEvents);
     func!(repos, Repos);
     func!(starred, UsersStarred);
+    func!(subscriptions, Subscriptions);
     exec!();
 }
 
