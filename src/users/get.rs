@@ -22,6 +22,7 @@ new_type!(UsersKeys);
 new_type!(Username);
 new_type!(Repos);
 new_type!(Issues);
+new_type!(Subscriptions);
 
 // From implementations for conversion
 from!(Emails, Executor);
@@ -34,6 +35,7 @@ from!(Keys, KeysId);
 from!(Keys, Executor);
 from!(KeysId, Executor);
 from!(Orgs, Executor);
+from!(Subscriptions, Executor);
 from!(User, Emails, "emails");
 from!(User, Followers, "followers");
 from!(User, Following, "following");
@@ -41,6 +43,7 @@ from!(User, Keys, "keys");
 from!(User, Executor);
 from!(User, Issues, "issues");
 from!(User, Orgs, "orgs");
+from!(User, Subscriptions, "subscriptions");
 from!(Users, Executor);
 from!(Users, Username);
 from!(UsersKeys, Executor);
@@ -59,6 +62,7 @@ impl<'a> User<'a> {
     func!(following, Following);
     func!(issues, Issues);
     func!(repos, Repos);
+    func!(subscriptions, Subscriptions);
     func!(keys, Keys);
     func!(orgs, Orgs);
     exec!();
@@ -96,4 +100,5 @@ exec!(Issues);
 exec!(KeysId);
 exec!(Followers);
 exec!(Repos);
+exec!(Subscriptions);
 exec!(Orgs);

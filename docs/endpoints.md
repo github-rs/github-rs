@@ -141,14 +141,14 @@ GitHub V3 API
 - [X] /user/followers
 - [X] /user/following
 - [X] /user/following/:username
-- [x] /user/issues
+- [X] /user/issues
 - [X] /user/keys
 - [X] /user/keys/:id
 - [X] /user/orgs
 - [X] /user/repos
 - [ ] /user/starred
 - [ ] /user/starred/:owner/:repo
-- [ ] /user/subscriptions
+- [X] /user/subscriptions
 - [X] /users
 - [X] /users/:username
 - [ ] /users/:username/events
