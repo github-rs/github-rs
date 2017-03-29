@@ -24,6 +24,7 @@ new_type!(EventsOrgs);
 new_type!(EventsOrgsName);
 new_type!(Gists);
 new_type!(UsersKeys);
+new_type!(UsersStarred);
 new_type!(UserUsername);
 new_type!(UsersUsername);
 new_type!(Repos);
@@ -72,6 +73,7 @@ from!(Users, Executor);
 from!(Users, UsersUsername);
 from!(UsersOrgs, Executor);
 from!(UsersKeys, Executor);
+from!(UsersStarred, Executor);
 from!(UserUsername, Followers, "followers");
 from!(UserUsername, Following, "following");
 from!(UserUsername, UsersKeys, "keys");
@@ -84,6 +86,7 @@ from!(UsersUsername, Gists, "gists");
 from!(UsersUsername, UsersOrgs, "orgs");
 from!(UsersUsername, UsersKeys, "keys");
 from!(UsersUsername, Repos, "repos");
+from!(UsersUsername, UsersStarred, "starred");
 from!(UsersUsername, ReceivedEvents, "received_events");
 from!(UsersUsername, Executor);
 from!(User, Repos, "repos");
@@ -134,6 +137,7 @@ impl<'a> UsersUsername<'a> {
     func!(keys, UsersKeys);
     func!(received_events, ReceivedEvents);
     func!(repos, Repos);
+    func!(starred, UsersStarred);
     exec!();
 }
 
@@ -177,3 +181,4 @@ exec!(StarredRepo);
 exec!(Orgs);
 exec!(Public);
 exec!(UsersOrgs);
+exec!(UsersStarred);
