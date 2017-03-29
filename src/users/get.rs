@@ -15,6 +15,7 @@ new_type!(Following);
 new_type!(FollowingUser);
 new_type!(Keys);
 new_type!(KeysId);
+new_type!(Orgs);
 new_type!(User);
 new_type!(Users);
 new_type!(UsersKeys);
@@ -32,12 +33,14 @@ from!(Issues, Executor);
 from!(Keys, KeysId);
 from!(Keys, Executor);
 from!(KeysId, Executor);
+from!(Orgs, Executor);
 from!(User, Emails, "emails");
 from!(User, Followers, "followers");
 from!(User, Following, "following");
 from!(User, Keys, "keys");
 from!(User, Executor);
 from!(User, Issues, "issues");
+from!(User, Orgs, "orgs");
 from!(Users, Executor);
 from!(Users, Username);
 from!(UsersKeys, Executor);
@@ -57,6 +60,7 @@ impl<'a> User<'a> {
     func!(issues, Issues);
     func!(repos, Repos);
     func!(keys, Keys);
+    func!(orgs, Orgs);
     exec!();
 }
 
@@ -92,3 +96,4 @@ exec!(Issues);
 exec!(KeysId);
 exec!(Followers);
 exec!(Repos);
+exec!(Orgs);
