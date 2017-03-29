@@ -26,6 +26,7 @@ new_type!(UserUsername);
 new_type!(UsersUsername);
 new_type!(Repos);
 new_type!(Issues);
+new_type!(Public);
 new_type!(Starred);
 new_type!(StarredRepo);
 new_type!(StarredOwner);
@@ -35,6 +36,7 @@ new_type!(Subscriptions);
 from!(Emails, Executor);
 from!(Events, Executor);
 from!(Events, EventsOrgs, "orgs");
+from!(Events, Public, "public");
 from!(EventsOrgs, EventsOrgsName);
 from!(EventsOrgsName, Executor);
 from!(Followers, Executor);
@@ -46,6 +48,7 @@ from!(Keys, KeysId);
 from!(Keys, Executor);
 from!(KeysId, Executor);
 from!(Orgs, Executor);
+from!(Public, Executor);
 from!(Subscriptions, Executor);
 from!(Starred, Executor);
 from!(Starred, StarredOwner);
@@ -124,6 +127,7 @@ impl<'a> UsersUsername<'a> {
 
 impl<'a> Events<'a> {
     func!(orgs, EventsOrgs);
+    func!(public, Public);
     exec!();
 }
 
@@ -154,3 +158,4 @@ exec!(Repos);
 exec!(Subscriptions);
 exec!(StarredRepo);
 exec!(Orgs);
+exec!(Public);
