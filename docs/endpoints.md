@@ -28,10 +28,12 @@ GitHub V3 API
 - [ ] /orgs/:org/events
 - [ ] /orgs/:org/hooks
 - [ ] /orgs/:org/hooks/:id
+- [ ] /orgs/:org/invitations
 - [ ] /orgs/:org/issues
 - [ ] /orgs/:org/members
 - [ ] /orgs/:org/members/:username
 - [ ] /orgs/:org/memberships/:username
+- [ ] /orgs/:org/outside_collaborators
 - [ ] /orgs/:org/public_members
 - [ ] /orgs/:org/public_members/:username
 - [ ] /orgs/:org/repos
@@ -52,6 +54,7 @@ GitHub V3 API
 - [ ] /repos/:owner/:repo/branches/:branch/required_status_checks/contexts
 - [ ] /repos/:owner/:repo/collaborators
 - [ ] /repos/:owner/:repo/collaborators/:username
+- [ ] /repos/:owner/:repo/collaborators/:username/permission
 - [ ] /repos/:owner/:repo/comments
 - [ ] /repos/:owner/:repo/comments/:id
 - [ ] /repos/:owner/:repo/commits
@@ -133,6 +136,7 @@ GitHub V3 API
 - [ ] /search/repositories
 - [ ] /search/users
 - [ ] /teams/:id
+- [ ] /teams/:id/invitations
 - [ ] /teams/:id/members
 - [ ] /teams/:id/memberships/:username
 - [ ] /teams/:id/repos
@@ -213,6 +217,7 @@ GitHub V3 API
 - [ ] /notifications
 - [ ] /notifications/threads/:id/subscription
 - [ ] /orgs/:org/memberships/:username
+- [ ] /orgs/:org/outside_collaborator/:username
 - [ ] /orgs/:org/public_members/:username
 - [ ] /orgs/:org/teams
 - [ ] /repos/:owner/:repo/branches/:branch/protection
@@ -239,6 +244,7 @@ GitHub V3 API
 - [ ] /orgs/:org/hooks/:id
 - [ ] /orgs/:org/members/:username
 - [ ] /orgs/:org/memberships/:username
+- [ ] /orgs/:org/outside_collaborator/:username
 - [ ] /orgs/:org/public_members/:username
 - [ ] /repos/:owner/:repo
 - [ ] /repos/:owner/:repo/branches/:branch/protection
@@ -305,8 +311,6 @@ GitHub V3 API Pre-release
 - [ ] /licenses/:license
 - [ ] /orgs/:org/blocks
 - [ ] /orgs/:org/blocks/:username
-- [ ] /orgs/:org/invitations
-- [ ] /orgs/:org/outside_collaborators
 - [ ] /orgs/:org/projects
 - [ ] /projects/columns/cards/:id
 - [ ] /projects/columns/:column_id/cards
@@ -314,7 +318,6 @@ GitHub V3 API Pre-release
 - [ ] /projects/:id
 - [ ] /projects/:project_id/columns
 - [ ] /repos/:owner/:repo <-- Will return license with license header
-- [ ] /repos/:owner/:repo/collaborators/:username/permission
 - [ ] /repos/:owner/:repo/comments/:id/reactions
 - [ ] /repos/:owner/:repo/commits/:sha
 - [ ] /repos/:owner/:repo/deployments/:id/statuses/:status_id
@@ -336,7 +339,6 @@ GitHub V3 API Pre-release
 - [ ] /repositories/:repo_id/community/profile
 - [ ] /repositories/:repo_id/invitations
 - [ ] /search/commits
-- [ ] /teams/:id/invitations
 - [ ] /teams/:id/repos/:owner/:repo
 - [ ] /user/blocks
 - [ ] /user/blocks/:username
@@ -370,7 +372,6 @@ GitHub V3 API Pre-release
 ## PUT
 - [ ] /installations/:installation_id/repositories/:repository_id
 - [ ] /orgs/:org/blocks/:username
-- [ ] /orgs/:org/outside_collaborator/:username
 - [ ] /repos/:owner/:repo/pulls/:number/reviews/:id/dismissals
 - [ ] /teams/:id/repos/:org/:repo
 - [ ] /user/blocks/:username
@@ -378,7 +379,6 @@ GitHub V3 API Pre-release
 ## DELETE
 - [ ] /installations/:installation_id/repositories/:repository_id
 - [ ] /orgs/:org/blocks/:username
-- [ ] /orgs/:org/outside_collaborator/:username
 - [ ] /projects/columns/cards/:id
 - [ ] /projects/columns/:id
 - [ ] /projects/:id
