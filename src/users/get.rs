@@ -18,8 +18,10 @@ new_type!(KeysId);
 new_type!(Orgs);
 new_type!(User);
 new_type!(Users);
+new_type!(Events);
 new_type!(UsersKeys);
-new_type!(Username);
+new_type!(UserUsername);
+new_type!(UsersUsername);
 new_type!(Repos);
 new_type!(Issues);
 new_type!(Starred);
@@ -29,6 +31,7 @@ new_type!(Subscriptions);
 
 // From implementations for conversion
 from!(Emails, Executor);
+from!(Events, Executor);
 from!(Followers, Executor);
 from!(Following, FollowingUser);
 from!(Following, Executor);
@@ -53,13 +56,19 @@ from!(User, Orgs, "orgs");
 from!(User, Subscriptions, "subscriptions");
 from!(User, Starred, "starred");
 from!(Users, Executor);
-from!(Users, Username);
+from!(Users, UsersUsername);
 from!(UsersKeys, Executor);
-from!(Username, Followers, "followers");
-from!(Username, Following, "following");
-from!(Username, UsersKeys, "keys");
-from!(Username, Repos, "repos");
-from!(Username, Executor);
+from!(UserUsername, Followers, "followers");
+from!(UserUsername, Following, "following");
+from!(UserUsername, UsersKeys, "keys");
+from!(UserUsername, Repos, "repos");
+from!(UserUsername, Executor);
+from!(UsersUsername, Followers, "followers");
+from!(UsersUsername, Following, "following");
+from!(UsersUsername, Events, "events");
+from!(UsersUsername, UsersKeys, "keys");
+from!(UsersUsername, Repos, "repos");
+from!(UsersUsername, Executor);
 from!(User, Repos, "repos");
 from!(Repos, Executor);
 
@@ -87,15 +96,28 @@ impl<'a> User<'a> {
 }
 
 impl<'a> Users<'a> {
-    func!(username, Username, username_str);
+    func!(username, UsersUsername, username_str);
     exec!();
 }
 
-impl<'a> Username<'a> {
+impl<'a> UserUsername<'a> {
     func!(followers, Followers);
     func!(following, Following);
     func!(keys, UsersKeys);
     func!(repos, Repos);
+    exec!();
+}
+
+impl<'a> UsersUsername<'a> {
+    func!(events, Events);
+    func!(followers, Followers);
+    func!(following, Following);
+    func!(keys, UsersKeys);
+    func!(repos, Repos);
+    exec!();
+}
+
+impl<'a> Events<'a> {
     exec!();
 }
 
