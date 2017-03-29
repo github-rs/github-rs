@@ -157,7 +157,7 @@ GitHub V3 API
 - [X] /users/:username/followers
 - [X] /users/:username/following
 - [X] /users/:username/following/:target_user
-- [ ] /users/:username/gists
+- [X] /users/:username/gists
 - [X] /users/:username/keys
 - [ ] /users/:username/orgs
 - [ ] /users/:username/received_events
