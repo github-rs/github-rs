@@ -141,7 +141,7 @@ GitHub V3 API
 - [X] /user/followers
 - [X] /user/following
 - [X] /user/following/:username
-- [ ] /user/issues
+- [x] /user/issues
 - [X] /user/keys
 - [X] /user/keys/:id
 - [ ] /user/orgs
