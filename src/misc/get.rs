@@ -7,8 +7,11 @@ use errors::*;
 use client::Executor;
 use Json;
 
+new_type!(Emojis);
 new_type!(RateLimit);
 
+from!(Emojis, Executor);
 from!(RateLimit, Executor);
 
+exec!(Emojis);
 exec!(RateLimit);

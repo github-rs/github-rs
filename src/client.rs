@@ -66,6 +66,7 @@ impl Github {
 }
 
 impl<'a> GetQueryBuilder<'a> {
+    func!(emojis, Emojis);
     func!(rate_limit, RateLimit);
     func!(user, User);
     func!(users, Users);
@@ -104,6 +105,7 @@ from!(PostQueryBuilder, Method::Post);
 from!(PatchQueryBuilder, Method::Patch);
 from!(DeleteQueryBuilder, Method::Delete);
 
+from!(GetQueryBuilder, Emojis, "emojis");
 from!(GetQueryBuilder, RateLimit, "rate_limit");
 from!(GetQueryBuilder, User, "user");
 from!(GetQueryBuilder, Users, "users");
