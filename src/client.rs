@@ -16,6 +16,7 @@ use serde_json;
 
 // Internal Library Imports
 use users::get::{User, Users};
+use misc::get::*;
 use util::url_join;
 use errors::*;
 use Json;
@@ -65,6 +66,7 @@ impl Github {
 }
 
 impl<'a> GetQueryBuilder<'a> {
+    func!(rate_limit, RateLimit);
     func!(user, User);
     func!(users, Users);
 }
@@ -102,5 +104,6 @@ from!(PostQueryBuilder, Method::Post);
 from!(PatchQueryBuilder, Method::Patch);
 from!(DeleteQueryBuilder, Method::Delete);
 
+from!(GetQueryBuilder, RateLimit, "rate_limit");
 from!(GetQueryBuilder, User, "user");
 from!(GetQueryBuilder, Users, "users");
