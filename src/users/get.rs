@@ -22,6 +22,7 @@ new_type!(UsersKeys);
 new_type!(Username);
 new_type!(Repos);
 new_type!(Issues);
+new_type!(Starred);
 new_type!(Subscriptions);
 
 // From implementations for conversion
@@ -36,6 +37,7 @@ from!(Keys, Executor);
 from!(KeysId, Executor);
 from!(Orgs, Executor);
 from!(Subscriptions, Executor);
+from!(Starred, Executor);
 from!(User, Emails, "emails");
 from!(User, Followers, "followers");
 from!(User, Following, "following");
@@ -44,6 +46,7 @@ from!(User, Executor);
 from!(User, Issues, "issues");
 from!(User, Orgs, "orgs");
 from!(User, Subscriptions, "subscriptions");
+from!(User, Starred, "starred");
 from!(Users, Executor);
 from!(Users, Username);
 from!(UsersKeys, Executor);
@@ -56,6 +59,10 @@ from!(User, Repos, "repos");
 from!(Repos, Executor);
 
 // impls of each type
+impl<'a> Starred<'a> {
+    exec!();
+}
+
 impl<'a> User<'a> {
     func!(emails, Emails);
     func!(followers, Followers);
@@ -63,6 +70,7 @@ impl<'a> User<'a> {
     func!(issues, Issues);
     func!(repos, Repos);
     func!(subscriptions, Subscriptions);
+    func!(starred, Starred);
     func!(keys, Keys);
     func!(orgs, Orgs);
     exec!();
