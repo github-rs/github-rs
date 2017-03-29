@@ -147,7 +147,7 @@ GitHub V3 API
 - [X] /user/orgs
 - [X] /user/repos
 - [X] /user/starred
-- [ ] /user/starred/:owner/:repo
+- [X] /user/starred/:owner/:repo
 - [X] /user/subscriptions
 - [X] /users
 - [X] /users/:username
