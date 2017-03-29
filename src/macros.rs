@@ -166,7 +166,6 @@ macro_rules! func {
                 let mut req = self.request.unwrap();
                 let url = url_join(req.uri(), $e)
                     .chain_err(|| "Failed to parse Url");
-                println!("{:?}", url);
                 match url {
                     Ok(u) => {
                         req.set_uri(u);
