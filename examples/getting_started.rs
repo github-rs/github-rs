@@ -9,7 +9,9 @@ fn main() {
     match me {
         Ok((status, json)) => {
             println!("{}", status);
-            println!("{}", json);
+            if let Some(json) = json{
+                println!("{}", json);
+            }
         },
         Err(e) => println!("{}", e)
     }

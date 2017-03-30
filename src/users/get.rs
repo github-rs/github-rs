@@ -5,7 +5,7 @@ use hyper::status::StatusCode;
 use hyper::Body;
 use errors::*;
 use util::url_join;
-use client::Executor;
+use client::{GetQueryBuilder, Executor};
 use Json;
 
 // Declaration of types representing the various items under users
@@ -37,6 +37,8 @@ new_type!(StarredOwner);
 new_type!(Subscriptions);
 
 // From implementations for conversion
+from!(GetQueryBuilder, User, "user");
+from!(GetQueryBuilder, Users, "users");
 from!(Emails, Executor);
 from!(Events, Executor);
 from!(Events, EventsOrgs, "orgs");

@@ -207,7 +207,7 @@ GitHub V3 API
 - [ ] /repos/:owner/:repo/pulls/comments
 - [ ] /repos/:owner/:repo/releases
 - [ ] /repos/:owner/:repo/statuses/:sha
-- [ ] /user/emails
+- [X] /user/emails
 - [ ] /user/keys
 - [ ] /user/repos
 - [ ] https://<upload_url>/repos/:owner/:repo/releases/:id/assets?name=foo.zip
@@ -233,7 +233,7 @@ GitHub V3 API
 - [ ] /repos/:owner/:repo/pulls/:number/merge
 - [ ] /repos/:owner/:repo/subscription
 - [ ] /teams/:id/memberships/:username
-- [ ] /user/following/:username
+- [X] /user/following/:username
 - [ ] /user/starred/:owner/:repo
 
 ## DELETE
@@ -272,7 +272,7 @@ GitHub V3 API
 - [ ] /repos/:owner/:repo/subscription
 - [ ] /teams/:id
 - [ ] /teams/:id/memberships/:username
-- [ ] /user/emails
+- [X] /user/emails
 - [ ] /user/following/:username
 - [ ] /user/keys/:id
 - [ ] /user/starred/:owner/:repo
@@ -299,7 +299,7 @@ GitHub V3 API
 - [ ] /repos/:owner/:repo/releases/:id
 - [ ] /teams/:id
 - [ ] /user
-- [ ] /user/email/visibility
+- [X] /user/email/visibility
 
 GitHub V3 API Pre-release
 --------------------------------------------------------------------------------

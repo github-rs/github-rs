@@ -12,12 +12,12 @@ use hyper::status::StatusCode;
 use hyper_tls::HttpsConnector;
 
 // Serde Imports
+use serde::Serialize;
 use serde_json;
 
 // Internal Library Imports
-use users::get::{User, Users};
-use misc::get::*;
-use util::url_join;
+use users;
+use misc;
 use errors::*;
 use Json;
 
@@ -50,31 +50,122 @@ impl Github {
     pub fn get(&mut self) -> GetQueryBuilder {
         self.into()
     }
-    pub fn put(&mut self) -> PutQueryBuilder {
+    pub fn put_empty(&mut self) -> PutQueryBuilder {
         self.into()
     }
-    pub fn post(&mut self) -> PostQueryBuilder {
-        self.into()
+    pub fn put<T>(&mut self, body: T) -> PutQueryBuilder
+        where T: Serialize {
+        let mut qb: PutQueryBuilder = self.into();
+        match qb.request {
+            Ok(mut qbr) => {
+                let serialized = serde_json::to_vec(&body);
+                match serialized {
+                    Ok(json) => {
+                        qbr.set_body(json);
+                        qb.request = Ok(qbr);
+                    },
+                    Err(_) => {
+                        qb.request = Err("Unable to serialize data to JSON".into());
+                    }
+                }
+            },
+            Err(_) => {},
+        }
+        qb
     }
-    pub fn patch(&mut self) -> PatchQueryBuilder {
-        self.into()
+    pub fn post<T>(&mut self, body: T) -> PostQueryBuilder
+        where T: Serialize {
+        let mut qb: PostQueryBuilder = self.into();
+        match qb.request {
+            Ok(mut qbr) => {
+                let serialized = serde_json::to_vec(&body);
+                match serialized {
+                    Ok(json) => {
+                        qbr.set_body(json);
+                        qb.request = Ok(qbr);
+                    },
+                    Err(_) => {
+                        qb.request = Err("Unable to serialize data to JSON".into());
+                    }
+                }
+            },
+            Err(_) => {},
+        }
+
+        qb
     }
-    pub fn delete(&mut self) -> DeleteQueryBuilder {
+    pub fn patch<T>(&mut self, body: T) -> PatchQueryBuilder
+        where T: Serialize {
+        let mut qb: PatchQueryBuilder = self.into();
+        match qb.request {
+            Ok(mut qbr) => {
+                let serialized = serde_json::to_vec(&body);
+                match serialized {
+                    Ok(json) => {
+                        qbr.set_body(json);
+                        qb.request = Ok(qbr);
+                    },
+                    Err(_) => {
+                        qb.request = Err("Unable to serialize data to JSON".into());
+                    }
+                }
+            },
+            Err(_) => {},
+        }
+        qb
+    }
+    pub fn delete<T>(&mut self, body: T) -> DeleteQueryBuilder
+        where T: Serialize {
+        let mut qb: DeleteQueryBuilder = self.into();
+        match qb.request {
+            Ok(mut qbr) => {
+                let serialized = serde_json::to_vec(&body);
+                match serialized {
+                    Ok(json) => {
+                        qbr.set_body(json);
+                        qb.request = Ok(qbr);
+                    },
+                    Err(_) => {
+                        qb.request = Err("Unable to serialize data to JSON".into());
+                    }
+                }
+            },
+            Err(_) => {},
+        }
+        qb
+    }
+    pub fn delete_empty(&mut self) -> DeleteQueryBuilder {
         self.into()
     }
 
 }
 
 impl<'a> GetQueryBuilder<'a> {
-    func!(emojis, Emojis);
-    func!(rate_limit, RateLimit);
-    func!(user, User);
-    func!(users, Users);
+    func_client!(emojis, misc::get::Emojis<'a>);
+    func_client!(rate_limit, misc::get::RateLimit<'a>);
+    func_client!(user, users::get::User<'a>);
+    func_client!(users, users::get::Users<'a>);
+}
+
+impl<'a> PutQueryBuilder<'a> {
+    func_client!(user, users::put::User<'a>);
+}
+
+impl<'a> DeleteQueryBuilder<'a> {
+    func_client!(user, users::delete::User<'a>);
+}
+
+impl<'a> PostQueryBuilder<'a> {
+    func_client!(user, users::post::User<'a>);
+}
+
+impl<'a> PatchQueryBuilder<'a> {
+    func_client!(user, users::patch::User<'a>);
 }
 
 impl<'a> Executor<'a> {
 
-    pub fn execute(self) -> Result<(StatusCode, Json)> {
+    pub fn execute(self) -> Result<(StatusCode, Option<Json>)> {
         let handle = self.core.handle();
         let work = Client::configure()
             .connector(HttpsConnector::new(4,&handle))
@@ -88,7 +179,11 @@ impl<'a> Executor<'a> {
                     v.extend(&chunk[..]);
                     ok::<_, Error>(v)
                 }).map(move |chunks| {
-                    (status, serde_json::from_slice(&chunks).unwrap())
+                    if chunks.is_empty() {
+                        (status, None)
+                    } else {
+                        (status, Some(serde_json::from_slice(&chunks).unwrap()))
+                    }
                 })
             });
 
@@ -104,8 +199,3 @@ from!(PutQueryBuilder, Method::Put);
 from!(PostQueryBuilder, Method::Post);
 from!(PatchQueryBuilder, Method::Patch);
 from!(DeleteQueryBuilder, Method::Delete);
-
-from!(GetQueryBuilder, Emojis, "emojis");
-from!(GetQueryBuilder, RateLimit, "rate_limit");
-from!(GetQueryBuilder, User, "user");
-from!(GetQueryBuilder, Users, "users");

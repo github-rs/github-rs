@@ -46,9 +46,6 @@ macro_rules! from {
             fn from(gh: &'a mut Github) -> Self {
                 use std::result;
                 use errors;
-                // I don't like using unwrap here but it's one of those things
-                // that never really fails at all because it's the creation of
-                // something.
                 let url = "https://api.github.com".parse::<Uri>()
                     .chain_err(||
                         "Url failed to parse"
@@ -126,7 +123,7 @@ macro_rules! exec {
         /// or the Status Code and Json after it has been deserialized.
         /// Please take a look at the GitHub documenation to see what value
         /// you should receive back for good or bad requests.
-        pub fn execute(self) -> Result<(StatusCode, Json)> {
+        pub fn execute(self) -> Result<(StatusCode, Option<Json>)> {
             let ex: Executor = self.into();
             ex.execute()
         }
@@ -138,7 +135,7 @@ macro_rules! exec {
             /// or the Status Code and Json after it has been deserialized.
             /// Please take a look at the GitHub documenation to see what value
             /// you should receive back for good or bad requests.
-            pub fn execute(self) -> Result<(StatusCode, Json)> {
+            pub fn execute(self) -> Result<(StatusCode, Option<Json>)> {
                 let ex: Executor = self.into();
                 ex.execute()
             }
@@ -176,6 +173,18 @@ macro_rules! func {
                     }
                 }
             }
+            self.into()
+        }
+    );
+}
+
+/// A variation of func for the client module that allows partitioning of types.
+/// Create a function with a given name and return type. Used for creating
+/// functions for simple conversions from one type to another, where the actual
+/// conversion code is in the From implementation.
+macro_rules! func_client{
+    ($i: ident, $t: ty) => (
+        pub fn $i(self) -> $t {
             self.into()
         }
     );
