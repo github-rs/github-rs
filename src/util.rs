@@ -2,8 +2,8 @@ use hyper::Uri;
 use hyper::error::UriError;
 use std::str::FromStr;
 
-/// Work around function for Url.join() until it gets fixed upstream.
-/// Adds the value passed in to the Url path
+/// Add an extra subdirectory to the end of the url. This utilizes
+/// Hyper's more generic Uri type. We've set it up to act as a Url.
 pub fn url_join(url: &Uri, path: &str) -> Result<Uri, UriError> {
     // Absolutely hackish but don't know anything better
     match (url.scheme(), url.authority(), url.path()) {
@@ -18,7 +18,8 @@ pub fn url_join(url: &Uri, path: &str) -> Result<Uri, UriError> {
             curr_path.push_str(path);
             curr_path.parse::<Uri>()
         },
-        // I think this will do it
-        _ => Uri::from_str("fail"),
+        // This should cause the request to fail if something goes
+        // wrong.
+        _ => Uri::from_str("Failed to make a valid Url"),
     }
 }

@@ -156,13 +156,11 @@ impl<'a> EventsOrgs<'a> {
 }
 
 impl<'a> Keys<'a> {
-    // This is a status based call, will need to figure out
     func!(id, KeysId, id_str);
     exec!();
 }
 
 impl<'a> Following<'a> {
-    // This is a status based call, will need to figure out
     func!(username, Following, username_str);
     exec!();
 }
