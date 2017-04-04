@@ -8,14 +8,17 @@ use util::url_join;
 use client::{GetQueryBuilder, Executor};
 use Json;
 
+new_type!(Assignees);
+new_type!(Repo);
 new_type!(Repos);
 new_type!(Owner);
-new_type!(Repo);
 
+from!(Assignees, Executor);
 from!(GetQueryBuilder, Repos, "repos");
-from!(Repos, Owner);
 from!(Owner, Repo);
+from!(Repo, Assignees, "assignees");
 from!(Repo, Executor);
+from!(Repos, Owner);
 
 impl<'a> Repos<'a> {
     func!(owner, Owner, username_str);
@@ -26,5 +29,10 @@ impl<'a> Owner<'a> {
 }
 
 impl<'a> Repo<'a> {
+    func!(assignees, Assignees);
+    exec!();
+}
+
+impl<'a> Assignees<'a> {
     exec!();
 }
