@@ -20,6 +20,7 @@ use users;
 use misc;
 use repos;
 use errors::*;
+use util::url_join;
 use Json;
 
 /// Struct used to make calls to the Github API.
@@ -32,6 +33,7 @@ new_type!(PutQueryBuilder);
 new_type!(PostQueryBuilder);
 new_type!(DeleteQueryBuilder);
 new_type!(PatchQueryBuilder);
+new_type!(CustomQuery);
 new_type!(Executor);
 
 
@@ -142,6 +144,17 @@ impl Github {
 }
 
 impl<'a> GetQueryBuilder<'a> {
+    /// Pass in an endpoint not covered by the API in the form of the following:
+    ///
+    /// ```no_test
+    /// # Don't have the beginning / in it
+    /// repos/mgattozzi/github-rs
+    /// ```
+    ///
+    /// It can be whatever endpoint or url string that's needed. This will allow
+    /// you to get functionality out of the library as items are still added or
+    /// if you need access to a hidden endpoint.
+    func!(custom_endpoint, CustomQuery, endpoint_str);
     func_client!(emojis, misc::get::Emojis<'a>);
     func_client!(rate_limit, misc::get::RateLimit<'a>);
     func_client!(user, users::get::User<'a>);
@@ -150,20 +163,66 @@ impl<'a> GetQueryBuilder<'a> {
 }
 
 impl<'a> PutQueryBuilder<'a> {
+    /// Pass in an endpoint not covered by the API in the form of the following:
+    ///
+    /// ```no_test
+    /// # Don't have the beginning / in it
+    /// repos/mgattozzi/github-rs
+    /// ```
+    ///
+    /// It can be whatever endpoint or url string that's needed. This will allow
+    /// you to get functionality out of the library as items are still added or
+    /// if you need access to a hidden endpoint.
+    func!(custom_endpoint, CustomQuery, endpoint_str);
     func_client!(user, users::put::User<'a>);
 }
 
 impl<'a> DeleteQueryBuilder<'a> {
+    /// Pass in an endpoint not covered by the API in the form of the following:
+    ///
+    /// ```no_test
+    /// # Don't have the beginning / in it
+    /// repos/mgattozzi/github-rs
+    /// ```
+    ///
+    /// It can be whatever endpoint or url string that's needed. This will allow
+    /// you to get functionality out of the library as items are still added or
+    /// if you need access to a hidden endpoint.
+    func!(custom_endpoint, CustomQuery, endpoint_str);
     func_client!(user, users::delete::User<'a>);
 }
 
 impl<'a> PostQueryBuilder<'a> {
+    /// Pass in an endpoint not covered by the API in the form of the following:
+    ///
+    /// ```no_test
+    /// # Don't have the beginning / in it
+    /// repos/mgattozzi/github-rs
+    /// ```
+    ///
+    /// It can be whatever endpoint or url string that's needed. This will allow
+    /// you to get functionality out of the library as items are still added or
+    /// if you need access to a hidden endpoint.
+    func!(custom_endpoint, CustomQuery, endpoint_str);
     func_client!(user, users::post::User<'a>);
 }
 
 impl<'a> PatchQueryBuilder<'a> {
+    /// Pass in an endpoint not covered by the API in the form of the following:
+    ///
+    /// ```no_test
+    /// # Don't have the beginning / in it
+    /// repos/mgattozzi/github-rs
+    /// ```
+    ///
+    /// It can be whatever endpoint or url string that's needed. This will allow
+    /// you to get functionality out of the library as items are still added or
+    /// if you need access to a hidden endpoint.
+    func!(custom_endpoint, CustomQuery, endpoint_str);
     func_client!(user, users::patch::User<'a>);
 }
+
+exec!(CustomQuery);
 
 impl<'a> Executor<'a> {
 
@@ -201,3 +260,11 @@ from!(PutQueryBuilder, Method::Put);
 from!(PostQueryBuilder, Method::Post);
 from!(PatchQueryBuilder, Method::Patch);
 from!(DeleteQueryBuilder, Method::Delete);
+
+// Custom Url based from impls
+from!(GetQueryBuilder, CustomQuery);
+from!(PutQueryBuilder, CustomQuery);
+from!(PostQueryBuilder, CustomQuery);
+from!(PatchQueryBuilder, CustomQuery);
+from!(DeleteQueryBuilder, CustomQuery);
+from!(CustomQuery, Executor);
