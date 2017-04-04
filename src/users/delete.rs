@@ -9,7 +9,7 @@ from!(DeleteQueryBuilder, User, "user");
 from!(User, Emails, "emails");
 from!(Emails, Executor);
 
-impl User {
+impl <'g> User<'g> {
     func!(emails, Emails);
 }
 

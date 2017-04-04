@@ -16,12 +16,13 @@ fn auth_token() -> Result<String, std::io::Error> {
 fn get_user_repos() {
     // We want it to fail
     let g = Github::new(&auth_token().unwrap());
-    let (status, json) = g.get()
-                          .repos()
-                          .owner("mgattozzi")
-                          .repo("github-rs")
-                          .execute()
-                          .unwrap();
+    let (headers, status, json) = g.get()
+                                   .repos()
+                                   .owner("mgattozzi")
+                                   .repo("github-rs")
+                                   .execute()
+                                   .unwrap();
+    println!("{}", headers);
     println!("{}", status);
     if let Some(json) = json {
         println!("{}", json);

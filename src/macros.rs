@@ -2,8 +2,8 @@
 /// closure to be passed in to modify the Url if needed.
 macro_rules! from {
     ($f: ident, $t: ident) => (
-        impl From<$f> for $t {
-            fn from(f: $f) -> Self {
+        impl <'g> From<$f<'g>> for $t<'g> {
+            fn from(f: $f<'g>) -> Self {
                 Self {
                     request: f.request,
                     core: f.core,
@@ -12,8 +12,8 @@ macro_rules! from {
         }
     );
     ($f: ident, $t: ident, $e: expr) => (
-        impl From<$f> for $t {
-            fn from(mut f: $f) -> Self {
+        impl <'g> From<$f<'g>> for $t<'g> {
+            fn from(mut f: $f<'g>) -> Self {
                 // This is borrow checking abuse and about the only
                 // time I'd do is_ok(). Essentially this allows us
                 // to either pass the error message along or update
@@ -50,8 +50,8 @@ macro_rules! from {
         }
     );
     ($t: ident, $p: path) => (
-        impl From<Github> for $t {
-            fn from(gh: Github) -> Self {
+        impl <'g> From<&'g Github> for $t<'g> {
+            fn from(gh: &'g Github) -> Self {
                 use std::result;
                 use errors;
                 let url = "https://api.github.com".parse::<Uri>()
@@ -73,13 +73,13 @@ macro_rules! from {
                         }
                         Self {
                             request: Ok(RefCell::new(req)),
-                            core: gh.core,
+                            core: &gh.core,
                         }
                     }
                     (Err(u), Ok(_)) => {
                         Self {
                             request: Err(u),
-                            core: gh.core,
+                            core: &gh.core,
                         }
                     }
                     (Ok(_), Err(_)) => {
@@ -90,7 +90,7 @@ macro_rules! from {
                                 ErrorKind::from(
                                     "Mime failed to parse.".to_owned()
                                 ))),
-                            core: gh.core,
+                            core: &gh.core,
                         }
                     }
                     (Err(u), Err(_)) => {
@@ -98,7 +98,7 @@ macro_rules! from {
                             request: Err(u).chain_err(||
                                 "Mime failed to parse."
                             ),
-                            core: gh.core,
+                            core: &gh.core,
                         }
                     }
                 }
@@ -113,9 +113,9 @@ macro_rules! from {
 /// maintain code in the future by simply adding a new field here if needed
 macro_rules! new_type {
     ($i: ident) => (
-        pub struct $i {
+        pub struct $i<'g> {
             pub(crate) request: Result<RefCell<Request<Body>>>,
-            pub(crate) core: Rc<RefCell<Core>>,
+            pub(crate) core: &'g Rc<RefCell<Core>>,
         }
     );
 }
@@ -131,21 +131,24 @@ macro_rules! exec {
         /// or the Status Code and Json after it has been deserialized.
         /// Please take a look at the GitHub documenation to see what value
         /// you should receive back for good or bad requests.
-        pub fn execute(self) -> Result<(StatusCode, Option<Json>)> {
+        pub fn execute(self) -> Result<(Headers, StatusCode, Option<Json>)> {
             let ex: Executor = self.into();
             ex.execute()
         }
     );
     ($t: ident) => (
-        impl $t {
+        impl<'g> $t<'g> {
             /// Execute the query by sending the built up request
             /// to GitHub. The value returned is either an error
             /// or the Status Code and Json after it has been deserialized.
             /// Please take a look at the GitHub documenation to see what value
             /// you should receive back for good or bad requests.
-            pub fn execute(self) -> Result<(StatusCode, Option<Json>)> {
+            pub fn execute(self) ->
+                Result<(Headers, StatusCode, Option<Json>)> {
+
                 let ex: Executor = self.into();
                 ex.execute()
+
             }
         }
     );
@@ -156,12 +159,12 @@ macro_rules! exec {
 /// conversion code is in the From implementation.
 macro_rules! func {
     ($i: ident, $t: ident) => (
-        pub fn $i(self) -> $t {
+        pub fn $i(self) -> $t<'g> {
             self.into()
         }
     );
     ($i: ident, $t: ident, $e: ident) => (
-        pub fn $i(mut self, $e: &str) -> $t {
+        pub fn $i(mut self, $e: &str) -> $t<'g> {
             // This is borrow checking abuse and about the only
             // time I'd do is_ok(). Essentially this allows us
             // to either pass the error message along or update
@@ -204,7 +207,7 @@ macro_rules! imports{
         use tokio_core::reactor::Core;
         use hyper::client::Request;
         use hyper::status::StatusCode;
-        use hyper::Body;
+        use hyper::{ Body, Headers };
         use errors::*;
         use util::url_join;
         use Json;

@@ -11,11 +11,11 @@ from!(User, Following, "following");
 from!(Following, Username);
 from!(Username, Executor);
 
-impl User {
+impl <'g> User<'g> {
     func!(following, Following);
 }
 
-impl Following {
+impl <'g> Following<'g> {
     func!(username, Username, username_str);
 }
 

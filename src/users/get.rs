@@ -90,16 +90,16 @@ from!(User, Repos, "repos");
 from!(Repos, Executor);
 
 // impls of each type
-impl Starred {
+impl <'g> Starred<'g> {
     func!(owner, StarredOwner, owner_str);
     exec!();
 }
 
-impl StarredOwner {
+impl <'g> StarredOwner<'g> {
     func!(repo, StarredRepo, repo_str);
 }
 
-impl User {
+impl <'g> User<'g> {
     func!(emails, Emails);
     func!(followers, Followers);
     func!(following, Following);
@@ -112,12 +112,12 @@ impl User {
     exec!();
 }
 
-impl Users {
+impl <'g> Users<'g> {
     func!(username, UsersUsername, username_str);
     exec!();
 }
 
-impl UserUsername {
+impl <'g> UserUsername<'g> {
     func!(followers, Followers);
     func!(following, Following);
     func!(keys, UsersKeys);
@@ -125,7 +125,7 @@ impl UserUsername {
     exec!();
 }
 
-impl UsersUsername {
+impl <'g> UsersUsername<'g> {
     func!(events, Events);
     func!(followers, Followers);
     func!(following, Following);
@@ -139,27 +139,27 @@ impl UsersUsername {
     exec!();
 }
 
-impl Events {
+impl <'g> Events<'g> {
     func!(orgs, EventsOrgs);
     func!(public, Public);
     exec!();
 }
 
-impl EventsOrgs {
+impl <'g> EventsOrgs<'g> {
     func!(org, EventsOrgsName, org_name_str);
 }
 
-impl Keys {
+impl <'g> Keys<'g> {
     func!(id, KeysId, id_str);
     exec!();
 }
 
-impl Following {
+impl <'g> Following<'g> {
     func!(username, Following, username_str);
     exec!();
 }
 
-impl ReceivedEvents {
+impl <'g> ReceivedEvents<'g> {
     exec!();
 }
 

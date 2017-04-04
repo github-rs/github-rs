@@ -11,11 +11,11 @@ from!(User, Email, "email");
 from!(Email, Visibility, "visibility");
 from!(Visibility, Executor);
 
-impl User {
+impl <'g> User<'g> {
     func!(emails, Email);
 }
 
-impl Email {
+impl <'g> Email<'g> {
     func!(visibility, Visibility);
 }
 

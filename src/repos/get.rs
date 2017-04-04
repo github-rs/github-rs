@@ -21,29 +21,29 @@ from!(Repo, Executor);
 from!(Repos, Owner);
 
 
-impl Assignees {
+impl <'g> Assignees<'g> {
     exec!();
 }
 
-impl Branches {
+impl <'g> Branches<'g> {
     exec!();
 }
 
-impl Collaborators {
+impl <'g> Collaborators<'g> {
     exec!();
 }
 
-impl Owner {
+impl <'g> Owner<'g> {
     func!(repo, Repo, repo_str);
 }
 
-impl Repo {
+impl <'g> Repo<'g> {
     func!(assignees, Assignees);
     func!(branches, Branches);
     func!(collaborators, Collaborators);
     exec!();
 }
 
-impl Repos {
+impl <'g> Repos<'g> {
     func!(owner, Owner, username_str);
 }

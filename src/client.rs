@@ -4,9 +4,10 @@ use futures::future::ok;
 use tokio_core::reactor::Core;
 
 // Hyper Imports
-use hyper::{ Body, Uri, Method, Error };
+use hyper::{ Body, Headers, Uri, Method, Error };
 use hyper::client::{ Client, Request };
-use hyper::header::{ Authorization, Accept, ContentType, UserAgent, qitem };
+use hyper::header::{ Authorization, Accept, ContentType,
+                     ETag, UserAgent, qitem };
 use hyper::mime::Mime;
 use hyper::status::StatusCode;
 use hyper_tls::HttpsConnector;
@@ -31,35 +32,69 @@ pub struct Github {
     token: String,
     core: Rc<RefCell<Core>>,
 }
+
+impl Clone for Github {
+    fn clone(&self) -> Self {
+        Self {
+            token: self.token.clone(),
+            core: self.core.clone(),
+        }
+    }
+}
+
+/// All GET based queries can be constructed from this type
 new_type!(GetQueryBuilder);
+
+/// All PUT based queries can be constructed from this type
 new_type!(PutQueryBuilder);
+
+/// All POST based queries can be constructed from this type
 new_type!(PostQueryBuilder);
+
+/// All DELETE based queries can be constructed from this type
 new_type!(DeleteQueryBuilder);
+
+/// All PATCH based queries can be constructed from this type
 new_type!(PatchQueryBuilder);
+
+/// Queries for endpoints that aren't in this library can be crafted here
 new_type!(CustomQuery);
+
+/// This type is the final type used to execute a query
 new_type!(Executor);
 
 
 impl Github {
+    /// Create a new Github client struct
     pub fn new(token: &str) -> Self {
         Self {
             token: token.to_owned(),
             core: Rc::new(RefCell::new(Core::new().unwrap())),
         }
     }
+
+    /// Get the currently set Authorization Token
     pub fn get_token(&self) -> &str {
         &self.token
     }
+
+    /// Change the currently set Authorization Token
     pub fn set_token(&mut self, token: &str) {
         self.token = token.to_owned();
     }
-    pub fn get(self) -> GetQueryBuilder {
+
+    /// Begin building up a GET request to GitHub
+    pub fn get(&self) -> GetQueryBuilder {
         self.into()
     }
-    pub fn put_empty(self) -> PutQueryBuilder {
+
+    /// Begin building up a PUT request with no data to GitHub
+    pub fn put_empty(&self) -> PutQueryBuilder {
         self.into()
     }
-    pub fn put<T>(self, body: T) -> PutQueryBuilder
+
+    /// Begin building up a PUT request with data to GitHub
+    pub fn put<T>(&self, body: T) -> PutQueryBuilder
         where T: Serialize {
         let mut qb: PutQueryBuilder = self.into();
         match qb.request {
@@ -79,7 +114,9 @@ impl Github {
         }
         qb
     }
-    pub fn post<T>(self, body: T) -> PostQueryBuilder
+
+    /// Begin building up a POST request with data to GitHub
+    pub fn post<T>(&self, body: T) -> PostQueryBuilder
         where T: Serialize {
         let mut qb: PostQueryBuilder = self.into();
         match qb.request {
@@ -100,7 +137,9 @@ impl Github {
 
         qb
     }
-    pub fn patch<T>(self, body: T) -> PatchQueryBuilder
+
+    /// Begin building up a PATCH request with data to GitHub
+    pub fn patch<T>(&self, body: T) -> PatchQueryBuilder
         where T: Serialize {
         let mut qb: PatchQueryBuilder = self.into();
         match qb.request {
@@ -120,7 +159,9 @@ impl Github {
         }
         qb
     }
-    pub fn delete<T>(self, body: T) -> DeleteQueryBuilder
+
+    /// Begin building up a DELETE request with data to GitHub
+    pub fn delete<T>(&self, body: T) -> DeleteQueryBuilder
         where T: Serialize {
         let mut qb: DeleteQueryBuilder = self.into();
         match qb.request {
@@ -140,13 +181,15 @@ impl Github {
         }
         qb
     }
-    pub fn delete_empty(self) -> DeleteQueryBuilder {
+
+    /// Begin building up a DELETE request without data to GitHub
+    pub fn delete_empty(&self) -> DeleteQueryBuilder {
         self.into()
     }
 
 }
 
-impl GetQueryBuilder {
+impl <'g> GetQueryBuilder<'g> {
     /// Pass in an endpoint not covered by the API in the form of the following:
     ///
     /// ```no_test
@@ -158,14 +201,38 @@ impl GetQueryBuilder {
     /// you to get functionality out of the library as items are still added or
     /// if you need access to a hidden endpoint.
     func!(custom_endpoint, CustomQuery, endpoint_str);
-    func_client!(emojis, misc::get::Emojis);
-    func_client!(rate_limit, misc::get::RateLimit);
-    func_client!(user, users::get::User);
-    func_client!(users, users::get::Users);
-    func_client!(repos, repos::get::Repos);
+
+    /// Query the emojis endpoint
+    func_client!(emojis, misc::get::Emojis<'g>);
+
+    /// Query the rate limit endpoint
+    func_client!(rate_limit, misc::get::RateLimit<'g>);
+
+    /// Query the user endpoint
+    func_client!(user, users::get::User<'g>);
+
+    /// Query the users endpoint
+    func_client!(users, users::get::Users<'g>);
+
+    /// Query the repos endpoint
+    func_client!(repos, repos::get::Repos<'g>);
+
+    /// Add an etag to the headers of the request
+    pub fn set_etag(self, tag: ETag) -> Self {
+        match self.request {
+            Ok(mut req) => {
+                req.get_mut().headers_mut().set(tag);
+                Self {
+                    request: Ok(req),
+                    core: self.core,
+                }
+            }
+            Err(_) => self,
+        }
+    }
 }
 
-impl PutQueryBuilder {
+impl <'g> PutQueryBuilder<'g> {
     /// Pass in an endpoint not covered by the API in the form of the following:
     ///
     /// ```no_test
@@ -177,10 +244,22 @@ impl PutQueryBuilder {
     /// you to get functionality out of the library as items are still added or
     /// if you need access to a hidden endpoint.
     func!(custom_endpoint, CustomQuery, endpoint_str);
-    func_client!(user, users::put::User);
+    func_client!(user, users::put::User<'g>);
+
+    /// Add an etag to the headers of the request
+    pub fn set_etag(mut self, tag: ETag) -> Self {
+        match self.request {
+            Ok(mut req) => {
+                req.get_mut().headers_mut().set(tag);
+                self.request = Ok(req);
+                self
+            }
+            Err(_) => self,
+        }
+    }
 }
 
-impl DeleteQueryBuilder {
+impl <'g> DeleteQueryBuilder<'g> {
     /// Pass in an endpoint not covered by the API in the form of the following:
     ///
     /// ```no_test
@@ -192,10 +271,22 @@ impl DeleteQueryBuilder {
     /// you to get functionality out of the library as items are still added or
     /// if you need access to a hidden endpoint.
     func!(custom_endpoint, CustomQuery, endpoint_str);
-    func_client!(user, users::delete::User);
+    func_client!(user, users::delete::User<'g>);
+
+    /// Add an etag to the headers of the request
+    pub fn set_etag(mut self, tag: ETag) -> Self {
+        match self.request {
+            Ok(mut req) => {
+                req.get_mut().headers_mut().set(tag);
+                self.request = Ok(req);
+                self
+            }
+            Err(_) => self,
+        }
+    }
 }
 
-impl PostQueryBuilder {
+impl <'g> PostQueryBuilder<'g> {
     /// Pass in an endpoint not covered by the API in the form of the following:
     ///
     /// ```no_test
@@ -207,10 +298,22 @@ impl PostQueryBuilder {
     /// you to get functionality out of the library as items are still added or
     /// if you need access to a hidden endpoint.
     func!(custom_endpoint, CustomQuery, endpoint_str);
-    func_client!(user, users::post::User);
+    func_client!(user, users::post::User<'g>);
+
+    /// Add an etag to the headers of the request
+    pub fn set_etag(mut self, tag: ETag) -> Self {
+        match self.request {
+            Ok(mut req) => {
+                req.get_mut().headers_mut().set(tag);
+                self.request = Ok(req);
+                self
+            },
+            Err(_) => self,
+        }
+    }
 }
 
-impl PatchQueryBuilder {
+impl <'g> PatchQueryBuilder<'g> {
     /// Pass in an endpoint not covered by the API in the form of the following:
     ///
     /// ```no_test
@@ -222,14 +325,26 @@ impl PatchQueryBuilder {
     /// you to get functionality out of the library as items are still added or
     /// if you need access to a hidden endpoint.
     func!(custom_endpoint, CustomQuery, endpoint_str);
-    func_client!(user, users::patch::User);
+    func_client!(user, users::patch::User<'g>);
+
+    /// Add an etag to the headers of the request
+    pub fn set_etag(mut self, tag: ETag) -> Self {
+        match self.request {
+            Ok(mut req) => {
+                req.get_mut().headers_mut().set(tag);
+                self.request = Ok(req);
+                self
+            }
+            Err(_) => self,
+        }
+    }
 }
 
 exec!(CustomQuery);
 
-impl Executor {
+impl <'g> Executor<'g> {
 
-    pub fn execute(self) -> Result<(StatusCode, Option<Json>)> {
+    pub fn execute(self) -> Result<(Headers, StatusCode, Option<Json>)> {
         let ref mut core_ref = *self.core
                                     .try_borrow_mut()
                                     .chain_err(|| "Unable to get mutable borrow\
@@ -242,15 +357,17 @@ impl Executor {
             // if the request actually didn't fail being built!
             .request(self.request?.into_inner())
             .and_then(|res| {
+                let header = res.headers().clone();
                 let status = res.status().clone();
                 res.body().fold(Vec::new(), |mut v, chunk| {
                     v.extend(&chunk[..]);
                     ok::<_, Error>(v)
                 }).map(move |chunks| {
                     if chunks.is_empty() {
-                        (status, None)
+                        (header, status, None)
                     } else {
-                        (status, Some(serde_json::from_slice(&chunks).unwrap()))
+                        (header, status, Some(serde_json::from_slice(&chunks)
+                                              .unwrap()))
                     }
                 })
             });

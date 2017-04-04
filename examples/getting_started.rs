@@ -7,7 +7,8 @@ fn main() {
                    .user()
                    .execute();
     match me {
-        Ok((status, json)) => {
+        Ok((headers, status, json)) => {
+            println!("{}", headers);
             println!("{}", status);
             if let Some(json) = json{
                 println!("{}", json);
