@@ -43,7 +43,7 @@ GitHub V3 API
 - [ ] /repos/:owner/:repo/:archive_format/:ref
 - [X] /repos/:owner/:repo/assignees
 - [ ] /repos/:owner/:repo/assignees/:assignee
-- [ ] /repos/:owner/:repo/branches
+- [X] /repos/:owner/:repo/branches
 - [ ] /repos/:owner/:repo/branches/:branch
 - [ ] /repos/:owner/:repo/branches/:branch/protection
 - [ ] /repos/:owner/:repo/branches/:branch/protection/restrictions

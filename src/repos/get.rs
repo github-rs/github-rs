@@ -9,19 +9,27 @@ use client::{GetQueryBuilder, Executor};
 use Json;
 
 new_type!(Assignees);
+new_type!(Branches);
 new_type!(Repo);
 new_type!(Repos);
 new_type!(Owner);
 
 from!(Assignees, Executor);
+from!(Branches, Executor);
 from!(GetQueryBuilder, Repos, "repos");
 from!(Owner, Repo);
 from!(Repo, Assignees, "assignees");
+from!(Repo, Branches, "branches");
 from!(Repo, Executor);
 from!(Repos, Owner);
 
-impl<'a> Repos<'a> {
-    func!(owner, Owner, username_str);
+
+impl<'a> Assignees<'a> {
+    exec!();
+}
+
+impl<'a> Branches<'a> {
+    exec!();
 }
 
 impl<'a> Owner<'a> {
@@ -30,9 +38,10 @@ impl<'a> Owner<'a> {
 
 impl<'a> Repo<'a> {
     func!(assignees, Assignees);
+    func!(branches, Branches);
     exec!();
 }
 
-impl<'a> Assignees<'a> {
-    exec!();
+impl<'a> Repos<'a> {
+    func!(owner, Owner, username_str);
 }
