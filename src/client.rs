@@ -18,6 +18,7 @@ use serde_json;
 // Internal Library Imports
 use users;
 use misc;
+use repos;
 use errors::*;
 use Json;
 
@@ -145,6 +146,7 @@ impl<'a> GetQueryBuilder<'a> {
     func_client!(rate_limit, misc::get::RateLimit<'a>);
     func_client!(user, users::get::User<'a>);
     func_client!(users, users::get::Users<'a>);
+    func_client!(repos, repos::get::Repos<'a>);
 }
 
 impl<'a> PutQueryBuilder<'a> {

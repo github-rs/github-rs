@@ -17,10 +17,13 @@ fn get_user_repos() {
     // We want it to fail
     let mut g = Github::new(&auth_token().unwrap());
     let (status, json) = g.get()
-                          .user()
                           .repos()
+                          .owner("mgattozzi")
+                          .repo("github-rs")
                           .execute()
                           .unwrap();
     println!("{}", status);
-    println!("{}", json);
+    if let Some(json) = json {
+        println!("{}", json);
+    }
 }

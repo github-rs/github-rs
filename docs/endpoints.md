@@ -39,7 +39,7 @@ GitHub V3 API
 - [ ] /orgs/:org/repos
 - [ ] /orgs/:org/teams
 - [X] /rate_limit
-- [ ] /repos/:owner/:repo
+- [X] /repos/:owner/:repo
 - [ ] /repos/:owner/:repo/:archive_format/:ref
 - [ ] /repos/:owner/:repo/assignees
 - [ ] /repos/:owner/:repo/assignees/:assignee
