@@ -52,7 +52,7 @@ GitHub V3 API
 - [ ] /repos/:owner/:repo/branches/:branch/protection/required_pull_request_reviews
 - [ ] /repos/:owner/:repo/branches/:branch/required_status_checks
 - [ ] /repos/:owner/:repo/branches/:branch/required_status_checks/contexts
-- [ ] /repos/:owner/:repo/collaborators
+- [X] /repos/:owner/:repo/collaborators
 - [ ] /repos/:owner/:repo/collaborators/:username
 - [ ] /repos/:owner/:repo/collaborators/:username/permission
 - [ ] /repos/:owner/:repo/comments
