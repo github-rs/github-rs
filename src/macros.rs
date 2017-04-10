@@ -67,7 +67,7 @@ macro_rules! from {
                         {
                             let mut headers = req.headers_mut();
                             headers.set(ContentType::json());
-                            headers.set(UserAgent(String::from("github-rs")));
+                            headers.set(UserAgent::new(String::from("github-rs")));
                             headers.set(Accept(vec![qitem(m)]));
                             headers.set(Authorization(token));
                         }

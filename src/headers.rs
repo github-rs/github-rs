@@ -8,9 +8,7 @@ use hyper::header::{ ETag, Headers, LastModified, UserAgent };
 pub fn has_github_hookshot(head: &Headers) -> bool {
     head.get::<UserAgent>()
         .map_or(false, |user_agent| {
-            match user_agent {
-                &UserAgent(ref raw) => raw.starts_with("GitHub-Hookshot"),
-            }
+            user_agent.starts_with("GitHub-Hookshot")
         })
 }
 
