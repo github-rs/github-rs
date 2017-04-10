@@ -7,7 +7,7 @@ use tokio_core::reactor::Core;
 use hyper::{ Body, Headers, Uri, Method, Error };
 use hyper::client::{ Client, Request };
 use hyper::header::{ Authorization, Accept, ContentType,
-                     ETag, UserAgent, qitem };
+                     ETag, IfNoneMatch, UserAgent, qitem };
 use hyper::mime::Mime;
 use hyper::status::StatusCode;
 use hyper_tls::HttpsConnector;
@@ -221,7 +221,8 @@ impl <'g> GetQueryBuilder<'g> {
     pub fn set_etag(self, tag: ETag) -> Self {
         match self.request {
             Ok(mut req) => {
-                req.get_mut().headers_mut().set(tag);
+                let ETag(tag) = tag;
+                req.get_mut().headers_mut().set(IfNoneMatch::Items(vec![tag]));
                 Self {
                     request: Ok(req),
                     core: self.core,
@@ -250,7 +251,8 @@ impl <'g> PutQueryBuilder<'g> {
     pub fn set_etag(mut self, tag: ETag) -> Self {
         match self.request {
             Ok(mut req) => {
-                req.get_mut().headers_mut().set(tag);
+                let ETag(tag) = tag;
+                req.get_mut().headers_mut().set(IfNoneMatch::Items(vec![tag]));
                 self.request = Ok(req);
                 self
             }
@@ -277,7 +279,8 @@ impl <'g> DeleteQueryBuilder<'g> {
     pub fn set_etag(mut self, tag: ETag) -> Self {
         match self.request {
             Ok(mut req) => {
-                req.get_mut().headers_mut().set(tag);
+                let ETag(tag) = tag;
+                req.get_mut().headers_mut().set(IfNoneMatch::Items(vec![tag]));
                 self.request = Ok(req);
                 self
             }
@@ -304,7 +307,8 @@ impl <'g> PostQueryBuilder<'g> {
     pub fn set_etag(mut self, tag: ETag) -> Self {
         match self.request {
             Ok(mut req) => {
-                req.get_mut().headers_mut().set(tag);
+                let ETag(tag) = tag;
+                req.get_mut().headers_mut().set(IfNoneMatch::Items(vec![tag]));
                 self.request = Ok(req);
                 self
             },
@@ -331,7 +335,8 @@ impl <'g> PatchQueryBuilder<'g> {
     pub fn set_etag(mut self, tag: ETag) -> Self {
         match self.request {
             Ok(mut req) => {
-                req.get_mut().headers_mut().set(tag);
+                let ETag(tag) = tag;
+                req.get_mut().headers_mut().set(IfNoneMatch::Items(vec![tag]));
                 self.request = Ok(req);
                 self
             }

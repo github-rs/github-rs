@@ -1,5 +1,6 @@
 extern crate github_rs as gh;
 use gh::client::Github;
+use gh::headers::{ etag, rate_limit_remaining };
 use std::io::BufReader;
 use std::io::prelude::*;
 use std::fs::File;
@@ -22,9 +23,34 @@ fn get_user_repos() {
                                    .repo("github-rs")
                                    .execute()
                                    .unwrap();
+    let etag = etag(&headers);
     println!("{}", headers);
     println!("{}", status);
     if let Some(json) = json {
         println!("{}", json);
     }
+}
+
+#[test]
+fn cached_response() {
+    // We want it to fail
+    let g = Github::new(&auth_token().unwrap());
+    let (headers, _, _) = g.get()
+                           .repos()
+                           .owner("mgattozzi")
+                           .repo("github-rs")
+                           .execute()
+                           .unwrap();
+    let etag = etag(&headers);
+    let limit = rate_limit_remaining(&headers).unwrap();
+    let (headers, _, _) = g.get()
+                           .set_etag(etag.unwrap())
+                           .repos()
+                           .owner("mgattozzi")
+                           .repo("github-rs")
+                           .execute()
+                           .unwrap();
+    let limit2 = rate_limit_remaining(&headers).unwrap();
+    // Spurious test case
+    //assert_eq!(limit, limit2);
 }
