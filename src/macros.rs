@@ -2,8 +2,8 @@
 /// closure to be passed in to modify the Url if needed.
 macro_rules! from {
     ($f: ident, $t: ident) => (
-        impl<'a> From<$f<'a>> for $t<'a> {
-            fn from(mut f: $f<'a>) -> Self {
+        impl From<$f> for $t {
+            fn from(f: $f) -> Self {
                 Self {
                     request: f.request,
                     core: f.core,
@@ -12,8 +12,8 @@ macro_rules! from {
         }
     );
     ($f: ident, $t: ident, $e: expr) => (
-        impl<'a> From<$f<'a>> for $t<'a> {
-            fn from(mut f: $f<'a>) -> Self {
+        impl From<$f> for $t {
+            fn from(mut f: $f) -> Self {
                 // This is borrow checking abuse and about the only
                 // time I'd do is_ok(). Essentially this allows us
                 // to either pass the error message along or update
@@ -21,29 +21,37 @@ macro_rules! from {
                 if f.request.is_ok() {
                     // We've checked that this works
                     let mut req = f.request.unwrap();
-                    let url = url_join(req.uri(), $e)
+                    let url = url_join(req.get_mut().uri(), $e)
                         .chain_err(|| "Failed to parse Url");
                     match url {
                         Ok(u) => {
-                            req.set_uri(u);
+                            req.get_mut().set_uri(u);
                             f.request = Ok(req);
                         },
                         Err(e) => {
                             f.request = Err(e);
                         }
                     }
-                }
 
-                Self {
-                    request: f.request,
-                    core: f.core,
+                    Self {
+                        request: f.request,
+                        core: f.core,
+                    }
+
+                } else {
+
+                    Self {
+                        request: f.request,
+                        core: f.core,
+                    }
+
                 }
             }
         }
     );
     ($t: ident, $p: path) => (
-        impl<'a> From<&'a mut Github> for $t<'a> {
-            fn from(gh: &'a mut Github) -> Self {
+        impl From<Github> for $t {
+            fn from(gh: Github) -> Self {
                 use std::result;
                 use errors;
                 let url = "https://api.github.com".parse::<Uri>()
@@ -64,14 +72,14 @@ macro_rules! from {
                             headers.set(Authorization(token));
                         }
                         Self {
-                            request: Ok(req),
-                            core: &mut gh.core,
+                            request: Ok(RefCell::new(req)),
+                            core: gh.core,
                         }
                     }
                     (Err(u), Ok(_)) => {
                         Self {
                             request: Err(u),
-                            core: &mut gh.core,
+                            core: gh.core,
                         }
                     }
                     (Ok(_), Err(_)) => {
@@ -82,7 +90,7 @@ macro_rules! from {
                                 ErrorKind::from(
                                     "Mime failed to parse.".to_owned()
                                 ))),
-                            core: &mut gh.core,
+                            core: gh.core,
                         }
                     }
                     (Err(u), Err(_)) => {
@@ -90,7 +98,7 @@ macro_rules! from {
                             request: Err(u).chain_err(||
                                 "Mime failed to parse."
                             ),
-                            core: &mut gh.core,
+                            core: gh.core,
                         }
                     }
                 }
@@ -105,9 +113,9 @@ macro_rules! from {
 /// maintain code in the future by simply adding a new field here if needed
 macro_rules! new_type {
     ($i: ident) => (
-        pub struct $i<'a> {
-            pub(crate) request: Result<Request<Body>>,
-            pub(crate) core: &'a mut Core,
+        pub struct $i {
+            pub(crate) request: Result<RefCell<Request<Body>>>,
+            pub(crate) core: Rc<RefCell<Core>>,
         }
     );
 }
@@ -129,7 +137,7 @@ macro_rules! exec {
         }
     );
     ($t: ident) => (
-        impl<'a> $t<'a> {
+        impl $t {
             /// Execute the query by sending the built up request
             /// to GitHub. The value returned is either an error
             /// or the Status Code and Json after it has been deserialized.
@@ -148,12 +156,12 @@ macro_rules! exec {
 /// conversion code is in the From implementation.
 macro_rules! func {
     ($i: ident, $t: ident) => (
-        pub fn $i(self) -> $t<'a> {
+        pub fn $i(self) -> $t {
             self.into()
         }
     );
     ($i: ident, $t: ident, $e: ident) => (
-        pub fn $i(mut self, $e: &str) -> $t<'a> {
+        pub fn $i(mut self, $e: &str) -> $t {
             // This is borrow checking abuse and about the only
             // time I'd do is_ok(). Essentially this allows us
             // to either pass the error message along or update
@@ -161,11 +169,11 @@ macro_rules! func {
             if self.request.is_ok() {
                 // We've checked that this works
                 let mut req = self.request.unwrap();
-                let url = url_join(req.uri(), $e)
+                let url = url_join(req.get_mut().uri(), $e)
                     .chain_err(|| "Failed to parse Url");
                 match url {
                     Ok(u) => {
-                        req.set_uri(u);
+                        req.get_mut().set_uri(u);
                         self.request = Ok(req);
                     },
                     Err(e) => {
@@ -187,5 +195,20 @@ macro_rules! func_client{
         pub fn $i(self) -> $t {
             self.into()
         }
+    );
+}
+
+/// Common imports for every file
+macro_rules! imports{
+    () => (
+        use tokio_core::reactor::Core;
+        use hyper::client::Request;
+        use hyper::status::StatusCode;
+        use hyper::Body;
+        use errors::*;
+        use util::url_join;
+        use Json;
+        use std::rc::Rc;
+        use std::cell::RefCell;
     );
 }

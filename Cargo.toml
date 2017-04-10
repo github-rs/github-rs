@@ -11,8 +11,8 @@ documentation = "https://mgattozzi.github.io/github-rs"
 [dependencies]
 hyper = { git = "https://github.com/hyperium/hyper" }
 hyper-tls = { git = "https://github.com/hyperium/hyper-tls" }
-error-chain = "*"
+error-chain = "0.10"
 tokio-core = "0.1"
-futures = "*"
+futures = "0.1"
 serde = "0.9"
 serde_json = "0.9"

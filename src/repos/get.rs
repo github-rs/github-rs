@@ -1,12 +1,6 @@
 //! Access the Repos portion of the GitHub API
-use tokio_core::reactor::Core;
-use hyper::client::Request;
-use hyper::status::StatusCode;
-use hyper::Body;
-use errors::*;
-use util::url_join;
+imports!();
 use client::{GetQueryBuilder, Executor};
-use Json;
 
 new_type!(Assignees);
 new_type!(Branches);
@@ -27,29 +21,29 @@ from!(Repo, Executor);
 from!(Repos, Owner);
 
 
-impl<'a> Assignees<'a> {
+impl Assignees {
     exec!();
 }
 
-impl<'a> Branches<'a> {
+impl Branches {
     exec!();
 }
 
-impl<'a> Collaborators<'a> {
+impl Collaborators {
     exec!();
 }
 
-impl<'a> Owner<'a> {
+impl Owner {
     func!(repo, Repo, repo_str);
 }
 
-impl<'a> Repo<'a> {
+impl Repo {
     func!(assignees, Assignees);
     func!(branches, Branches);
     func!(collaborators, Collaborators);
     exec!();
 }
 
-impl<'a> Repos<'a> {
+impl Repos {
     func!(owner, Owner, username_str);
 }

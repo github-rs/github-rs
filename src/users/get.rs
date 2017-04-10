@@ -1,12 +1,6 @@
 //! Access the Users portion of the GitHub API
-use tokio_core::reactor::Core;
-use hyper::client::Request;
-use hyper::status::StatusCode;
-use hyper::Body;
-use errors::*;
-use util::url_join;
+imports!();
 use client::{GetQueryBuilder, Executor};
-use Json;
 
 // Declaration of types representing the various items under users
 new_type!(Emails);
@@ -96,16 +90,16 @@ from!(User, Repos, "repos");
 from!(Repos, Executor);
 
 // impls of each type
-impl<'a> Starred<'a> {
+impl Starred {
     func!(owner, StarredOwner, owner_str);
     exec!();
 }
 
-impl<'a> StarredOwner<'a> {
+impl StarredOwner {
     func!(repo, StarredRepo, repo_str);
 }
 
-impl<'a> User<'a> {
+impl User {
     func!(emails, Emails);
     func!(followers, Followers);
     func!(following, Following);
@@ -118,12 +112,12 @@ impl<'a> User<'a> {
     exec!();
 }
 
-impl<'a> Users<'a> {
+impl Users {
     func!(username, UsersUsername, username_str);
     exec!();
 }
 
-impl<'a> UserUsername<'a> {
+impl UserUsername {
     func!(followers, Followers);
     func!(following, Following);
     func!(keys, UsersKeys);
@@ -131,7 +125,7 @@ impl<'a> UserUsername<'a> {
     exec!();
 }
 
-impl<'a> UsersUsername<'a> {
+impl UsersUsername {
     func!(events, Events);
     func!(followers, Followers);
     func!(following, Following);
@@ -145,27 +139,27 @@ impl<'a> UsersUsername<'a> {
     exec!();
 }
 
-impl<'a> Events<'a> {
+impl Events {
     func!(orgs, EventsOrgs);
     func!(public, Public);
     exec!();
 }
 
-impl<'a> EventsOrgs<'a> {
+impl EventsOrgs {
     func!(org, EventsOrgsName, org_name_str);
 }
 
-impl<'a> Keys<'a> {
+impl Keys {
     func!(id, KeysId, id_str);
     exec!();
 }
 
-impl<'a> Following<'a> {
+impl Following {
     func!(username, Following, username_str);
     exec!();
 }
 
-impl<'a> ReceivedEvents<'a> {
+impl ReceivedEvents {
     exec!();
 }
 

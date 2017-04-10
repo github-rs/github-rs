@@ -15,7 +15,7 @@ fn auth_token() -> Result<String, std::io::Error> {
 #[test]
 fn get_user_repos() {
     // We want it to fail
-    let mut g = Github::new(&auth_token().unwrap());
+    let g = Github::new(&auth_token().unwrap());
     let (status, json) = g.get()
                           .repos()
                           .owner("mgattozzi")

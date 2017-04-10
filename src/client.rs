@@ -23,10 +23,13 @@ use errors::*;
 use util::url_join;
 use Json;
 
+use std::rc::Rc;
+use std::cell::RefCell;
+
 /// Struct used to make calls to the Github API.
 pub struct Github {
     token: String,
-    core: Core,
+    core: Rc<RefCell<Core>>,
 }
 new_type!(GetQueryBuilder);
 new_type!(PutQueryBuilder);
@@ -41,7 +44,7 @@ impl Github {
     pub fn new(token: &str) -> Self {
         Self {
             token: token.to_owned(),
-            core: Core::new().unwrap(),
+            core: Rc::new(RefCell::new(Core::new().unwrap())),
         }
     }
     pub fn get_token(&self) -> &str {
@@ -50,13 +53,13 @@ impl Github {
     pub fn set_token(&mut self, token: &str) {
         self.token = token.to_owned();
     }
-    pub fn get(&mut self) -> GetQueryBuilder {
+    pub fn get(self) -> GetQueryBuilder {
         self.into()
     }
-    pub fn put_empty(&mut self) -> PutQueryBuilder {
+    pub fn put_empty(self) -> PutQueryBuilder {
         self.into()
     }
-    pub fn put<T>(&mut self, body: T) -> PutQueryBuilder
+    pub fn put<T>(self, body: T) -> PutQueryBuilder
         where T: Serialize {
         let mut qb: PutQueryBuilder = self.into();
         match qb.request {
@@ -64,7 +67,7 @@ impl Github {
                 let serialized = serde_json::to_vec(&body);
                 match serialized {
                     Ok(json) => {
-                        qbr.set_body(json);
+                        qbr.get_mut().set_body(json);
                         qb.request = Ok(qbr);
                     },
                     Err(_) => {
@@ -76,7 +79,7 @@ impl Github {
         }
         qb
     }
-    pub fn post<T>(&mut self, body: T) -> PostQueryBuilder
+    pub fn post<T>(self, body: T) -> PostQueryBuilder
         where T: Serialize {
         let mut qb: PostQueryBuilder = self.into();
         match qb.request {
@@ -84,7 +87,7 @@ impl Github {
                 let serialized = serde_json::to_vec(&body);
                 match serialized {
                     Ok(json) => {
-                        qbr.set_body(json);
+                        qbr.get_mut().set_body(json);
                         qb.request = Ok(qbr);
                     },
                     Err(_) => {
@@ -97,7 +100,7 @@ impl Github {
 
         qb
     }
-    pub fn patch<T>(&mut self, body: T) -> PatchQueryBuilder
+    pub fn patch<T>(self, body: T) -> PatchQueryBuilder
         where T: Serialize {
         let mut qb: PatchQueryBuilder = self.into();
         match qb.request {
@@ -105,7 +108,7 @@ impl Github {
                 let serialized = serde_json::to_vec(&body);
                 match serialized {
                     Ok(json) => {
-                        qbr.set_body(json);
+                        qbr.get_mut().set_body(json);
                         qb.request = Ok(qbr);
                     },
                     Err(_) => {
@@ -117,7 +120,7 @@ impl Github {
         }
         qb
     }
-    pub fn delete<T>(&mut self, body: T) -> DeleteQueryBuilder
+    pub fn delete<T>(self, body: T) -> DeleteQueryBuilder
         where T: Serialize {
         let mut qb: DeleteQueryBuilder = self.into();
         match qb.request {
@@ -125,7 +128,7 @@ impl Github {
                 let serialized = serde_json::to_vec(&body);
                 match serialized {
                     Ok(json) => {
-                        qbr.set_body(json);
+                        qbr.get_mut().set_body(json);
                         qb.request = Ok(qbr);
                     },
                     Err(_) => {
@@ -137,13 +140,13 @@ impl Github {
         }
         qb
     }
-    pub fn delete_empty(&mut self) -> DeleteQueryBuilder {
+    pub fn delete_empty(self) -> DeleteQueryBuilder {
         self.into()
     }
 
 }
 
-impl<'a> GetQueryBuilder<'a> {
+impl GetQueryBuilder {
     /// Pass in an endpoint not covered by the API in the form of the following:
     ///
     /// ```no_test
@@ -155,14 +158,14 @@ impl<'a> GetQueryBuilder<'a> {
     /// you to get functionality out of the library as items are still added or
     /// if you need access to a hidden endpoint.
     func!(custom_endpoint, CustomQuery, endpoint_str);
-    func_client!(emojis, misc::get::Emojis<'a>);
-    func_client!(rate_limit, misc::get::RateLimit<'a>);
-    func_client!(user, users::get::User<'a>);
-    func_client!(users, users::get::Users<'a>);
-    func_client!(repos, repos::get::Repos<'a>);
+    func_client!(emojis, misc::get::Emojis);
+    func_client!(rate_limit, misc::get::RateLimit);
+    func_client!(user, users::get::User);
+    func_client!(users, users::get::Users);
+    func_client!(repos, repos::get::Repos);
 }
 
-impl<'a> PutQueryBuilder<'a> {
+impl PutQueryBuilder {
     /// Pass in an endpoint not covered by the API in the form of the following:
     ///
     /// ```no_test
@@ -174,10 +177,10 @@ impl<'a> PutQueryBuilder<'a> {
     /// you to get functionality out of the library as items are still added or
     /// if you need access to a hidden endpoint.
     func!(custom_endpoint, CustomQuery, endpoint_str);
-    func_client!(user, users::put::User<'a>);
+    func_client!(user, users::put::User);
 }
 
-impl<'a> DeleteQueryBuilder<'a> {
+impl DeleteQueryBuilder {
     /// Pass in an endpoint not covered by the API in the form of the following:
     ///
     /// ```no_test
@@ -189,10 +192,10 @@ impl<'a> DeleteQueryBuilder<'a> {
     /// you to get functionality out of the library as items are still added or
     /// if you need access to a hidden endpoint.
     func!(custom_endpoint, CustomQuery, endpoint_str);
-    func_client!(user, users::delete::User<'a>);
+    func_client!(user, users::delete::User);
 }
 
-impl<'a> PostQueryBuilder<'a> {
+impl PostQueryBuilder {
     /// Pass in an endpoint not covered by the API in the form of the following:
     ///
     /// ```no_test
@@ -204,10 +207,10 @@ impl<'a> PostQueryBuilder<'a> {
     /// you to get functionality out of the library as items are still added or
     /// if you need access to a hidden endpoint.
     func!(custom_endpoint, CustomQuery, endpoint_str);
-    func_client!(user, users::post::User<'a>);
+    func_client!(user, users::post::User);
 }
 
-impl<'a> PatchQueryBuilder<'a> {
+impl PatchQueryBuilder {
     /// Pass in an endpoint not covered by the API in the form of the following:
     ///
     /// ```no_test
@@ -219,21 +222,25 @@ impl<'a> PatchQueryBuilder<'a> {
     /// you to get functionality out of the library as items are still added or
     /// if you need access to a hidden endpoint.
     func!(custom_endpoint, CustomQuery, endpoint_str);
-    func_client!(user, users::patch::User<'a>);
+    func_client!(user, users::patch::User);
 }
 
 exec!(CustomQuery);
 
-impl<'a> Executor<'a> {
+impl Executor {
 
     pub fn execute(self) -> Result<(StatusCode, Option<Json>)> {
-        let handle = self.core.handle();
+        let ref mut core_ref = *self.core
+                                    .try_borrow_mut()
+                                    .chain_err(|| "Unable to get mutable borrow\
+                                                   to the event loop")?;
+        let handle = core_ref.handle();
         let work = Client::configure()
             .connector(HttpsConnector::new(4,&handle))
             .build(&handle)
             // All that type checking abuse culminates in this checking
             // if the request actually didn't fail being built!
-            .request(self.request?)
+            .request(self.request?.into_inner())
             .and_then(|res| {
                 let status = res.status().clone();
                 res.body().fold(Vec::new(), |mut v, chunk| {
@@ -248,7 +255,7 @@ impl<'a> Executor<'a> {
                 })
             });
 
-        self.core.run(work).chain_err(|| "Failed to execute request")
+        core_ref.run(work).chain_err(|| "Failed to execute request")
     }
 
 }
