@@ -83,6 +83,27 @@ impl Github {
         self.token = token.to_owned();
     }
 
+    /// Exposes the inner event loop for those who need
+    /// access to it. The reccomended way to safely access
+    /// the core would be
+    ///
+    /// ```rust,no_test
+    /// let g = Github::new("API KEY");
+    /// let core = g.get_core();
+    /// // Handle the error here.
+    /// let ref mut core_mut = *core.try_borrow_mut()?;
+    /// // Do stuff with the core here. This prevents a runtime failure by
+    /// // having two mutable borrows to the core at the same time.
+    /// ```
+    ///
+    /// This is how other parts of the API are implemented to avoid causing your
+    /// program to crash unexpectedly. While you could borrow without the
+    /// `Result` being handled it's highly reccomended you don't unless you know
+    /// there is no other mutable reference to it.
+    pub fn get_core(&self) -> &Rc<RefCell<Core>> {
+        &self.core
+    }
+
     /// Begin building up a GET request to GitHub
     pub fn get(&self) -> GetQueryBuilder {
         self.into()
