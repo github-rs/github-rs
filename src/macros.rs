@@ -7,6 +7,7 @@ macro_rules! from {
                 Self {
                     request: f.request,
                     core: f.core,
+                    client: f.client,
                 }
             }
         }
@@ -36,6 +37,7 @@ macro_rules! from {
                     Self {
                         request: f.request,
                         core: f.core,
+                        client: f.client,
                     }
 
                 } else {
@@ -43,6 +45,7 @@ macro_rules! from {
                     Self {
                         request: f.request,
                         core: f.core,
+                        client: f.client,
                     }
 
                 }
@@ -74,12 +77,14 @@ macro_rules! from {
                         Self {
                             request: Ok(RefCell::new(req)),
                             core: &gh.core,
+                            client: &gh.client,
                         }
                     }
                     (Err(u), Ok(_)) => {
                         Self {
                             request: Err(u),
                             core: &gh.core,
+                            client: &gh.client,
                         }
                     }
                     (Ok(_), Err(_)) => {
@@ -91,6 +96,7 @@ macro_rules! from {
                                     "Mime failed to parse.".to_owned()
                                 ))),
                             core: &gh.core,
+                            client: &gh.client,
                         }
                     }
                     (Err(u), Err(_)) => {
@@ -99,6 +105,7 @@ macro_rules! from {
                                 "Mime failed to parse."
                             ),
                             core: &gh.core,
+                            client: &gh.client,
                         }
                     }
                 }
@@ -116,6 +123,7 @@ macro_rules! new_type {
         pub struct $i<'g> {
             pub(crate) request: Result<RefCell<Request<Body>>>,
             pub(crate) core: &'g Rc<RefCell<Core>>,
+            pub(crate) client: &'g Rc<Client<HttpsConnector>>,
         }
     );
 }
@@ -205,6 +213,8 @@ macro_rules! func_client{
 macro_rules! imports{
     () => (
         use tokio_core::reactor::Core;
+        use hyper_tls::HttpsConnector;
+        use hyper::client::Client;
         use hyper::client::Request;
         use hyper::status::StatusCode;
         use hyper::{ Body, Headers };

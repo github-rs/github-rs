@@ -31,6 +31,7 @@ use std::cell::RefCell;
 pub struct Github {
     token: String,
     core: Rc<RefCell<Core>>,
+    client: Rc<Client<HttpsConnector>>,
 }
 
 impl Clone for Github {
@@ -38,6 +39,7 @@ impl Clone for Github {
         Self {
             token: self.token.clone(),
             core: self.core.clone(),
+            client: self.client.clone(),
         }
     }
 }
@@ -67,9 +69,15 @@ new_type!(Executor);
 impl Github {
     /// Create a new Github client struct
     pub fn new(token: &str) -> Self {
+        let core = Core::new().unwrap();
+        let handle = core.handle();
+        let client = Client::configure()
+            .connector(HttpsConnector::new(4,&handle))
+            .build(&handle);
         Self {
             token: token.to_owned(),
-            core: Rc::new(RefCell::new(Core::new().unwrap())),
+            core: Rc::new(RefCell::new(core)),
+            client: Rc::new(client),
         }
     }
 
@@ -87,7 +95,7 @@ impl Github {
     /// access to it. The reccomended way to safely access
     /// the core would be
     ///
-    /// ```rust,no_test
+    /// ```text
     /// let g = Github::new("API KEY");
     /// let core = g.get_core();
     /// // Handle the error here.
@@ -239,15 +247,13 @@ impl <'g> GetQueryBuilder<'g> {
     func_client!(repos, repos::get::Repos<'g>);
 
     /// Add an etag to the headers of the request
-    pub fn set_etag(self, tag: ETag) -> Self {
+    pub fn set_etag(mut self, tag: ETag) -> Self {
         match self.request {
             Ok(mut req) => {
                 let ETag(tag) = tag;
                 req.get_mut().headers_mut().set(IfNoneMatch::Items(vec![tag]));
-                Self {
-                    request: Ok(req),
-                    core: self.core,
-                }
+                self.request = Ok(req);
+                self
             }
             Err(_) => self,
         }
@@ -374,30 +380,28 @@ impl <'g> Executor<'g> {
         let ref mut core_ref = *self.core
                                     .try_borrow_mut()
                                     .chain_err(|| "Unable to get mutable borrow\
-                                                   to the event loop")?;
-        let handle = core_ref.handle();
-        let work = Client::configure()
-            .connector(HttpsConnector::new(4,&handle))
-            .build(&handle)
-            // All that type checking abuse culminates in this checking
-            // if the request actually didn't fail being built!
-            .request(self.request?.into_inner())
-            .and_then(|res| {
-                let header = res.headers().clone();
-                let status = res.status().clone();
-                res.body().fold(Vec::new(), |mut v, chunk| {
-                    v.extend(&chunk[..]);
-                    ok::<_, Error>(v)
-                }).map(move |chunks| {
-                    if chunks.is_empty() {
-                        (header, status, None)
-                    } else {
-                        (header, status, Some(serde_json::from_slice(&chunks)
-                                              .unwrap()))
-                    }
-                })
-            });
-
+                                                  to the event loop")?;
+        let ref client = *self.client;
+        let work = client
+                    .request(self.request?.into_inner())
+                    .and_then(|res| {
+                        let header = res.headers().clone();
+                        let status = res.status().clone();
+                        res.body().fold(Vec::new(), |mut v, chunk| {
+                            v.extend(&chunk[..]);
+                            ok::<_, Error>(v)
+                        }).map(move |chunks| {
+                            if chunks.is_empty() {
+                                (header, status, None)
+                            } else {
+                                (
+                                  header,
+                                  status,
+                                  Some(serde_json::from_slice(&chunks).unwrap())
+                                )
+                            }
+                        })
+                    });
         core_ref.run(work).chain_err(|| "Failed to execute request")
     }
 
