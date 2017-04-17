@@ -18,7 +18,7 @@ GitHub V3 API
 - [ ] /gitignore/templates
 - [ ] /gitignore/templates/:lang
 - [ ] /issues
-- [ ] /meta
+- [X] /meta
 - [ ] /networks/:owner/:repo/events
 - [ ] /notifications
 - [ ] /notifications/threads/:id
