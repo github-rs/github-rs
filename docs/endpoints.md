@@ -4,7 +4,7 @@ GitHub V3 API
 ## GET
 - [X] /emojis
 - [X] /events
-- [ ] /feeds
+- [X] /feeds
 - [ ] /gists
 - [ ] /gists/:gist_id/comments
 - [ ] /gists/:gist_id/comments/:id

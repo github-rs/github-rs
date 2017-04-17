@@ -237,6 +237,9 @@ impl <'g> GetQueryBuilder<'g> {
     /// Query the emojis endpoint
     func_client!(events, misc::get::Events<'g>);
 
+    /// Query the emojis endpoint
+    func_client!(feeds, misc::get::Feeds<'g>);
+
     /// Query the rate limit endpoint
     func_client!(rate_limit, misc::get::RateLimit<'g>);
 
