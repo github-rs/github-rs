@@ -67,15 +67,18 @@ new_type!(Executor);
 
 
 impl Github {
-    /// Create a new Github client struct
-    pub fn new(token: &str) -> Self {
+    /// Create a new Github client struct. It takes a type that can convert into
+    /// an &str (`String` or `Vec<u8>` for example). As long as the function is
+    /// given a valid API Token your requests will work.
+    pub fn new<T>(token: T) -> Self
+        where T: AsRef<str> {
         let core = Core::new().unwrap();
         let handle = core.handle();
         let client = Client::configure()
             .connector(HttpsConnector::new(4,&handle))
             .build(&handle);
         Self {
-            token: token.to_owned(),
+            token: token.as_ref().into(),
             core: Rc::new(RefCell::new(core)),
             client: Rc::new(client),
         }
@@ -86,9 +89,11 @@ impl Github {
         &self.token
     }
 
-    /// Change the currently set Authorization Token
-    pub fn set_token(&mut self, token: &str) {
-        self.token = token.to_owned();
+    /// Change the currently set Authorization Token using a type that can turn
+    /// into an &str. Must be a valid API Token for requests to work.
+    pub fn set_token<T>(&mut self, token: T)
+        where T: AsRef<str> {
+        self.token = token.as_ref().into();
     }
 
     /// Exposes the inner event loop for those who need
