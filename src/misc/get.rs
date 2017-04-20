@@ -2,26 +2,47 @@
 imports!();
 use client::{GetQueryBuilder, Executor};
 
-from!(GetQueryBuilder, Emojis, "emojis");
-from!(GetQueryBuilder, Events, "events");
-from!(GetQueryBuilder, Feeds, "feeds");
-from!(GetQueryBuilder, Meta, "meta");
-from!(GetQueryBuilder, RateLimit, "rate_limit");
+new_type!(
+    Emojis
+    Events
+    Feeds
+    Meta
+    RateLimit
+);
 
-new_type!(Emojis);
-new_type!(Events);
-new_type!(Feeds);
-new_type!(Meta);
-new_type!(RateLimit);
+from!(
+    @GetQueryBuilder
+       -> Emojis = "emojis"
+       -> Events = "events"
+       -> Feeds = "feeds"
+       -> Meta = "meta"
+       -> RateLimit = "rate_limit"
+    @Emojis
+       => Executor
+    @Events
+       => Executor
+    @Feeds
+       => Executor
+    @Meta
+       => Executor
+    @RateLimit
+       => Executor
+);
 
-from!(Emojis, Executor);
-from!(Events, Executor);
-from!(Feeds, Executor);
-from!(Meta, Executor);
-from!(RateLimit, Executor);
-
-exec!(Emojis);
-exec!(Events);
-exec!(Feeds);
-exec!(Meta);
-exec!(RateLimit);
+impl_macro!(
+    @Emojis
+        |
+        |-> execute
+    @Events
+        |
+        |-> execute
+    @Feeds
+        |
+        |-> execute
+    @Meta
+        |
+        |-> execute
+    @RateLimit
+        |
+        |-> execute
+);

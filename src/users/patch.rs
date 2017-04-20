@@ -2,21 +2,31 @@
 imports!();
 use client::{ PatchQueryBuilder, Executor };
 
-new_type!(User);
-new_type!(Email);
-new_type!(Visibility);
+new_type!(
+    User
+    Email
+    Visibility
+);
 
-from!(PatchQueryBuilder, User, "user");
-from!(User, Email, "email");
-from!(Email, Visibility, "visibility");
-from!(Visibility, Executor);
+from!(
+    @PatchQueryBuilder
+        -> User = "user"
+    @User
+        -> Email = "email"
+    @Email
+        -> Visibility = "visibility"
+    @Visibility
+        => Executor
+);
 
-impl <'g> User<'g> {
-    func!(emails, Email);
-}
-
-impl <'g> Email<'g> {
-    func!(visibility, Visibility);
-}
-
-exec!(Visibility);
+impl_macro!(
+    @User
+        |=> emails -> Email
+        |
+    @Email
+        |=> visibility -> Visibility
+        |
+    @Visibility
+        |
+        |-> execute
+);

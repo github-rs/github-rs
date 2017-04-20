@@ -2,15 +2,25 @@
 imports!();
 use client::{ DeleteQueryBuilder, Executor };
 
-new_type!(User);
-new_type!(Emails);
+new_type!(
+    User
+    Emails
+);
 
-from!(DeleteQueryBuilder, User, "user");
-from!(User, Emails, "emails");
-from!(Emails, Executor);
+from!(
+    @DeleteQueryBuilder
+       -> User = "user"
+    @User
+       -> Emails = "emails"
+    @Emails
+       => Executor
+);
 
-impl <'g> User<'g> {
-    func!(emails, Emails);
-}
-
-exec!(Emails);
+impl_macro!(
+    @User
+        |=> emails -> Emails
+        |
+    @Emails
+        |
+        |-> execute
+);

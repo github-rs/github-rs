@@ -1,7 +1,8 @@
-/// Automatically generate From impls. Optionally it's allowed a
-/// closure to be passed in to modify the Url if needed.
+/// Automatically generate From impls for types given using a small DSL like
+/// macrot
 macro_rules! from {
-    ($f: ident, $t: ident) => (
+    ($(@$f: ident $( => $t: ident )* $( -> $i: ident = $e: expr )*)*) => (
+        $($(
         impl <'g> From<$f<'g>> for $t<'g> {
             fn from(f: $f<'g>) -> Self {
                 Self {
@@ -11,9 +12,8 @@ macro_rules! from {
                 }
             }
         }
-    );
-    ($f: ident, $t: ident, $e: expr) => (
-        impl <'g> From<$f<'g>> for $t<'g> {
+        )*$(
+        impl <'g> From<$f<'g>> for $i<'g> {
             fn from(mut f: $f<'g>) -> Self {
                 // This is borrow checking abuse and about the only
                 // time I'd do is_ok(). Essentially this allows us
@@ -51,8 +51,10 @@ macro_rules! from {
                 }
             }
         }
+        )*)*
     );
-    ($t: ident, $p: path) => (
+    ($(@$t: ident => $p: path)*) => (
+        $(
         impl <'g> From<&'g Github> for $t<'g> {
             fn from(gh: &'g Github) -> Self {
                 use std::result;
@@ -111,6 +113,7 @@ macro_rules! from {
                 }
             }
         }
+    )*
     );
 }
 
@@ -119,12 +122,14 @@ macro_rules! from {
 /// This helps reduce boiler plate code and makes it easy to expand and
 /// maintain code in the future by simply adding a new field here if needed
 macro_rules! new_type {
-    ($i: ident) => (
+    ($($i: ident)*) => (
+        $(
         pub struct $i<'g> {
             pub(crate) request: Result<RefCell<Request<Body>>>,
             pub(crate) core: &'g Rc<RefCell<Core>>,
             pub(crate) client: &'g Rc<Client<HttpsConnector>>,
         }
+        )*
     );
 }
 
@@ -162,12 +167,65 @@ macro_rules! exec {
     );
 }
 
-/// Create a function with a given name and return type. Used for creating
-/// functions for simple conversions from one type to another, where the actual
-/// conversion code is in the From implementation.
-macro_rules! func {
-    ($i: ident, $t: ident) => (
-        pub fn $i(self) -> $t<'g> {
+/// Using a small DSL like macro generate an impl for a given type
+/// that creates all the functions to transition from one node type to another
+macro_rules! impl_macro {
+    ($(@$i: ident $(|=> $id1: ident -> $t1: ident)*|
+     $(|=> $id2: ident -> $t2: ident = $e: ident)*
+     $(|-> $id3: ident )*)+)=> (
+        $(
+            impl<'g> $i <'g>{
+            $(
+                pub fn $id1(self) -> $t1<'g> {
+                    self.into()
+                }
+            )*$(
+                pub fn $id2(mut self, $e: &str) -> $t2<'g> {
+                    // This is borrow checking abuse and about the only
+                    // time I'd do is_ok(). Essentially this allows us
+                    // to either pass the error message along or update
+                    // the url
+                    if self.request.is_ok() {
+                        // We've checked that this works
+                        let mut req = self.request.unwrap();
+                        let url = url_join(req.get_mut().uri(), $e)
+                            .chain_err(|| "Failed to parse Url");
+                        match url {
+                            Ok(u) => {
+                                req.get_mut().set_uri(u);
+                                self.request = Ok(req);
+                            },
+                            Err(e) => {
+                                self.request = Err(e);
+                            }
+                        }
+                    }
+                    self.into()
+                }
+            )*$(
+                /// Execute the query by sending the built up request to GitHub.
+                /// The value returned is either an error or the Status Code and
+                /// Json after it has been deserialized. Please take a look at
+                /// the GitHub documenation to see what value you should receive
+                /// back for good or bad requests.
+                pub fn $id3(self) -> Result<(Headers, StatusCode, Option<Json>)>
+                {
+                    let ex: Executor = self.into();
+                    ex.execute()
+                }
+            )*
+            }
+        )+
+    );
+}
+
+/// A variation of impl_macro for the client module that allows partitioning of
+/// types. Create a function with a given name and return type. Used for
+/// creating functions for simple conversions from one type to another, where
+/// the actual conversion code is in the From implementation.
+macro_rules! func_client{
+    ($i: ident, $t: ty) => (
+        pub fn $i(self) -> $t {
             self.into()
         }
     );
@@ -192,18 +250,6 @@ macro_rules! func {
                     }
                 }
             }
-            self.into()
-        }
-    );
-}
-
-/// A variation of func for the client module that allows partitioning of types.
-/// Create a function with a given name and return type. Used for creating
-/// functions for simple conversions from one type to another, where the actual
-/// conversion code is in the From implementation.
-macro_rules! func_client{
-    ($i: ident, $t: ty) => (
-        pub fn $i(self) -> $t {
             self.into()
         }
     );

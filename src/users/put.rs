@@ -2,21 +2,31 @@
 imports!();
 use client::{ PutQueryBuilder, Executor };
 
-new_type!(User);
-new_type!(Following);
-new_type!(Username);
+new_type!(
+    User
+    Following
+    Username
+);
 
-from!(PutQueryBuilder, User, "user");
-from!(User, Following, "following");
-from!(Following, Username);
-from!(Username, Executor);
+from!(
+    @PutQueryBuilder
+        -> User = "user"
+    @User
+        -> Following = "following"
+    @Following
+        => Username
+    @Username
+        => Executor
+);
 
-impl <'g> User<'g> {
-    func!(following, Following);
-}
-
-impl <'g> Following<'g> {
-    func!(username, Username, username_str);
-}
-
-exec!(Username);
+impl_macro!(
+    @User
+        |=> following -> Following
+        |
+    @Following
+        |
+        |=> username -> Username = username_str
+    @Username
+        |
+        |-> execute
+);

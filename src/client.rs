@@ -234,7 +234,7 @@ impl <'g> GetQueryBuilder<'g> {
     /// It can be whatever endpoint or url string that's needed. This will allow
     /// you to get functionality out of the library as items are still added or
     /// if you need access to a hidden endpoint.
-    func!(custom_endpoint, CustomQuery, endpoint_str);
+    func_client!(custom_endpoint, CustomQuery, endpoint_str);
 
     /// Query the emojis endpoint
     func_client!(emojis, misc::get::Emojis<'g>);
@@ -285,7 +285,7 @@ impl <'g> PutQueryBuilder<'g> {
     /// It can be whatever endpoint or url string that's needed. This will allow
     /// you to get functionality out of the library as items are still added or
     /// if you need access to a hidden endpoint.
-    func!(custom_endpoint, CustomQuery, endpoint_str);
+    func_client!(custom_endpoint, CustomQuery, endpoint_str);
     func_client!(user, users::put::User<'g>);
 
     /// Add an etag to the headers of the request
@@ -313,7 +313,7 @@ impl <'g> DeleteQueryBuilder<'g> {
     /// It can be whatever endpoint or url string that's needed. This will allow
     /// you to get functionality out of the library as items are still added or
     /// if you need access to a hidden endpoint.
-    func!(custom_endpoint, CustomQuery, endpoint_str);
+    func_client!(custom_endpoint, CustomQuery, endpoint_str);
     func_client!(user, users::delete::User<'g>);
 
     /// Add an etag to the headers of the request
@@ -341,7 +341,7 @@ impl <'g> PostQueryBuilder<'g> {
     /// It can be whatever endpoint or url string that's needed. This will allow
     /// you to get functionality out of the library as items are still added or
     /// if you need access to a hidden endpoint.
-    func!(custom_endpoint, CustomQuery, endpoint_str);
+    func_client!(custom_endpoint, CustomQuery, endpoint_str);
     func_client!(user, users::post::User<'g>);
 
     /// Add an etag to the headers of the request
@@ -369,7 +369,7 @@ impl <'g> PatchQueryBuilder<'g> {
     /// It can be whatever endpoint or url string that's needed. This will allow
     /// you to get functionality out of the library as items are still added or
     /// if you need access to a hidden endpoint.
-    func!(custom_endpoint, CustomQuery, endpoint_str);
+    func_client!(custom_endpoint, CustomQuery, endpoint_str);
     func_client!(user, users::patch::User<'g>);
 
     /// Add an etag to the headers of the request
@@ -423,16 +423,31 @@ impl <'g> Executor<'g> {
 
 // From derivations of Github to the given type using a certain
 // request method
-from!(GetQueryBuilder, Method::Get);
-from!(PutQueryBuilder, Method::Put);
-from!(PostQueryBuilder, Method::Post);
-from!(PatchQueryBuilder, Method::Patch);
-from!(DeleteQueryBuilder, Method::Delete);
+from!(
+    @GetQueryBuilder
+        => Method::Get
+    @PutQueryBuilder
+        => Method::Put
+    @PostQueryBuilder
+        => Method::Post
+    @PatchQueryBuilder
+        => Method::Patch
+    @DeleteQueryBuilder
+        => Method::Delete
+);
 
 // Custom Url based from impls
-from!(GetQueryBuilder, CustomQuery);
-from!(PutQueryBuilder, CustomQuery);
-from!(PostQueryBuilder, CustomQuery);
-from!(PatchQueryBuilder, CustomQuery);
-from!(DeleteQueryBuilder, CustomQuery);
-from!(CustomQuery, Executor);
+from!(
+    @GetQueryBuilder
+       => CustomQuery
+    @PutQueryBuilder
+       => CustomQuery
+    @PostQueryBuilder
+       => CustomQuery
+    @PatchQueryBuilder
+       => CustomQuery
+    @DeleteQueryBuilder
+       => CustomQuery
+    @CustomQuery
+        => Executor
+);
