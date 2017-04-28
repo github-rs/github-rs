@@ -131,20 +131,17 @@ impl Github {
     pub fn put<T>(&self, body: T) -> PutQueryBuilder
         where T: Serialize {
         let mut qb: PutQueryBuilder = self.into();
-        match qb.request {
-            Ok(mut qbr) => {
-                let serialized = serde_json::to_vec(&body);
-                match serialized {
-                    Ok(json) => {
-                        qbr.get_mut().set_body(json);
-                        qb.request = Ok(qbr);
-                    },
-                    Err(_) => {
-                        qb.request = Err("Unable to serialize data to JSON".into());
-                    }
+        if let Ok(mut qbr) = qb.request {
+            let serialized = serde_json::to_vec(&body);
+            match serialized {
+                Ok(json) => {
+                    qbr.get_mut().set_body(json);
+                    qb.request = Ok(qbr);
+                },
+                Err(_) => {
+                    qb.request = Err("Unable to serialize data to JSON".into());
                 }
-            },
-            Err(_) => {},
+            }
         }
         qb
     }
@@ -153,20 +150,17 @@ impl Github {
     pub fn post<T>(&self, body: T) -> PostQueryBuilder
         where T: Serialize {
         let mut qb: PostQueryBuilder = self.into();
-        match qb.request {
-            Ok(mut qbr) => {
-                let serialized = serde_json::to_vec(&body);
-                match serialized {
-                    Ok(json) => {
-                        qbr.get_mut().set_body(json);
-                        qb.request = Ok(qbr);
-                    },
-                    Err(_) => {
-                        qb.request = Err("Unable to serialize data to JSON".into());
-                    }
+        if let Ok(mut qbr) = qb.request {
+            let serialized = serde_json::to_vec(&body);
+            match serialized {
+                Ok(json) => {
+                    qbr.get_mut().set_body(json);
+                    qb.request = Ok(qbr);
+                },
+                Err(_) => {
+                    qb.request = Err("Unable to serialize data to JSON".into());
                 }
-            },
-            Err(_) => {},
+            }
         }
 
         qb
@@ -176,20 +170,17 @@ impl Github {
     pub fn patch<T>(&self, body: T) -> PatchQueryBuilder
         where T: Serialize {
         let mut qb: PatchQueryBuilder = self.into();
-        match qb.request {
-            Ok(mut qbr) => {
-                let serialized = serde_json::to_vec(&body);
-                match serialized {
-                    Ok(json) => {
-                        qbr.get_mut().set_body(json);
-                        qb.request = Ok(qbr);
-                    },
-                    Err(_) => {
-                        qb.request = Err("Unable to serialize data to JSON".into());
-                    }
+        if let Ok(mut qbr) = qb.request {
+            let serialized = serde_json::to_vec(&body);
+            match serialized {
+                Ok(json) => {
+                    qbr.get_mut().set_body(json);
+                    qb.request = Ok(qbr);
+                },
+                Err(_) => {
+                    qb.request = Err("Unable to serialize data to JSON".into());
                 }
-            },
-            Err(_) => {},
+            }
         }
         qb
     }
@@ -198,20 +189,18 @@ impl Github {
     pub fn delete<T>(&self, body: T) -> DeleteQueryBuilder
         where T: Serialize {
         let mut qb: DeleteQueryBuilder = self.into();
-        match qb.request {
-            Ok(mut qbr) => {
-                let serialized = serde_json::to_vec(&body);
-                match serialized {
-                    Ok(json) => {
-                        qbr.get_mut().set_body(json);
-                        qb.request = Ok(qbr);
-                    },
-                    Err(_) => {
-                        qb.request = Err("Unable to serialize data to JSON".into());
-                    }
+
+        if let Ok(mut qbr) = qb.request {
+            let serialized = serde_json::to_vec(&body);
+            match serialized {
+                Ok(json) => {
+                    qbr.get_mut().set_body(json);
+                    qb.request = Ok(qbr);
+                },
+                Err(_) => {
+                    qb.request = Err("Unable to serialize data to JSON".into());
                 }
-            },
-            Err(_) => {},
+            }
         }
         qb
     }
