@@ -12,7 +12,7 @@ pub fn has_github_hookshot(head: &Headers) -> bool {
         })
 }
 
-/// Extract an ETag from the Headers if it exists
+/// Extract an `ETag` from the Headers if it exists
 pub fn etag(head: &Headers) -> Option<ETag> {
     head.get::<ETag>()
         .map(|tag| tag.to_owned())
