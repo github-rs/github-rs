@@ -61,6 +61,6 @@ fn core_exposure() {
     let g = Github::new(&auth_token().unwrap());
     // Can we get the core for users to have?
     let core = g.get_core();
-    let ref mut core_mut = *core.try_borrow_mut().unwrap();
+    let core_mut = core.try_borrow_mut().unwrap();
     let _ = core_mut.handle();
 }

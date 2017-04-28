@@ -380,11 +380,11 @@ exec!(CustomQuery);
 impl <'g> Executor<'g> {
 
     pub fn execute(self) -> Result<(Headers, StatusCode, Option<Json>)> {
-        let ref mut core_ref = *self.core
-                                    .try_borrow_mut()
-                                    .chain_err(|| "Unable to get mutable borrow\
-                                                  to the event loop")?;
-        let ref client = *self.client;
+        let mut core_ref = self.core
+                            .try_borrow_mut()
+                            .chain_err(|| "Unable to get mutable borrow\
+                                            to the event loop")?;
+        let client = self.client;
         let work = client
                     .request(self.request?.into_inner())
                     .and_then(|res| {
