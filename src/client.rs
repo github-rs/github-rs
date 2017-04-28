@@ -389,7 +389,7 @@ impl <'g> Executor<'g> {
                     .request(self.request?.into_inner())
                     .and_then(|res| {
                         let header = res.headers().clone();
-                        let status = res.status().clone();
+                        let status = res.status();
                         res.body().fold(Vec::new(), |mut v, chunk| {
                             v.extend(&chunk[..]);
                             ok::<_, Error>(v)
