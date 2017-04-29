@@ -8,4 +8,3 @@ pub use hyper::{ Body, Headers };
 pub use errors::*;
 pub use util::url_join;
 pub use Json;
-pub use std::cell::RefCell;

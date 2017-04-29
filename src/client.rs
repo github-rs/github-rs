@@ -25,8 +25,6 @@ use errors::*;
 use util::url_join;
 use Json;
 
-use std::cell::RefCell;
-
 /// Struct used to make calls to the Github API.
 pub struct Github {
     token: String,
@@ -109,7 +107,7 @@ impl Github {
             let serialized = serde_json::to_vec(&body);
             match serialized {
                 Ok(json) => {
-                    qbr.get_mut().set_body(json);
+                    qbr.set_body(json);
                     qb.request = Ok(qbr);
                 },
                 Err(_) => {
@@ -128,7 +126,7 @@ impl Github {
             let serialized = serde_json::to_vec(&body);
             match serialized {
                 Ok(json) => {
-                    qbr.get_mut().set_body(json);
+                    qbr.set_body(json);
                     qb.request = Ok(qbr);
                 },
                 Err(_) => {
@@ -148,7 +146,7 @@ impl Github {
             let serialized = serde_json::to_vec(&body);
             match serialized {
                 Ok(json) => {
-                    qbr.get_mut().set_body(json);
+                    qbr.set_body(json);
                     qb.request = Ok(qbr);
                 },
                 Err(_) => {
@@ -168,7 +166,7 @@ impl Github {
             let serialized = serde_json::to_vec(&body);
             match serialized {
                 Ok(json) => {
-                    qbr.get_mut().set_body(json);
+                    qbr.set_body(json);
                     qb.request = Ok(qbr);
                 },
                 Err(_) => {
@@ -228,7 +226,7 @@ impl <'g> GetQueryBuilder<'g> {
         match self.request {
             Ok(mut req) => {
                 let ETag(tag) = tag;
-                req.get_mut().headers_mut().set(IfNoneMatch::Items(vec![tag]));
+                req.headers_mut().set(IfNoneMatch::Items(vec![tag]));
                 self.request = Ok(req);
                 self
             }
@@ -256,7 +254,7 @@ impl <'g> PutQueryBuilder<'g> {
         match self.request {
             Ok(mut req) => {
                 let ETag(tag) = tag;
-                req.get_mut().headers_mut().set(IfNoneMatch::Items(vec![tag]));
+                req.headers_mut().set(IfNoneMatch::Items(vec![tag]));
                 self.request = Ok(req);
                 self
             }
@@ -284,7 +282,7 @@ impl <'g> DeleteQueryBuilder<'g> {
         match self.request {
             Ok(mut req) => {
                 let ETag(tag) = tag;
-                req.get_mut().headers_mut().set(IfNoneMatch::Items(vec![tag]));
+                req.headers_mut().set(IfNoneMatch::Items(vec![tag]));
                 self.request = Ok(req);
                 self
             }
@@ -312,7 +310,7 @@ impl <'g> PostQueryBuilder<'g> {
         match self.request {
             Ok(mut req) => {
                 let ETag(tag) = tag;
-                req.get_mut().headers_mut().set(IfNoneMatch::Items(vec![tag]));
+                req.headers_mut().set(IfNoneMatch::Items(vec![tag]));
                 self.request = Ok(req);
                 self
             },
@@ -340,7 +338,7 @@ impl <'g> PatchQueryBuilder<'g> {
         match self.request {
             Ok(mut req) => {
                 let ETag(tag) = tag;
-                req.get_mut().headers_mut().set(IfNoneMatch::Items(vec![tag]));
+                req.headers_mut().set(IfNoneMatch::Items(vec![tag]));
                 self.request = Ok(req);
                 self
             }
@@ -372,7 +370,7 @@ impl <'g> Executor<'g> {
         };
 
         return Box::new(self.client
-                    .request(request.into_inner())
+                    .request(request)
                     .and_then(|res| {
                         let header = res.headers().clone();
                         let status = res.status();

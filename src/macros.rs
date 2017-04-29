@@ -21,11 +21,11 @@ macro_rules! from {
                 if f.request.is_ok() {
                     // We've checked that this works
                     let mut req = f.request.unwrap();
-                    let url = url_join(req.get_mut().uri(), $e)
+                    let url = url_join(req.uri(), $e)
                         .chain_err(|| "Failed to parse Url");
                     match url {
                         Ok(u) => {
-                            req.get_mut().set_uri(u);
+                            req.set_uri(u);
                             f.request = Ok(req);
                         },
                         Err(e) => {
@@ -74,7 +74,7 @@ macro_rules! from {
                             headers.set(Authorization(token));
                         }
                         Self {
-                            request: Ok(RefCell::new(req)),
+                            request: Ok(req),
                             client: &gh.client,
                         }
                     }
@@ -118,7 +118,7 @@ macro_rules! new_type {
     ($($i: ident)*) => (
         $(
         pub struct $i<'g> {
-            pub(crate) request: Result<RefCell<Request<Body>>>,
+            pub(crate) request: Result<Request<Body>>,
             pub(crate) client: &'g Client<HttpsConnector>,
         }
         )*
@@ -146,11 +146,11 @@ macro_rules! impl_macro {
                     if self.request.is_ok() {
                         // We've checked that this works
                         let mut req = self.request.unwrap();
-                        let url = url_join(req.get_mut().uri(), $e)
+                        let url = url_join(req.uri(), $e)
                             .chain_err(|| "Failed to parse Url");
                         match url {
                             Ok(u) => {
-                                req.get_mut().set_uri(u);
+                                req.set_uri(u);
                                 self.request = Ok(req);
                             },
                             Err(e) => {
@@ -196,11 +196,11 @@ macro_rules! func_client{
             if self.request.is_ok() {
                 // We've checked that this works
                 let mut req = self.request.unwrap();
-                let url = url_join(req.get_mut().uri(), $e)
+                let url = url_join(req.uri(), $e)
                     .chain_err(|| "Failed to parse Url");
                 match url {
                     Ok(u) => {
-                        req.get_mut().set_uri(u);
+                        req.set_uri(u);
                         self.request = Ok(req);
                     },
                     Err(e) => {
