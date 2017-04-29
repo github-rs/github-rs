@@ -7,7 +7,6 @@ macro_rules! from {
             fn from(f: $f<'g>) -> Self {
                 Self {
                     request: f.request,
-                    core: f.core,
                     client: f.client,
                 }
             }
@@ -36,7 +35,6 @@ macro_rules! from {
 
                     Self {
                         request: f.request,
-                        core: f.core,
                         client: f.client,
                     }
 
@@ -44,7 +42,6 @@ macro_rules! from {
 
                     Self {
                         request: f.request,
-                        core: f.core,
                         client: f.client,
                     }
 
@@ -78,14 +75,12 @@ macro_rules! from {
                         }
                         Self {
                             request: Ok(RefCell::new(req)),
-                            core: &gh.core,
                             client: &gh.client,
                         }
                     }
                     (Err(u), Ok(_)) => {
                         Self {
                             request: Err(u),
-                            core: &gh.core,
                             client: &gh.client,
                         }
                     }
@@ -97,7 +92,6 @@ macro_rules! from {
                                 ErrorKind::from(
                                     "Mime failed to parse.".to_owned()
                                 ))),
-                            core: &gh.core,
                             client: &gh.client,
                         }
                     }
@@ -106,7 +100,6 @@ macro_rules! from {
                             request: Err(u).chain_err(||
                                 "Mime failed to parse."
                             ),
-                            core: &gh.core,
                             client: &gh.client,
                         }
                     }
@@ -126,7 +119,6 @@ macro_rules! new_type {
         $(
         pub struct $i<'g> {
             pub(crate) request: Result<RefCell<Request<Body>>>,
-            pub(crate) core: &'g Rc<RefCell<Core>>,
             pub(crate) client: &'g Rc<Client<HttpsConnector>>,
         }
         )*
@@ -174,7 +166,7 @@ macro_rules! impl_macro {
                 /// Json after it has been deserialized. Please take a look at
                 /// the GitHub documenation to see what value you should receive
                 /// back for good or bad requests.
-                pub fn $id3(self) -> Result<(Headers, StatusCode, Option<Json>)>
+                pub fn $id3(self) -> Box<Future<Item=(Headers, StatusCode, Option<Json>), Error=Error>>
                 {
                     let ex: Executor = self.into();
                     ex.execute()

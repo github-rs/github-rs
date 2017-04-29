@@ -1,5 +1,5 @@
 /// Common imports.
-pub use tokio_core::reactor::Core;
+pub use futures::Future;
 pub use hyper_tls::HttpsConnector;
 pub use hyper::client::Client;
 pub use hyper::client::Request;
