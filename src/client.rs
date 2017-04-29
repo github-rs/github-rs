@@ -25,13 +25,12 @@ use errors::*;
 use util::url_join;
 use Json;
 
-use std::rc::Rc;
 use std::cell::RefCell;
 
 /// Struct used to make calls to the Github API.
 pub struct Github {
     token: String,
-    client: Rc<Client<HttpsConnector>>,
+    client: Client<HttpsConnector>,
 }
 
 impl Clone for Github {
@@ -76,7 +75,7 @@ impl Github {
             .build(handle);
         Self {
             token: token.as_ref().into(),
-            client: Rc::new(client),
+            client: client,
         }
     }
 

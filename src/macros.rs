@@ -119,7 +119,7 @@ macro_rules! new_type {
         $(
         pub struct $i<'g> {
             pub(crate) request: Result<RefCell<Request<Body>>>,
-            pub(crate) client: &'g Rc<Client<HttpsConnector>>,
+            pub(crate) client: &'g Client<HttpsConnector>,
         }
         )*
     );
