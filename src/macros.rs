@@ -133,40 +133,6 @@ macro_rules! new_type {
     );
 }
 
-/// Used to generate an execute function for a terminal type in a query
-/// pipeline. If passed a type it creates the impl as well as it needs
-/// no extra functions. If blank it just creates the function and should be
-/// used this way only inside an impl
-macro_rules! exec {
-    () => (
-        /// Execute the query by sending the built up request
-        /// to GitHub. The value returned is either an error
-        /// or the Status Code and Json after it has been deserialized.
-        /// Please take a look at the GitHub documenation to see what value
-        /// you should receive back for good or bad requests.
-        pub fn execute(self) -> Result<(Headers, StatusCode, Option<Json>)> {
-            let ex: Executor = self.into();
-            ex.execute()
-        }
-    );
-    ($t: ident) => (
-        impl<'g> $t<'g> {
-            /// Execute the query by sending the built up request
-            /// to GitHub. The value returned is either an error
-            /// or the Status Code and Json after it has been deserialized.
-            /// Please take a look at the GitHub documenation to see what value
-            /// you should receive back for good or bad requests.
-            pub fn execute(self) ->
-                Result<(Headers, StatusCode, Option<Json>)> {
-
-                let ex: Executor = self.into();
-                ex.execute()
-
-            }
-        }
-    );
-}
-
 /// Using a small DSL like macro generate an impl for a given type
 /// that creates all the functions to transition from one node type to another
 macro_rules! impl_macro {

@@ -375,7 +375,17 @@ impl <'g> PatchQueryBuilder<'g> {
     }
 }
 
-exec!(CustomQuery);
+impl<'g> CustomQuery<'g> {
+    /// Execute the query by sending the built up request
+    /// to GitHub. The value returned is either an error
+    /// or the Status Code and Json after it has been deserialized.
+    /// Please take a look at the GitHub documenation to see what value
+    /// you should receive back for good or bad requests.
+    pub fn execute(self) -> Result<(Headers, StatusCode, Option<Json>)> {
+        let ex: Executor = self.into();
+        ex.execute()
+    }
+}
 
 impl <'g> Executor<'g> {
 
