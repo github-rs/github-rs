@@ -1,5 +1,5 @@
 //! Access the Users portion of the GitHub API
-imports!();
+use imports::*;
 use client::{GetQueryBuilder, Executor};
 
 // Declaration of types representing the various items under users

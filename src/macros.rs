@@ -7,7 +7,6 @@ macro_rules! from {
             fn from(f: $f<'g>) -> Self {
                 Self {
                     request: f.request,
-                    core: f.core,
                     client: f.client,
                 }
             }
@@ -22,11 +21,11 @@ macro_rules! from {
                 if f.request.is_ok() {
                     // We've checked that this works
                     let mut req = f.request.unwrap();
-                    let url = url_join(req.get_mut().uri(), $e)
+                    let url = url_join(req.uri(), $e)
                         .chain_err(|| "Failed to parse Url");
                     match url {
                         Ok(u) => {
-                            req.get_mut().set_uri(u);
+                            req.set_uri(u);
                             f.request = Ok(req);
                         },
                         Err(e) => {
@@ -36,7 +35,6 @@ macro_rules! from {
 
                     Self {
                         request: f.request,
-                        core: f.core,
                         client: f.client,
                     }
 
@@ -44,7 +42,6 @@ macro_rules! from {
 
                     Self {
                         request: f.request,
-                        core: f.core,
                         client: f.client,
                     }
 
@@ -77,15 +74,13 @@ macro_rules! from {
                             headers.set(Authorization(token));
                         }
                         Self {
-                            request: Ok(RefCell::new(req)),
-                            core: &gh.core,
+                            request: Ok(req),
                             client: &gh.client,
                         }
                     }
                     (Err(u), Ok(_)) => {
                         Self {
                             request: Err(u),
-                            core: &gh.core,
                             client: &gh.client,
                         }
                     }
@@ -97,7 +92,6 @@ macro_rules! from {
                                 ErrorKind::from(
                                     "Mime failed to parse.".to_owned()
                                 ))),
-                            core: &gh.core,
                             client: &gh.client,
                         }
                     }
@@ -106,7 +100,6 @@ macro_rules! from {
                             request: Err(u).chain_err(||
                                 "Mime failed to parse."
                             ),
-                            core: &gh.core,
                             client: &gh.client,
                         }
                     }
@@ -125,45 +118,10 @@ macro_rules! new_type {
     ($($i: ident)*) => (
         $(
         pub struct $i<'g> {
-            pub(crate) request: Result<RefCell<Request<Body>>>,
-            pub(crate) core: &'g Rc<RefCell<Core>>,
-            pub(crate) client: &'g Rc<Client<HttpsConnector>>,
+            pub(crate) request: Result<Request<Body>>,
+            pub(crate) client: &'g Client<HttpsConnector>,
         }
         )*
-    );
-}
-
-/// Used to generate an execute function for a terminal type in a query
-/// pipeline. If passed a type it creates the impl as well as it needs
-/// no extra functions. If blank it just creates the function and should be
-/// used this way only inside an impl
-macro_rules! exec {
-    () => (
-        /// Execute the query by sending the built up request
-        /// to GitHub. The value returned is either an error
-        /// or the Status Code and Json after it has been deserialized.
-        /// Please take a look at the GitHub documenation to see what value
-        /// you should receive back for good or bad requests.
-        pub fn execute(self) -> Result<(Headers, StatusCode, Option<Json>)> {
-            let ex: Executor = self.into();
-            ex.execute()
-        }
-    );
-    ($t: ident) => (
-        impl<'g> $t<'g> {
-            /// Execute the query by sending the built up request
-            /// to GitHub. The value returned is either an error
-            /// or the Status Code and Json after it has been deserialized.
-            /// Please take a look at the GitHub documenation to see what value
-            /// you should receive back for good or bad requests.
-            pub fn execute(self) ->
-                Result<(Headers, StatusCode, Option<Json>)> {
-
-                let ex: Executor = self.into();
-                ex.execute()
-
-            }
-        }
     );
 }
 
@@ -188,11 +146,11 @@ macro_rules! impl_macro {
                     if self.request.is_ok() {
                         // We've checked that this works
                         let mut req = self.request.unwrap();
-                        let url = url_join(req.get_mut().uri(), $e)
+                        let url = url_join(req.uri(), $e)
                             .chain_err(|| "Failed to parse Url");
                         match url {
                             Ok(u) => {
-                                req.get_mut().set_uri(u);
+                                req.set_uri(u);
                                 self.request = Ok(req);
                             },
                             Err(e) => {
@@ -208,7 +166,7 @@ macro_rules! impl_macro {
                 /// Json after it has been deserialized. Please take a look at
                 /// the GitHub documenation to see what value you should receive
                 /// back for good or bad requests.
-                pub fn $id3(self) -> Result<(Headers, StatusCode, Option<Json>)>
+                pub fn $id3(self) -> Box<Future<Item=(Headers, StatusCode, Option<Json>), Error=Error>>
                 {
                     let ex: Executor = self.into();
                     ex.execute()
@@ -238,11 +196,11 @@ macro_rules! func_client{
             if self.request.is_ok() {
                 // We've checked that this works
                 let mut req = self.request.unwrap();
-                let url = url_join(req.get_mut().uri(), $e)
+                let url = url_join(req.uri(), $e)
                     .chain_err(|| "Failed to parse Url");
                 match url {
                     Ok(u) => {
-                        req.get_mut().set_uri(u);
+                        req.set_uri(u);
                         self.request = Ok(req);
                     },
                     Err(e) => {
@@ -252,22 +210,5 @@ macro_rules! func_client{
             }
             self.into()
         }
-    );
-}
-
-/// Common imports for every file
-macro_rules! imports{
-    () => (
-        use tokio_core::reactor::Core;
-        use hyper_tls::HttpsConnector;
-        use hyper::client::Client;
-        use hyper::client::Request;
-        use hyper::status::StatusCode;
-        use hyper::{ Body, Headers };
-        use errors::*;
-        use util::url_join;
-        use Json;
-        use std::rc::Rc;
-        use std::cell::RefCell;
     );
 }

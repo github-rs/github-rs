@@ -56,14 +56,17 @@ Now you can start making queries. Here's a small example to get your user
 information:
 
 ```rust
+extern crate tokio_core;
 extern crate github_rs;
+use tokio_core::reactor::Core;
 use github_rs::client::Github;
 
 fn main() {
-    let client = Github::new("API TOKEN");
-    let me = client.get()
-                   .user()
-                   .execute();
+    let mut core = Core::new().unwrap();
+    let client = Github::new("API TOKEN", &core.handle());
+    let me = core.run(client.get()
+                            .user()
+                            .execute());
     match me {
         Ok((headers, status, json)) => {
             println!("{}", headers);

@@ -1,6 +1,8 @@
+extern crate tokio_core;
 extern crate github_rs as gh;
 use gh::client::Github;
 use gh::headers::{ etag, rate_limit_remaining };
+use tokio_core::reactor::Core;
 use std::io::BufReader;
 use std::io::prelude::*;
 use std::fs::File;
@@ -16,13 +18,14 @@ fn auth_token() -> Result<String, std::io::Error> {
 #[test]
 fn get_user_repos() {
     // We want it to fail
-    let g = Github::new(&auth_token().unwrap());
-    let (headers, status, json) = g.get()
-                                   .repos()
-                                   .owner("mgattozzi")
-                                   .repo("github-rs")
-                                   .execute()
-                                   .unwrap();
+    let mut core = Core::new().unwrap();
+    let g = Github::new(&auth_token().unwrap(), &core.handle());
+    let (headers, status, json) = core.run(g.get()
+                                            .repos()
+                                            .owner("mgattozzi")
+                                            .repo("github-rs")
+                                            .execute())
+                                      .unwrap();
     println!("{}", headers);
     println!("{}", status);
     if let Some(json) = json {
@@ -33,34 +36,26 @@ fn get_user_repos() {
 #[test]
 fn cached_response() {
     // We want it to fail
-    let g = Github::new(&auth_token().unwrap());
-    let (headers, _, _) = g.get()
-                           .repos()
-                           .owner("mgattozzi")
-                           .repo("github-rs")
-                           .execute()
-                           .unwrap();
-    let etag = etag(&headers);
+    let mut core = Core::new().unwrap();
+    let g = Github::new(&auth_token().unwrap(), &core.handle());
+    let (headers, _, _) = core.run(g.get()
+                                    .repos()
+                                    .owner("mgattozzi")
+                                    .repo("github-rs")
+                                    .execute())
+                              .unwrap();
+    let etag = etag(&headers).unwrap();
     //let limit = rate_limit_remaining(&headers).unwrap();
     let _ = rate_limit_remaining(&headers).unwrap();
-    let (headers, _, _) = g.get()
-                           .set_etag(etag.unwrap())
-                           .repos()
-                           .owner("mgattozzi")
-                           .repo("github-rs")
-                           .execute()
-                           .unwrap();
+    let (headers, _, _) = core.run(g.get()
+                                    .set_etag(etag)
+                                    .repos()
+                                    .owner("mgattozzi")
+                                    .repo("github-rs")
+                                    .execute())
+                               .unwrap();
     //let limit2 = rate_limit_remaining(&headers).unwrap();
     let _ = rate_limit_remaining(&headers).unwrap();
     // Spurious test case
     //assert_eq!(limit, limit2);
-}
-
-#[test]
-fn core_exposure() {
-    let g = Github::new(&auth_token().unwrap());
-    // Can we get the core for users to have?
-    let core = g.get_core();
-    let core_mut = core.try_borrow_mut().unwrap();
-    let _ = core_mut.handle();
 }
