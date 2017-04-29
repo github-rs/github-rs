@@ -1,5 +1,5 @@
 //! Access the Repos portion of the GitHub API
-imports!();
+use imports::*;
 use client::{GetQueryBuilder, Executor};
 
 new_type!(

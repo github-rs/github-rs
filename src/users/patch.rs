@@ -1,5 +1,5 @@
 //! Access the Users portion of the GitHub API
-imports!();
+use imports::*;
 use client::{ PatchQueryBuilder, Executor };
 
 new_type!(

@@ -254,20 +254,3 @@ macro_rules! func_client{
         }
     );
 }
-
-/// Common imports for every file
-macro_rules! imports{
-    () => (
-        use tokio_core::reactor::Core;
-        use hyper_tls::HttpsConnector;
-        use hyper::client::Client;
-        use hyper::client::Request;
-        use hyper::status::StatusCode;
-        use hyper::{ Body, Headers };
-        use errors::*;
-        use util::url_join;
-        use Json;
-        use std::rc::Rc;
-        use std::cell::RefCell;
-    );
-}

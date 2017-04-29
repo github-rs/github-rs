@@ -1,5 +1,5 @@
 //! Access the Users portion of the GitHub API
-imports!();
+use imports::*;
 use client::{ DeleteQueryBuilder, Executor };
 
 new_type!(
