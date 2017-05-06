@@ -63,7 +63,7 @@ fn main() {
     let client = Github::new("API TOKEN");
     let me = client.get()
                    .user()
-                   .execute();
+                   .execute();
     match me {
         Ok((headers, status, json)) => {
             println!("{}", headers);
@@ -79,7 +79,7 @@ fn main() {
 
 ## Hacking on the Library
 - [GitHub API Reference Docs](https://developer.github.com/v3/)
-- See the [design docs](./docs/design) for more information.
+- See the [design docs](./docs/design.md) for more information.
 
 ## Contributing
 See [CONTRIBUTING.md](CONTRIBUTING.md) for more information.
