@@ -59,11 +59,12 @@ macro_rules! from {
             fn from(gh: &'g Github) -> Self {
                 use std::result;
                 use errors;
+                use hyper::mime::FromStrError;
                 let url = "https://api.github.com".parse::<Uri>()
                     .chain_err(||
                         "Url failed to parse"
                     );
-                let mime: result::Result<Mime, ()> =
+                let mime: result::Result<Mime, FromStrError> =
                     "application/vnd.github.v3+json".parse();
                 match (url, mime) {
                     (Ok(u), Ok(m)) => {
@@ -89,22 +90,22 @@ macro_rules! from {
                             client: &gh.client,
                         }
                     }
-                    (Ok(_), Err(_)) => {
+                    (Ok(_), Err(e)) => {
                         Self {
                             // Forgive me father for I have sinned and
                             // abused the error handling
                             request: Err(errors::Error::from_kind(
                                 ErrorKind::from(
-                                    "Mime failed to parse.".to_owned()
+                                    format!("Mime failed to parse: {:?}", e)
                                 ))),
                             core: &gh.core,
                             client: &gh.client,
                         }
                     }
-                    (Err(u), Err(_)) => {
+                    (Err(u), Err(e)) => {
                         Self {
                             request: Err(u).chain_err(||
-                                "Mime failed to parse."
+                                format!("Mime failed to parse: {:?}", e)
                             ),
                             core: &gh.core,
                             client: &gh.client,
