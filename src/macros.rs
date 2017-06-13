@@ -263,7 +263,7 @@ macro_rules! imports{
         use hyper_tls::HttpsConnector;
         use hyper::client::Client;
         use hyper::client::Request;
-        use hyper::status::StatusCode;
+        use hyper::StatusCode;
         use hyper::{ Body, Headers };
         use errors::*;
         use util::url_join;

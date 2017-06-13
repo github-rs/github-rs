@@ -9,7 +9,7 @@ use hyper::client::{ Client, Request };
 use hyper::header::{ Authorization, Accept, ContentType,
                      ETag, IfNoneMatch, UserAgent, qitem };
 use hyper::mime::Mime;
-use hyper::status::StatusCode;
+use hyper::StatusCode;
 use hyper_tls::HttpsConnector;
 
 // Serde Imports
