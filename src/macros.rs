@@ -57,14 +57,12 @@ macro_rules! from {
         $(
         impl <'g> From<&'g Github> for $t<'g> {
             fn from(gh: &'g Github) -> Self {
-                use std::result;
                 use errors;
                 let url = "https://api.github.com".parse::<Uri>()
                     .chain_err(||
                         "Url failed to parse"
                     );
-                let mime: result::Result<Mime, ()> =
-                    "application/vnd.github.v3+json".parse();
+                let mime = "application/vnd.github.v3+json".parse();
                 match (url, mime) {
                     (Ok(u), Ok(m)) => {
                         let mut req = Request::new($p, u);
