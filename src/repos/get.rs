@@ -6,6 +6,8 @@ new_type!(
     Assignees
     Branches
     Collaborators
+    CollaboratorsUsername
+    CollaboratorsUsernamePermission
     CommitsSha
     CommitsComments
     CommitsStatus
@@ -31,6 +33,12 @@ from!(
     @Branches
        => Executor
     @Collaborators
+       => CollaboratorsUsername
+       => Executor
+    @CollaboratorsUsername
+       => Executor
+       -> CollaboratorsUsernamePermission = "permission"
+    @CollaboratorsUsernamePermission
        => Executor
     @CommitsSha
        -> CommitsComments = "comments"
@@ -114,6 +122,14 @@ impl_macro!(
         |
         |-> execute
     @Collaborators
+        |
+        |=> username -> CollaboratorsUsername = username
+        |-> execute
+    @CollaboratorsUsername
+        |=> permission -> CollaboratorsUsernamePermission
+        |
+        |-> execute
+    @CollaboratorsUsernamePermission
         |
         |-> execute
     @CommitsSha

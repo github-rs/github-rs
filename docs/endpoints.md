@@ -53,8 +53,8 @@ GitHub V3 API
 - [ ] /repos/:owner/:repo/branches/:branch/required_status_checks
 - [ ] /repos/:owner/:repo/branches/:branch/required_status_checks/contexts
 - [X] /repos/:owner/:repo/collaborators
-- [ ] /repos/:owner/:repo/collaborators/:username
-- [ ] /repos/:owner/:repo/collaborators/:username/permission
+- [X] /repos/:owner/:repo/collaborators/:username
+- [X] /repos/:owner/:repo/collaborators/:username/permission
 - [ ] /repos/:owner/:repo/comments
 - [ ] /repos/:owner/:repo/comments/:id
 - [X] /repos/:owner/:repo/commits
