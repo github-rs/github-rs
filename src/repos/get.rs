@@ -59,11 +59,9 @@ from!(
        -> IssuesComments = "comments"
     @Issues
        => IssuesNumber
-    @Issues
        => Executor
     @IssuesComments
        => IssuesCommentsId
-    @IssuesComments
        => Executor
     @IssuesCommentsId
        => Executor
@@ -164,17 +162,13 @@ impl_macro!(
         |-> execute
 
     @Issues
-        |
-        |=> number -> IssuesNumber = issue_number
-    @Issues
         |=> comments -> IssuesComments
         |
+        |=> number -> IssuesNumber = issue_number
         |-> execute
     @IssuesComments
         |
         |=> id -> IssuesCommentsId = comment_id
-    @IssuesComments
-        |
         |-> execute
     @IssuesCommentsId
         |
