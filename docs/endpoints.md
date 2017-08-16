@@ -82,14 +82,14 @@ GitHub V3 API
 - [ ] /repos/:owner/:repo/git/trees/:sha
 - [ ] /repos/:owner/:repo/hooks
 - [ ] /repos/:owner/:repo/hooks/:id
-- [ ] /repos/:owner/:repo/issues
-- [ ] /repos/:owner/:repo/issues/comments
-- [ ] /repos/:owner/:repo/issues/comments/:id
+- [X] /repos/:owner/:repo/issues
+- [X] /repos/:owner/:repo/issues/comments
+- [X] /repos/:owner/:repo/issues/comments/:id
 - [ ] /repos/:owner/:repo/issues/events
 - [ ] /repos/:owner/:repo/issues/events/:id
 - [ ] /repos/:owner/:repo/issues/issue_number/events
-- [ ] /repos/:owner/:repo/issues/:number
-- [ ] /repos/:owner/:repo/issues/:number/comments
+- [X] /repos/:owner/:repo/issues/:number
+- [X] /repos/:owner/:repo/issues/:number/comments
 - [ ] /repos/:owner/:repo/issues/:number/labels
 - [ ] /repos/:owner/:repo/keys
 - [ ] /repos/:owner/:repo/keys/:id
