@@ -127,8 +127,8 @@ macro_rules! new_type {
         $(
         pub struct $i<'g> {
             pub(crate) request: Result<RefCell<Request<Body>>>,
-            pub(crate) core: &'g Rc<RefCell<Core>>,
-            pub(crate) client: &'g Rc<Client<HttpsConnector>>,
+            pub(crate) core: &'g Arc<RwLock<Core>>,
+            pub(crate) client: &'g Arc<Client<HttpsConnector>>,
         }
         )*
     );
@@ -268,7 +268,7 @@ macro_rules! imports{
         use errors::*;
         use util::url_join;
         use Json;
-        use std::rc::Rc;
         use std::cell::RefCell;
+        use std::sync::{Arc, RwLock};
     );
 }
