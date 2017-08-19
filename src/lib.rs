@@ -9,17 +9,19 @@
 #[macro_use]
 extern crate error_chain;
 extern crate hyper;
-extern crate hyper_rustls;
-extern crate futures;
-extern crate tokio_core;
+extern crate reqwest;
 extern crate serde;
 extern crate serde_json;
 
 #[macro_use] mod macros;
-mod util;
 
 pub mod errors {
-    error_chain!{}
+    error_chain!{
+        foreign_links {
+            Reqwest(::reqwest::Error)
+                #[doc = "An error from the reqwest crate."];
+        }
+    }
 }
 pub mod client;
 pub mod gists;

@@ -58,12 +58,3 @@ fn cached_response() {
     // Spurious test case
     //assert_eq!(limit, limit2);
 }
-
-#[test]
-fn core_exposure() {
-    let g = Github::new(&auth_token().unwrap()).unwrap();
-    // Can we get the core for users to have?
-    let core = g.get_core();
-    let core_mut = core.try_borrow_mut().unwrap();
-    let _ = core_mut.handle();
-}
