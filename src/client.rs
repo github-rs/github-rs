@@ -13,6 +13,7 @@ use hyper::StatusCode;
 use hyper_rustls::HttpsConnector;
 
 // Serde Imports
+use serde::de::DeserializeOwned;
 use serde::Serialize;
 use serde_json;
 
@@ -380,7 +381,8 @@ exec!(CustomQuery);
 
 impl <'g> Executor<'g> {
 
-    pub fn execute(self) -> Result<(Headers, StatusCode, Option<Json>)> {
+    pub fn execute<T>(self) -> Result<(Headers, StatusCode, Option<T>)>
+        where T: DeserializeOwned {
         let mut core_ref = self.core
                             .try_borrow_mut()
                             .chain_err(|| "Unable to get mutable borrow \
