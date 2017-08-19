@@ -71,14 +71,14 @@ impl Github {
     /// an &str (`String` or `Vec<u8>` for example). As long as the function is
     /// given a valid API Token your requests will work.
     pub fn new<T>(token: T) -> Result<Self>
-        where T: AsRef<str> {
+        where T: ToString {
         let core = Core::new().chain_err(|| "Unable to build a new Core")?;
         let handle = core.handle();
         let client = Client::configure()
             .connector(HttpsConnector::new(4,&handle))
             .build(&handle);
         Ok(Self {
-            token: token.as_ref().into(),
+            token: token.to_string(),
             core: Rc::new(RefCell::new(core)),
             client: Rc::new(client),
         })
@@ -92,8 +92,8 @@ impl Github {
     /// Change the currently set Authorization Token using a type that can turn
     /// into an &str. Must be a valid API Token for requests to work.
     pub fn set_token<T>(&mut self, token: T)
-        where T: AsRef<str> {
-        self.token = token.as_ref().into();
+        where T: ToString {
+        self.token = token.to_string();
     }
 
     /// Exposes the inner event loop for those who need
