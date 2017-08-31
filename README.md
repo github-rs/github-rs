@@ -52,7 +52,7 @@ github-rs = "0.5"
 Then in your `lib.rs` or `main.rs` file add:
 
 ```rust
-extern crate github_rs
+extern crate github_rs;
 use github_rs::client::Github;
 ```
 
@@ -64,7 +64,7 @@ extern crate github_rs;
 use github_rs::client::Github;
 
 fn main() {
-    let client = Github::new("API TOKEN");
+    let client = Github::new("API TOKEN").unwrap();
     let me = client.get()
                    .user()
                    .execute();
