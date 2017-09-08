@@ -398,17 +398,18 @@ impl <'g> Executor<'g> {
                             ok::<_, Error>(v)
                         }).map(move |chunks| {
                             if chunks.is_empty() {
-                                (header, status, None)
+                                Ok((header, status, None))
                             } else {
-                                (
+                                Ok((
                                   header,
                                   status,
-                                  Some(serde_json::from_slice(&chunks).unwrap())
-                                )
+                                  Some(serde_json::from_slice(&chunks)
+                                       .chain_err(|| "Failed to parse response body")?)
+                                ))
                             }
                         })
                     });
-        core_ref.run(work).chain_err(|| "Failed to execute request")
+        core_ref.run(work).chain_err(|| "Failed to execute request")?
     }
 
 }
