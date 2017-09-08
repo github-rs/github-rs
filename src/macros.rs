@@ -145,7 +145,8 @@ macro_rules! exec {
         /// or the Status Code and Json after it has been deserialized.
         /// Please take a look at the GitHub documenation to see what value
         /// you should receive back for good or bad requests.
-        pub fn execute(self) -> Result<(Headers, StatusCode, Option<Json>)> {
+        pub fn execute<T>(self) -> Result<(Headers, StatusCode, Option<T>)>
+        where T: DeserializeOwned {
             let ex: Executor = self.into();
             ex.execute()
         }
@@ -157,8 +158,9 @@ macro_rules! exec {
             /// or the Status Code and Json after it has been deserialized.
             /// Please take a look at the GitHub documenation to see what value
             /// you should receive back for good or bad requests.
-            pub fn execute(self) ->
-                Result<(Headers, StatusCode, Option<Json>)> {
+            pub fn execute<T>(self) ->
+                Result<(Headers, StatusCode, Option<T>)>
+            where T: DeserializeOwned {
 
                 let ex: Executor = self.into();
                 ex.execute()
@@ -209,8 +211,8 @@ macro_rules! impl_macro {
                 /// Json after it has been deserialized. Please take a look at
                 /// the GitHub documenation to see what value you should receive
                 /// back for good or bad requests.
-                pub fn $id3(self) -> Result<(Headers, StatusCode, Option<Json>)>
-                {
+                pub fn $id3<T>(self) -> Result<(Headers, StatusCode, Option<T>)>
+                where T: DeserializeOwned {
                     let ex: Executor = self.into();
                     ex.execute()
                 }
@@ -267,7 +269,7 @@ macro_rules! imports{
         use hyper::{ Body, Headers };
         use errors::*;
         use util::url_join;
-        use Json;
+        use serde::de::DeserializeOwned;
         use std::rc::Rc;
         use std::cell::RefCell;
     );

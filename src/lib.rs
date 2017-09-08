@@ -32,5 +32,3 @@ pub mod repos;
 pub mod search;
 pub mod teams;
 pub mod users;
-
-pub type Json = serde_json::Value;

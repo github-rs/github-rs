@@ -23,7 +23,6 @@ use misc;
 use repos;
 use errors::*;
 use util::url_join;
-use Json;
 
 use std::rc::Rc;
 use std::cell::RefCell;
