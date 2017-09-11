@@ -1,5 +1,5 @@
 /// Automatically generate From impls for types given using a small DSL like
-/// macrot
+/// macro.
 macro_rules! from {
     ($(@$f: ident $( => $t: ident )* $( -> $i: ident = $e: expr )*)*) => (
         $($(
@@ -21,7 +21,11 @@ macro_rules! from {
                 if f.request.is_ok() {
                     // We've checked that this works
                     let mut req = f.request.unwrap();
-                    let url = req.url().join($e)
+                    // We don't use `url.join` here because it uses a trailing slash as an
+                    // indicator, but some endpoints are both a "file" and "directory", so we can't
+                    // just add a trailing slash everywhere.
+                    use reqwest::Url;
+                    let url = Url::parse(&format!("{}/{}", req.url().as_str(), $e))
                         .chain_err(|| "Failed to parse Url");
                     match url {
                         Ok(u) => {
@@ -180,13 +184,13 @@ macro_rules! impl_macro {
                     // time I'd do is_ok(). Essentially this allows us
                     // to either pass the error message along or update
                     // the url
-                    use reqwest::Url;
                     if self.request.is_ok() {
                         // We've checked that this works
                         let mut req = self.request.unwrap();
                         // We don't use `url.join` here because it uses a trailing slash as an
-                        // indicator, but some endpoints are both an "file" and "directory", so we
+                        // indicator, but some endpoints are both a "file" and "directory", so we
                         // can't just add a trailing slash everywhere.
+                        use reqwest::Url;
                         let url = Url::parse(&format!("{}/{}", req.url().as_str(), $e))
                             .chain_err(|| "Failed to parse Url");
                         match url {
