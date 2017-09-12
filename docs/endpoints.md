@@ -67,7 +67,7 @@ GitHub V3 API
 - [X] /repos/:owner/:repo/commits/:sha/status
 - [X] /repos/:owner/:repo/commits/:sha/statuses
 - [ ] /repos/:owner/:repo/compare/:base...:head
-- [ ] /repos/:owner/:repo/contents/:path
+- [X] /repos/:owner/:repo/contents/:path
 - [ ] /repos/:owner/:repo/contributors
 - [ ] /repos/:owner/:repo/deployments
 - [ ] /repos/:owner/:repo/deployments/:deployment_id

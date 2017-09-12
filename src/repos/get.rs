@@ -13,6 +13,9 @@ new_type!(
     CommitsStatus
     CommitsStatuses
     Commits
+    Contents
+    ContentsPath
+    ContentsReference
     Issues
     IssuesComments
     IssuesCommentsId
@@ -63,6 +66,15 @@ from!(
        => CommitsSha
     @Commits
        => Executor
+
+    @Contents
+       => ContentsPath
+    @ContentsPath
+       ?> ContentsReference = "ref"
+       => Executor
+    @ContentsReference
+       => Executor
+
     @Issues
        -> IssuesComments = "comments"
     @Issues
@@ -91,6 +103,8 @@ from!(
        -> Collaborators = "collaborators"
     @Repo
        -> Commits = "commits"
+    @Repo
+       -> Contents = "contents"
     @Repo
        -> Pulls = "pulls"
        -> Issues = "issues"
@@ -177,6 +191,17 @@ impl_macro!(
         |
         |-> execute
 
+    @Contents
+        |
+        |=> path -> ContentsPath = path_str
+    @ContentsPath
+        |
+        |?> reference -> ContentsReference = ref_str
+        |-> execute
+    @ContentsReference
+        |
+        |-> execute
+
     @Issues
         |=> comments -> IssuesComments
         |
@@ -205,6 +230,7 @@ impl_macro!(
         |=> branches ->  Branches
         |=> collaborators ->  Collaborators
         |=> commits -> Commits
+        |=> contents -> Contents
         |=> pulls -> Pulls
         |=> issues -> Issues
         |
