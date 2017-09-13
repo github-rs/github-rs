@@ -94,36 +94,58 @@ macros you need to understand, how to use them, and what they do:
   pub struct User<'a> {
       pub(crate) request: Result<Request<Body>>,
       pub(crate) core: &'a mut Core,
+      pub(crate) client: &'g Rc<Client<HttpsConnector>>,
+      pub(crate) parameter: Option<String>,
   }
   ```
 
   It contains a value request which is the current value of the request and core
   which contains a mutable reference to a Tokio Core type which is used to run
-  the request when it's ready. Note you'll need to use 'a as a lifetime for any
-  `impl` of the new type you need to implement manually.
+  the request when it's ready. It also contains an optional parameter which can
+  be used to specify GET/POST parameters. Note you'll need to use 'a as a
+  lifetime for any `impl` of the new type you need to implement manually.
+
 - `from!` is used to create an implementation of `From` of a type you specify to
   another type. It's needed every time you want one type to turn into another.
   This is needed for the `func!` macro. If you forget to do this it will not
-  work. It can be used in two different ways:
+  work. It can be used in three different ways:
 
   ```rust
-  from!(TypeA, TypeB);            //<-- Create a From implementation from A to B
-  from!(TypeA, TypeB, "url_val"); //<-- Create a From implementation from A to
-                                  //    B that adds the string value passed in
-                                  //    the third position to the Url
+  from!(
+      @TypeA                      //<-- Create a From implementation from A to B
+        ?> TypeB = "param"        //    which includes a GET/POST parameter
+  );                              //    named 'param'
+  from!(
+      @TypeA                      //<-- Create a From implementation from A to B
+        => TypeB
+  );
+  from!(
+      @TypeA                      //<-- Create a From implementation from A to B
+        -> TypeB = "path"         //    which appends a path to the constructed
+  );                              //    URL
   ```
 
-- `func!` use this for implementations of types that can still change into
-  others. It can be used in two ways:
+- `impl_macro!` is used to create functions on types created by the `new_type!`
+  macro. This is used to implement the functions used when contructing a
+  request. It can be used in four different ways:
 
   ```rust
-  func!(TypeA, TypeB);            //<-- Create a function turning A into B
-  func!(TypeA, TypeB, parameter); //<-- Create a fucntion turning A into B
-                                  //    that uses the parameter name from the
-                                  //    third positon as the name of the
-                                  //    argument in the docs. This is used
-                                  //    for parts of a url that take a value
-                                  //    such as someone's username or repo name
+  impl_macro!(                     //<-- Create a function 'func' which, when
+      @TypeA                       //    called, returns a B
+        |=> func -> TypeB
+  );
+  impl_macro!(                     //<-- Create a function 'func' which, when
+      @TypeA                       //    called, returns a B with 'path' added
+        |=> func -> TypeB = path   //    to the request URL. 'path' is the name
+  );                               //    of the variable is for documentation
+  impl_macro!(                     //<-- Create a function 'func' which, when
+      @TypeA                       //    called, returns a B with a GET/POST
+        |?> func -> TypeB = param  //    parameter. 'param' is the name of the
+  );                               //    variable and is for documentation
+  impl_macro!(                     //<-- Create a function 'func' which executes
+      @TypeA                       //    the request. 'func' is always named
+        |-> func                   //    named "execute" for clarity
+  );
   ```
 
 - `exec!`
