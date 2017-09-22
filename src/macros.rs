@@ -19,6 +19,8 @@ macro_rules! from {
         )*$(
         impl <'g> From<$f<'g>> for $i1<'g> {
             fn from(mut f: $f<'g>) -> Self {
+                use std::str::FromStr;
+
                 // This is borrow checking abuse and about the only
                 // time I'd do is_ok(). Essentially this allows us
                 // to either pass the error message along or update
@@ -35,7 +37,7 @@ macro_rules! from {
                                     .uri()
                                     .query()
                                     .is_some() { "&" } else { "?" };
-                            Uri::from_str(
+                            hyper::Uri::from_str(
                                 &format!("{}{}{}={}",
                                     req.get_mut().uri(),
                                     sep,
@@ -134,7 +136,7 @@ macro_rules! from {
                         let mut req = Request::new($p, u);
                         let token = String::from("token ") + &gh.token;
                         {
-                            let mut headers = req.headers_mut();
+                            let headers = req.headers_mut();
                             headers.set(ContentType::json());
                             headers.set(UserAgent::new(String::from("github-rs")));
                             headers.set(Accept(vec![qitem(m)]));
@@ -339,7 +341,7 @@ macro_rules! imports{
         use hyper::client::Client;
         use hyper::client::Request;
         use hyper::StatusCode;
-        use hyper::{ self, Body, Headers, Uri };
+        use hyper::{ self, Body, Headers };
         use errors::*;
         use futures::{ Future, Stream };
         use futures::future::ok;
@@ -348,7 +350,6 @@ macro_rules! imports{
         use serde_json;
         use std::rc::Rc;
         use std::cell::RefCell;
-        use std::str::FromStr;
 
         use $crate::client::Executor;
     );
