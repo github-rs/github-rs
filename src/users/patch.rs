@@ -1,6 +1,6 @@
 //! Access the Users portion of the GitHub API
 imports!();
-use client::{ PatchQueryBuilder, Executor };
+use client::PatchQueryBuilder;
 
 new_type!(
     User
@@ -15,8 +15,6 @@ from!(
         -> Email = "email"
     @Email
         -> Visibility = "visibility"
-    @Visibility
-        => Executor
 );
 
 impl_macro!(
@@ -26,7 +24,6 @@ impl_macro!(
     @Email
         |=> visibility -> Visibility
         |
-    @Visibility
-        |
-        |-> execute
 );
+
+exec!(Visibility);

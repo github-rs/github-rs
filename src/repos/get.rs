@@ -1,6 +1,6 @@
 //! Access the Repos portion of the GitHub API
 imports!();
-use client::{GetQueryBuilder, Executor};
+use client::GetQueryBuilder;
 
 new_type!(
     Assignees
@@ -36,61 +36,32 @@ new_type!(
 );
 
 from!(
-    @Assignees
-       => Executor
-    @Branches
-       => Executor
     @Collaborators
        => CollaboratorsUsername
-       => Executor
     @CollaboratorsUsername
-       => Executor
        -> CollaboratorsUsernamePermission = "permission"
-    @CollaboratorsUsernamePermission
-       => Executor
     @CommitsSha
        -> CommitsComments = "comments"
     @CommitsSha
        -> CommitsStatus = "status"
     @CommitsSha
        -> CommitsStatuses = "statuses"
-    @CommitsSha
-       => Executor
-    @CommitsComments
-       => Executor
-    @CommitsStatus
-       => Executor
-    @CommitsStatuses
-       => Executor
     @Commits
        => CommitsSha
-    @Commits
-       => Executor
 
     @Contents
        => ContentsPath
     @ContentsPath
        ?> ContentsReference = "ref"
-       => Executor
-    @ContentsReference
-       => Executor
 
     @Issues
        -> IssuesComments = "comments"
     @Issues
        => IssuesNumber
-       => Executor
     @IssuesComments
        => IssuesCommentsId
-       => Executor
-    @IssuesCommentsId
-       => Executor
     @IssuesNumber
        -> IssuesNumberComments = "comments"
-    @IssuesNumber
-       => Executor
-    @IssuesNumberComments
-       => Executor
     @GetQueryBuilder
        -> Repos = "repos"
     @Owner
@@ -108,120 +79,58 @@ from!(
     @Repo
        -> Pulls = "pulls"
        -> Issues = "issues"
-    @Repo
-       => Executor
     @Repos
        => Owner
 
     @Pulls
-       => Executor
-    @Pulls
        -> PullsComments = "comments"
     @PullsComments
-       => Executor
-    @PullsComments
        => PullsCommentsId
-    @PullsCommentsId
-       => Executor
     @Pulls
        => PullsNumber
     @PullsNumber
-       => Executor
-    @PullsNumber
        -> PullsNumberComments = "comments"
-    @PullsNumberComments
-       => Executor
     @PullsNumber
        -> PullsNumberCommits = "commits"
-    @PullsNumberCommits
-       => Executor
     @PullsNumber
        -> PullsNumberFiles = "files"
-    @PullsNumberFiles
-       => Executor
     @PullsNumber
        -> PullsNumberRequestedReviewers = "requested_reviewers"
-    @PullsNumberRequestedReviewers
-       => Executor
     @PullsNumber
        -> PullsNumberMerge = "merge"
-    @PullsNumberMerge
-       => Executor
-
 );
 
 impl_macro!(
-    @Assignees
-        |
-        |-> execute
-    @Branches
-        |
-        |-> execute
     @Collaborators
         |
         |=> username -> CollaboratorsUsername = username
-        |-> execute
     @CollaboratorsUsername
         |=> permission -> CollaboratorsUsernamePermission
         |
-        |-> execute
-    @CollaboratorsUsernamePermission
-        |
-        |-> execute
     @CommitsSha
         |=> comments -> CommitsComments
         |=> status -> CommitsStatus
         |=> statuses -> CommitsStatuses
         |
-        |-> execute
-    @CommitsComments
-        |
-        |-> execute
-    @CommitsStatus
-        |
-        |-> execute
-    @CommitsStatuses
-        |
-        |-> execute
-
     @Commits
         |
         |=> sha -> CommitsSha = sha_str
-    @Commits
-        |
-        |-> execute
-
     @Contents
         |
         |=> path -> ContentsPath = path_str
     @ContentsPath
         |
         |?> reference -> ContentsReference = ref_str
-        |-> execute
-    @ContentsReference
-        |
-        |-> execute
-
     @Issues
         |=> comments -> IssuesComments
         |
         |=> number -> IssuesNumber = issue_number
-        |-> execute
     @IssuesComments
         |
         |=> id -> IssuesCommentsId = comment_id
-        |-> execute
-    @IssuesCommentsId
-        |
-        |-> execute
     @IssuesNumber
         |=> comments -> IssuesNumberComments
         |
-        |-> execute
-    @IssuesNumberComments
-        |
-        |-> execute
-
     @Owner
         |
         |=> repo -> Repo = repo_str
@@ -234,29 +143,18 @@ impl_macro!(
         |=> pulls -> Pulls
         |=> issues -> Issues
         |
-        |-> execute
-
     @Repos
         |
         |=> owner ->  Owner = username_str
-
     @Pulls
         |=> comments -> PullsComments
         |
-        |-> execute
     @Pulls
         |
         |=> number -> PullsNumber = number_str
-
     @PullsComments
         |
         |=> id -> PullsCommentsId = id_str
-    @PullsComments
-        |
-        |-> execute
-    @PullsCommentsId
-        |
-        |-> execute
     @PullsNumber
         |=> comments -> PullsNumberComments
         |=> commits -> PullsNumberCommits
@@ -264,20 +162,32 @@ impl_macro!(
         |=> requested_reviewers -> PullsNumberRequestedReviewers
         |=> merge -> PullsNumberMerge
         |
-        |-> execute
-    @PullsNumberComments
-        |
-        |-> execute
-    @PullsNumberCommits
-        |
-        |-> execute
-    @PullsNumberFiles
-        |
-        |-> execute
-    @PullsNumberRequestedReviewers
-        |
-        |-> execute
-    @PullsNumberMerge
-        |
-        |-> execute
 );
+
+exec!(Assignees);
+exec!(Branches);
+exec!(Collaborators);
+exec!(CollaboratorsUsername);
+exec!(CollaboratorsUsernamePermission);
+exec!(Commits);
+exec!(CommitsSha);
+exec!(CommitsComments);
+exec!(CommitsStatus);
+exec!(CommitsStatuses);
+exec!(ContentsPath);
+exec!(ContentsReference);
+exec!(Issues);
+exec!(IssuesComments);
+exec!(IssuesCommentsId);
+exec!(IssuesNumber);
+exec!(IssuesNumberComments);
+exec!(Repo);
+exec!(Pulls);
+exec!(PullsComments);
+exec!(PullsCommentsId);
+exec!(PullsNumber);
+exec!(PullsNumberComments);
+exec!(PullsNumberCommits);
+exec!(PullsNumberFiles);
+exec!(PullsNumberRequestedReviewers);
+exec!(PullsNumberMerge);

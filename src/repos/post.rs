@@ -1,6 +1,6 @@
 //! Access the Repos portion of the GitHub API
 imports!();
-use client::{PostQueryBuilder, Executor};
+use client::PostQueryBuilder;
 
 new_type!(
     Sha
@@ -11,8 +11,6 @@ new_type!(
 );
 
 from!(
-    @Sha
-        => Executor
     @PostQueryBuilder
         -> Repos = "repos"
     @Repos
@@ -26,9 +24,6 @@ from!(
 );
 
 impl_macro!(
-    @Sha
-        |
-        |-> execute
     @Repos
         |
         |=> owner ->  Owner = username_str
@@ -42,3 +37,5 @@ impl_macro!(
         |
         |=> sha -> Sha = sha_str
 );
+
+exec!(Sha);

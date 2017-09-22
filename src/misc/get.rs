@@ -1,6 +1,6 @@
 //! Access the Misc portion of the GitHub API
 imports!();
-use client::{GetQueryBuilder, Executor};
+use client::GetQueryBuilder;
 
 new_type!(
     Emojis
@@ -17,32 +17,10 @@ from!(
        -> Feeds = "feeds"
        -> Meta = "meta"
        -> RateLimit = "rate_limit"
-    @Emojis
-       => Executor
-    @Events
-       => Executor
-    @Feeds
-       => Executor
-    @Meta
-       => Executor
-    @RateLimit
-       => Executor
 );
 
-impl_macro!(
-    @Emojis
-        |
-        |-> execute
-    @Events
-        |
-        |-> execute
-    @Feeds
-        |
-        |-> execute
-    @Meta
-        |
-        |-> execute
-    @RateLimit
-        |
-        |-> execute
-);
+exec!(Emojis);
+exec!(Events);
+exec!(Feeds);
+exec!(Meta);
+exec!(RateLimit);

@@ -1,6 +1,6 @@
 //! Access the Users portion of the GitHub API
 imports!();
-use client::{ PutQueryBuilder, Executor };
+use client::PutQueryBuilder;
 
 new_type!(
     User
@@ -15,8 +15,6 @@ from!(
         -> Following = "following"
     @Following
         => Username
-    @Username
-        => Executor
 );
 
 impl_macro!(
@@ -26,7 +24,6 @@ impl_macro!(
     @Following
         |
         |=> username -> Username = username_str
-    @Username
-        |
-        |-> execute
 );
+
+exec!(Username);

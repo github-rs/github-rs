@@ -1,6 +1,6 @@
 //! Access the Users portion of the GitHub API
 imports!();
-use client::{GetQueryBuilder, Executor};
+use client::GetQueryBuilder;
 
 // Declaration of types representing the various items under users
 new_type!(
@@ -37,50 +37,20 @@ from!(
     @GetQueryBuilder
         -> User  = "user"
         -> Users = "users"
-    @Emails
-        => Executor
     @Events
-        => Executor
         -> EventsOrgs = "orgs"
         -> Public =  "public"
     @EventsOrgs
         => EventsOrgsName
-        => Executor
-    @EventsOrgsName
-        => Executor
-    @Followers
-        => Executor
     @Following
         => FollowingUser
-        => Executor
-    @FollowingUser
-        => Executor
-    @Gists
-        => Executor
-    @Issues
-        => Executor
     @Keys
         => KeysId
-        => Executor
-    @KeysId
-        => Executor
-    @Orgs
-        => Executor
-    @Public
-        => Executor
-    @ReceivedEvents
-        => Executor
-    @Subscriptions
-        => Executor
     @Starred
-        => Executor
         => StarredOwner
     @StarredOwner
         => StarredRepo
-    @StarredRepo
-        => Executor
     @User
-        => Executor
         -> Emails = "emails"
         -> Followers = "followers"
         -> Following = "following"
@@ -91,22 +61,13 @@ from!(
         -> Subscriptions = "subscriptions"
         -> Starred = "starred"
     @Users
-        => Executor
         => UsersUsername
-    @UsersOrgs
-        => Executor
-    @UsersKeys
-        => Executor
-    @UsersStarred
-        => Executor
     @UserUsername
-        => Executor
         -> Followers = "followers"
         -> Following = "following"
         -> UsersKeys = "keys"
         -> Repos = "repos"
     @UsersUsername
-        => Executor
         -> Followers = "followers"
         -> Following = "following"
         -> Events = "events"
@@ -117,8 +78,6 @@ from!(
         -> Subscriptions = "subscriptions"
         -> UsersStarred = "starred"
         -> ReceivedEvents = "received_events"
-    @Repos
-        => Executor
 );
 
 // impls of each type
@@ -126,7 +85,6 @@ impl_macro!(
     @Starred
         |
         |=> owner -> StarredOwner = owner_str
-        |-> execute
     @StarredOwner
         |
         |=> repo -> StarredRepo = repo_str
@@ -141,18 +99,15 @@ impl_macro!(
         |=> keys -> Keys
         |=> orgs -> Orgs
         |
-        |-> execute
     @Users
         |
         |=> username -> UsersUsername = username_str
-        |-> execute
     @UserUsername
         |=> followers -> Followers
         |=> following -> Following
         |=> keys -> UsersKeys
         |=> repos -> Repos
         |
-        |-> execute
     @UsersUsername
         |=> events -> Events
         |=> followers -> Followers
@@ -165,69 +120,42 @@ impl_macro!(
         |=> starred -> UsersStarred
         |=> subscriptions -> Subscriptions
         |
-        |-> execute
     @Events
         |=> orgs -> EventsOrgs
         |=> public -> Public
         |
-        |-> execute
     @EventsOrgs
         |
         |=> org -> EventsOrgsName = org_name_str
     @Keys
         |
         |=> id -> KeysId = id_str
-        |-> execute
     @Following
         |
         |=> username -> Following = username_str
-        |-> execute
-    @ReceivedEvents
-        |
-        |-> execute
-    @UsersKeys
-        |
-        |-> execute
-    @Emails
-        |
-        |-> execute
-    @EventsOrgsName
-        |
-        |-> execute
-    @FollowingUser
-        |
-        |-> execute
-    @Gists
-        |
-        |-> execute
-    @Issues
-        |
-        |-> execute
-    @KeysId
-        |
-        |-> execute
-    @Followers
-        |
-        |-> execute
-    @Repos
-        |
-        |-> execute
-    @Subscriptions
-        |
-        |-> execute
-    @StarredRepo
-        |
-        |-> execute
-    @Orgs
-        |
-        |-> execute
-    @Public
-        |
-        |-> execute
-    @UsersOrgs
-        |
-        |-> execute
-    @UsersStarred
-        |
-        |-> execute
 );
+
+exec!(Emails);
+exec!(Events);
+exec!(EventsOrgsName);
+exec!(Followers);
+exec!(Following);
+exec!(FollowingUser);
+exec!(Gists);
+exec!(Issues);
+exec!(Keys);
+exec!(KeysId);
+exec!(Orgs);
+exec!(Public);
+exec!(ReceivedEvents);
+exec!(Repos);
+exec!(Starred);
+exec!(StarredRepo);
+exec!(Subscriptions);
+exec!(User);
+exec!(UserUsername);
+exec!(Users);
+exec!(UsersKeys);
+exec!(UsersOrgs);
+exec!(UsersStarred);
+exec!(UsersUsername);

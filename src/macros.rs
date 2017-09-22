@@ -204,37 +204,47 @@ macro_rules! new_type {
 
 /// Used to generate an execute function for a terminal type in a query
 /// pipeline. If passed a type it creates the impl as well as it needs
-/// no extra functions. If blank it just creates the function and should be
-/// used this way only inside an impl
+/// no extra functions.
 macro_rules! exec {
-    () => (
-        /// Execute the query by sending the built up request
-        /// to GitHub. The value returned is either an error
-        /// or the Status Code and Json after it has been deserialized.
-        /// Please take a look at the GitHub documenation to see what value
-        /// you should receive back for good or bad requests.
-        pub fn execute<T>(self) -> Result<(Headers, StatusCode, Option<T>)>
-        where T: DeserializeOwned {
-            let ex: Executor = self.into();
-            ex.execute()
-        }
-    );
     ($t: ident) => (
-        impl<'g> $t<'g> {
-            /// Execute the query by sending the built up request
-            /// to GitHub. The value returned is either an error
-            /// or the Status Code and Json after it has been deserialized.
-            /// Please take a look at the GitHub documenation to see what value
-            /// you should receive back for good or bad requests.
-            pub fn execute<T>(self) ->
-                Result<(Headers, StatusCode, Option<T>)>
-            where T: DeserializeOwned {
-
-                let ex: Executor = self.into();
-                ex.execute()
-
+        impl<'a> Executor for $t<'a> {
+            /// Execute the query by sending the built up request to GitHub.
+            /// The value returned is either an error or the Status Code and
+            /// Json after it has been deserialized. Please take a look at
+            /// the GitHub documenation to see what value you should receive
+            /// back for good or bad requests.
+            fn execute<T>(self) -> Result<(Headers, StatusCode, Option<T>)>
+            where T: DeserializeOwned
+            {
+                let mut core_ref = self.core
+                    .try_borrow_mut()
+                    .chain_err(|| "Unable to get mutable borrow \
+                                          to the event loop")?;
+                let client = self.client;
+                let work = client
+                    .request(self.request?.into_inner())
+                    .and_then(|res| {
+                        let header = res.headers().clone();
+                        let status = res.status();
+                        res.body().fold(Vec::new(), |mut v, chunk| {
+                            v.extend(&chunk[..]);
+                            ok::<_, hyper::Error>(v)
+                        }).map(move |chunks| {
+                            if chunks.is_empty() {
+                                Ok((header, status, None))
+                            } else {
+                                Ok((
+                                        header,
+                                        status,
+                                        Some(serde_json::from_slice(&chunks)
+                                             .chain_err(|| "Failed to parse response body")?)
+                                   ))
+                            }
+                        })
+                    });
+                core_ref.run(work).chain_err(|| "Failed to execute request")?
             }
-        }
+         }
     );
 }
 
@@ -243,8 +253,8 @@ macro_rules! exec {
 macro_rules! impl_macro {
     ($(@$i: ident $(|=> $id1: ident -> $t1: ident)*|
      $(|=> $id2: ident -> $t2: ident = $e2: ident)*
-     $(|?> $id3: ident -> $t3: ident = $e3: ident)*
-     $(|-> $id4: ident )*)+)=> (
+     $(|?> $id3: ident -> $t3: ident = $e3: ident)*)+
+    )=> (
         $(
             impl<'g> $i <'g>{
             $(
@@ -278,17 +288,6 @@ macro_rules! impl_macro {
                 pub fn $id3(mut self, $e3: &str) -> $t3<'g> {
                     self.parameter = Some($e3.to_string());
                     self.into()
-                }
-            )*$(
-                /// Execute the query by sending the built up request to GitHub.
-                /// The value returned is either an error or the Status Code and
-                /// Json after it has been deserialized. Please take a look at
-                /// the GitHub documenation to see what value you should receive
-                /// back for good or bad requests.
-                pub fn $id4<T>(self) -> Result<(Headers, StatusCode, Option<T>)>
-                where T: DeserializeOwned {
-                    let ex: Executor = self.into();
-                    ex.execute()
                 }
             )*
             }
@@ -340,12 +339,17 @@ macro_rules! imports{
         use hyper::client::Client;
         use hyper::client::Request;
         use hyper::StatusCode;
-        use hyper::{ Body, Headers, Uri };
+        use hyper::{ self, Body, Headers, Uri };
         use errors::*;
+        use futures::{ Future, Stream };
+        use futures::future::ok;
         use util::url_join;
         use serde::de::DeserializeOwned;
+        use serde_json;
         use std::rc::Rc;
         use std::cell::RefCell;
         use std::str::FromStr;
+
+        use $crate::client::Executor;
     );
 }

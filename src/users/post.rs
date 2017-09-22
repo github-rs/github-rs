@@ -1,6 +1,6 @@
 //! Access the Users portion of the GitHub API
 imports!();
-use client::{PostQueryBuilder, Executor};
+use client::PostQueryBuilder;
 
 new_type!(
     User
@@ -12,15 +12,12 @@ from!(
         -> User = "user"
     @User
         -> Emails = "emails"
-    @Emails
-        => Executor
 );
 
 impl_macro!(
     @User
         |=> emails -> Emails
         |
-    @Emails
-        |
-        |-> execute
 );
+
+exec!(Emails);

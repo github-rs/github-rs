@@ -4,7 +4,7 @@ use futures::future::ok;
 use tokio_core::reactor::Core;
 
 // Hyper Imports
-use hyper::{ Body, Headers, Uri, Method, Error };
+use hyper::{ self, Body, Headers, Uri, Method };
 use hyper::client::{ Client, Request };
 use hyper::header::{ Authorization, Accept, ContentType,
                      ETag, IfNoneMatch, UserAgent, qitem };
@@ -62,9 +62,12 @@ new_type!(PatchQueryBuilder);
 /// Queries for endpoints that aren't in this library can be crafted here
 new_type!(CustomQuery);
 
-/// This type is the final type used to execute a query
-new_type!(Executor);
+exec!(CustomQuery);
 
+pub trait Executor {
+    fn execute<T>(self) -> Result<(Headers, StatusCode, Option<T>)>
+        where T: DeserializeOwned;
+}
 
 impl Github {
     /// Create a new Github client struct. It takes a type that can convert into
@@ -376,43 +379,6 @@ impl <'g> PatchQueryBuilder<'g> {
     }
 }
 
-exec!(CustomQuery);
-
-impl <'g> Executor<'g> {
-
-    pub fn execute<T>(self) -> Result<(Headers, StatusCode, Option<T>)>
-        where T: DeserializeOwned {
-        let mut core_ref = self.core
-                            .try_borrow_mut()
-                            .chain_err(|| "Unable to get mutable borrow \
-                                           to the event loop")?;
-        let client = self.client;
-        let work = client
-                    .request(self.request?.into_inner())
-                    .and_then(|res| {
-                        let header = res.headers().clone();
-                        let status = res.status();
-                        res.body().fold(Vec::new(), |mut v, chunk| {
-                            v.extend(&chunk[..]);
-                            ok::<_, Error>(v)
-                        }).map(move |chunks| {
-                            if chunks.is_empty() {
-                                Ok((header, status, None))
-                            } else {
-                                Ok((
-                                  header,
-                                  status,
-                                  Some(serde_json::from_slice(&chunks)
-                                       .chain_err(|| "Failed to parse response body")?)
-                                ))
-                            }
-                        })
-                    });
-        core_ref.run(work).chain_err(|| "Failed to execute request")?
-    }
-
-}
-
 // From derivations of Github to the given type using a certain
 // request method
 from!(
@@ -440,6 +406,4 @@ from!(
        => CustomQuery
     @DeleteQueryBuilder
        => CustomQuery
-    @CustomQuery
-        => Executor
 );

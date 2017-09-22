@@ -1,6 +1,6 @@
 extern crate github_rs;
 extern crate serde_json;
-use github_rs::client::Github;
+use github_rs::client::{ Executor, Github };
 use serde_json::Value;
 
 fn main() {
