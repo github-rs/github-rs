@@ -6,3 +6,7 @@
 # More information here http://doc.crates.io/guide.html#cargotoml-vs-cargolock
 Cargo.lock
 tests/auth_token
+
+# github-gql-rs
+/github-gql-rs/target
+/github-gql-rs/tests/auth_token

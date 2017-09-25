@@ -8,11 +8,12 @@
 | CodeCov   | [![codecov](https://codecov.io/gh/mgattozzi/github-rs/branch/master/graph/badge.svg)](https://codecov.io/gh/mgattozzi/github-rs)      |
 | crates.io | ![crates.io](https://img.shields.io/crates/v/github-rs.svg)
 
-Pure Rust bindings to the Github API
+Pure Rust bindings to the Github V3 API. If you want bindings to the V4 library
+see the [github-graphql-rs](./github-gql-rs) library.
 
 ## Incomplete Bindings
 Please look at the [endpoints](./docs/endpoints.md) docs to see which endpoints
-are currently covered in the API.
+are currently covered in the API. This is for the Github V3 API.
 
 ## Dependencies and Support
 github-rs is intended to work on all tier 1 supported Rust systems:
@@ -46,7 +47,7 @@ Add the following to your `Cargo.toml`
 
 ```toml
 [dependencies]
-github-rs = "0.5"
+github-rs = "0.6"
 ```
 
 Then in your `lib.rs` or `main.rs` file add:

@@ -7,3 +7,5 @@ rust:
   - nightly
 script:
 - cargo build
+- cd github-gql-rs
+- cargo build

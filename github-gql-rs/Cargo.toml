@@ -1,16 +1,22 @@
 [package]
+name = "github-gql-rs"
+version = "0.0.1"
 authors = ["Michael Gattozzi <mgattozzi@gmail.com>"]
-description = "Pure Rust bindings to the Github API"
-name = "github-rs"
-version = "0.6.0"
-license = "MIT"
+description = "Pure Rust bindings to the Github V4 API using GraphQL"
+license = "MIT/Apache-2.0"
 repository = "https://github.com/mgattozzi/github-rs.git"
 homepage = "https://github.com/mgattozzi/github-rs"
 documentation = "https://docs.rs/github-rs/"
+readme = "README.md"
+keywords = []
+categories = []
 
 [badges]
 travis-ci = { repository = "mgattozzi/github-rs", branch = "master" }
 appveyor = { repository = "mgattozzi/github-rs", branch = "master", service = "github" }
+
+[lib]
+name = "github_gql"
 
 [dependencies]
 hyper = "0.11"
@@ -23,6 +29,3 @@ serde_json = "1.0"
 
 [dev-dependencies]
 serde_derive = "1.0"
-
-[workspaces]
-members = ["github-gql-rs"]
