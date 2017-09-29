@@ -33,7 +33,7 @@ Add the following to your `Cargo.toml`
 
 ```toml
 [dependencies]
-github-gql-rs = "0.01"
+github-gql-rs = "0.0.1"
 ```
 
 Then in your `lib.rs` or `main.rs` file add:
