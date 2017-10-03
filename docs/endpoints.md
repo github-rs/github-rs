@@ -216,7 +216,7 @@ GitHub V3 API
 - [ ] https://<upload_url>/repos/:owner/:repo/releases/:id/assets?name=foo.zip
 
 ## PUT
-- [ ] /gists/:id/star
+- [X] /gists/:id/star
 - [ ] /notifications
 - [ ] /notifications/threads/:id/subscription
 - [ ] /orgs/:org/memberships/:username
