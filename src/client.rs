@@ -23,6 +23,7 @@ use misc;
 use repos;
 use errors::*;
 use util::url_join;
+use gists;
 
 use std::rc::Rc;
 use std::cell::RefCell;
@@ -251,6 +252,9 @@ impl <'g> GetQueryBuilder<'g> {
 
     /// Query the repos endpoint
     func_client!(repos, repos::get::Repos<'g>);
+
+    /// Query the gists endpoint
+    func_client!(gists, gists::get::Gists<'g>);
 
     /// Add an etag to the headers of the request
     pub fn set_etag(mut self, tag: ETag) -> Self {

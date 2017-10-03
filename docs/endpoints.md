@@ -5,16 +5,16 @@ GitHub V3 API
 - [X] /emojis
 - [X] /events
 - [X] /feeds
-- [ ] /gists
-- [ ] /gists/:gist_id/comments
-- [ ] /gists/:gist_id/comments/:id
-- [ ] /gists/:id
-- [ ] /gists/:id/:commits
-- [ ] /gists/:id/forks
-- [ ] /gists/:id/:sha
-- [ ] /gists/:id/star
-- [ ] /gists/public
-- [ ] /gists/starred
+- [X] /gists
+- [X] /gists/:gist_id/comments
+- [X] /gists/:gist_id/comments/:id
+- [X] /gists/:id
+- [X] /gists/:id/:commits
+- [X] /gists/:id/forks
+- [X] /gists/:id/:sha
+- [X] /gists/:id/star
+- [X] /gists/public
+- [X] /gists/starred
 - [ ] /gitignore/templates
 - [ ] /gitignore/templates/:lang
 - [ ] /issues
