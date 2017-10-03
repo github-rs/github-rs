@@ -281,8 +281,8 @@ GitHub V3 API
 - [ ] /user/starred/:owner/:repo
 
 ## PATCH
-- [ ] /gists/:id
-- [ ] /gists/:gist_id/comments/:id
+- [X] /gists/:id
+- [X] /gists/:gist_id/comments/:id
 - [ ] /notifications/threads/:id
 - [ ] /orgs/:org
 - [ ] /orgs/:org/hooks/:id
