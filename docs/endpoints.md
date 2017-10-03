@@ -240,9 +240,9 @@ GitHub V3 API
 - [ ] /user/starred/:owner/:repo
 
 ## DELETE
-- [ ] /gists/:id
-- [ ] /gists/:id/star
-- [ ] /gists/:gist_id/comments/:id
+- [X] /gists/:id
+- [X] /gists/:id/star
+- [X] /gists/:gist_id/comments/:id
 - [ ] /notifications/threads/:id/subscription
 - [ ] /orgs/:org/hooks/:id
 - [ ] /orgs/:org/members/:username

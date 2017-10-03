@@ -23,6 +23,7 @@ use misc;
 use repos;
 use errors::*;
 use util::url_join;
+use gists;
 
 use std::rc::Rc;
 use std::cell::RefCell;
@@ -307,6 +308,7 @@ impl <'g> DeleteQueryBuilder<'g> {
     /// if you need access to a hidden endpoint.
     func_client!(custom_endpoint, CustomQuery, endpoint_str);
     func_client!(user, users::delete::User<'g>);
+    func_client!(gists, gists::delete::Gists<'g>);
 
     /// Add an etag to the headers of the request
     pub fn set_etag(mut self, tag: ETag) -> Self {
