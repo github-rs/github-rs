@@ -174,9 +174,9 @@ GitHub V3 API
 - [X] /users/:username/subscriptions
 
 ## POST
-- [ ] /gists
-- [ ] /gists/:id/forks
-- [ ] /gists/:gist_id/comments
+- [X] /gists
+- [X] /gists/:id/forks
+- [X] /gists/:gist_id/comments
 - [ ] /hub
 - [ ] /markdown
 - [ ] /markdown/raw
