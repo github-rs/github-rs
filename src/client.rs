@@ -38,8 +38,8 @@ impl Clone for Github {
     fn clone(&self) -> Self {
         Self {
             token: self.token.clone(),
-            core: self.core.clone(),
-            client: self.client.clone(),
+            core: Rc::clone(&self.core),
+            client: Rc::clone(&self.client),
         }
     }
 }

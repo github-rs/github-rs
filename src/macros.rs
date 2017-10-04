@@ -297,7 +297,7 @@ macro_rules! impl_macro {
     );
 }
 
-/// A variation of impl_macro for the client module that allows partitioning of
+/// A variation of `impl_macro` for the client module that allows partitioning of
 /// types. Create a function with a given name and return type. Used for
 /// creating functions for simple conversions from one type to another, where
 /// the actual conversion code is in the From implementation.
