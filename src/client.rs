@@ -238,6 +238,9 @@ impl <'g> GetQueryBuilder<'g> {
     /// Query the feeds endpoint
     func_client!(feeds, misc::get::Feeds<'g>);
 
+    /// Query the gitignore endpoint
+    func_client!(gitignore, misc::get::Gitignore<'g>);
+
     /// Query the meta endpoint
     func_client!(meta, misc::get::Meta<'g>);
 

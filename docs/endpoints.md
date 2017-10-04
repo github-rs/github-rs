@@ -15,8 +15,8 @@ GitHub V3 API
 - [X] /gists/:id/star
 - [X] /gists/public
 - [X] /gists/starred
-- [ ] /gitignore/templates
-- [ ] /gitignore/templates/:lang
+- [X] /gitignore/templates
+- [X] /gitignore/templates/:lang
 - [ ] /issues
 - [X] /meta
 - [ ] /networks/:owner/:repo/events
