@@ -48,13 +48,16 @@ Add the following to your `Cargo.toml`
 ```toml
 [dependencies]
 github-rs = "0.6"
+serde_json = "1.0"
 ```
 
 Then in your `lib.rs` or `main.rs` file add:
 
 ```rust
 extern crate github_rs;
-use github_rs::client::Github;
+extern crate serde_json;
+use github_rs::client::{Executor, Github};
+use serde_json::Value;
 ```
 
 Now you can start making queries. Here's a small example to get your user
@@ -62,13 +65,15 @@ information:
 
 ```rust
 extern crate github_rs;
-use github_rs::client::Github;
+extern crate serde_json;
+use github_rs::client::{Executor, Github};
+use serde_json::Value;
 
 fn main() {
     let client = Github::new("API TOKEN").unwrap();
     let me = client.get()
                    .user()
-                   .execute();
+                   .execute::<Value>();
     match me {
         Ok((headers, status, json)) => {
             println!("{}", headers);
