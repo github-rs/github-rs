@@ -21,6 +21,7 @@ use serde_json;
 use users;
 use misc;
 use repos;
+use search;
 use errors::*;
 use util::url_join;
 use gists;
@@ -265,6 +266,9 @@ impl <'g> GetQueryBuilder<'g> {
 
     /// Query the organizations endpoint
     func_client!(organizations, misc::get::Organizations<'g>);
+
+    /// Query the search endpoint
+    func_client!(search, search::get::Search<'g>);
 
     /// Add an etag to the headers of the request
     pub fn set_etag(mut self, tag: ETag) -> Self {
