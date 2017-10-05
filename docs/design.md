@@ -127,7 +127,7 @@ macros you need to understand, how to use them, and what they do:
 
 - `impl_macro!` is used to create functions on types created by the `new_type!`
   macro. This is used to implement the functions used when constructing a
-  request. It can be used in four different ways:
+  request. It can be used in three different ways:
 
   ```rust
   impl_macro!(                     //<-- Create a function 'func' which, when
