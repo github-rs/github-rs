@@ -184,6 +184,9 @@ macro_rules! from {
 macro_rules! new_type {
     ($($i: ident)*) => (
         $(
+        #[must_use = "Incomplete query.
+        This type by itself represents an incomplete query to the API.
+        You need to build up a query that can be executed."]
         pub struct $i<'g> {
             pub(crate) request: Result<RefCell<Request<Body>>>,
             pub(crate) core: &'g Rc<RefCell<Core>>,
@@ -199,6 +202,11 @@ macro_rules! new_type {
 /// no extra functions.
 macro_rules! exec {
     ($t: ident) => (
+        #[must_use = "Unexecuted query.
+        This type represents a query that can be executed. However,
+        you have not chosen to execute the query for results at all.
+        You must either execute the query or in some cases continue to
+        build up the query."]
         pub struct $t<'g> {
             pub(crate) request: Result<RefCell<Request<Body>>>,
             pub(crate) core: &'g Rc<RefCell<Core>>,
