@@ -3,59 +3,9 @@ imports!();
 use client::GetQueryBuilder;
 
 new_type!(
-    ArchiveReference
-    Assignees
-    AssigneesUsername
-    Branches
-    BranchesName
-    BranchesNameProtection
-    BranchesNameProtectionRestrictions
-    BranchesNameProtectionRestrictionsUsers
-    BranchesNameProtectionRequiredPullRequestReviews
-    BranchesNameProtectionRequiredStatusChecks
-    BranchesNameProtectionRequiredStatusChecksContexts
-    Collaborators
-    CollaboratorsUsername
-    CollaboratorsUsernamePermission
-    CommitsSha
-    CommitsReference
-    CommitsComments
-    CommitsStatus
-    CommitsStatuses
-    Commits
     Contents
-    ContentsPath
-    ContentsReference
-    Contributors
-    Events
-    Forks
-    Issues
-    IssuesState
-    IssuesComments
-    IssuesCommentsId
-    IssuesNumber
-    IssuesNumberComments
-    Languages
-    Notifications
     Owner
-    Pulls
-    PullsComments
-    PullsCommentsId
-    PullsNumber
-    PullsNumberComments
-    PullsNumberCommits
-    PullsNumberFiles
-    PullsNumberRequestedReviewers
-    PullsNumberMerge
-    Readme
-    Repo
     Repos
-    Stargazers
-    Subscribers
-    Subscription
-    Tags
-    Tarball
-    Zipball
 );
 
 from!(

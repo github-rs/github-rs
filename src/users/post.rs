@@ -4,7 +4,6 @@ use client::PostQueryBuilder;
 
 new_type!(
     User
-    Emails
 );
 
 from!(

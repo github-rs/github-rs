@@ -3,15 +3,7 @@ imports!();
 use client::GetQueryBuilder;
 
 new_type!(
-    Emojis
-    Events
-    Feeds
     Gitignore
-    GitignoreTemplates
-    GitignoreTemplatesLang
-    Meta
-    RateLimit
-    Organizations
 );
 
 from!(

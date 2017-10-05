@@ -6,7 +6,6 @@ use client::PatchQueryBuilder;
 new_type!(
     Notifications
     NotificationsThreads
-    NotificationsThreadsId
 );
 
 from!(

@@ -4,32 +4,8 @@ use client::GetQueryBuilder;
 
 // Declaration of types representing the various items under users
 new_type!(
-    Emails
-    Followers
-    Following
-    FollowingUser
-    Keys
-    KeysId
-    Orgs
-    User
-    Users
-    UsersOrgs
-    Events
     EventsOrgs
-    EventsOrgsName
-    Gists
-    UsersKeys
-    UsersStarred
-    UserUsername
-    UsersUsername
-    Repos
-    ReceivedEvents
-    Issues
-    Public
-    Starred
-    StarredRepo
     StarredOwner
-    Subscriptions
 );
 
 // From implementations for conversion

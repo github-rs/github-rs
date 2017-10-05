@@ -4,11 +4,8 @@ use client::DeleteQueryBuilder;
 
 new_type!(
     Gists
-    GistsId
-    GistsIdStar
     GistsGistId
     GistsGistIdComments
-    GistsGistIdCommentsId
 );
 
 from!(

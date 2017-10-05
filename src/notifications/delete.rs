@@ -7,7 +7,6 @@ new_type!(
     Notifications
     NotificationsThreads
     NotificationsThreadsId
-    NotificationsThreadsIdSubscription
 );
 
 from!(

@@ -5,7 +5,6 @@ use client::PutQueryBuilder;
 new_type!(
     User
     Following
-    Username
 );
 
 from!(

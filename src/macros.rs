@@ -199,6 +199,12 @@ macro_rules! new_type {
 /// no extra functions.
 macro_rules! exec {
     ($t: ident) => (
+        pub struct $t<'g> {
+            pub(crate) request: Result<RefCell<Request<Body>>>,
+            pub(crate) core: &'g Rc<RefCell<Core>>,
+            pub(crate) client: &'g Rc<Client<HttpsConnector>>,
+            pub(crate) parameter: Option<String>,
+        }
         impl<'a> Executor for $t<'a> {
             /// Execute the query by sending the built up request to GitHub.
             /// The value returned is either an error or the Status Code and
