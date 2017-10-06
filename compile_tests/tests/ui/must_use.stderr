@@ -1,0 +1,24 @@
+warning: unused `github_rs::users::get::StarredOwner` which must be used: Incomplete query.
+        This type by itself represents an incomplete query to the API.
+        You need to build up a query that can be executed.
+ --> $DIR/must_use.rs:8:5
+  |
+8 |     g.get().user().starred().owner("");
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+note: lint level defined here
+ --> $DIR/must_use.rs:5:8
+  |
+5 | #[warn(unused_must_use)] // compiletest allows `unused` for UI tests, so we restore the warning here
+  |        ^^^^^^^^^^^^^^^
+
+warning: unused `github_rs::gists::get::Gists` which must be used: Unexecuted query.
+        This type represents a query that can be executed. However,
+        you have not chosen to execute the query for results at all.
+        You must either execute the query or in some cases continue to
+        build up the query.
+ --> $DIR/must_use.rs:9:5
+  |
+9 |     g.get().gists();
+  |     ^^^^^^^^^^^^^^^^
+
