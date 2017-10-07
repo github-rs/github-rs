@@ -1,6 +1,7 @@
 //! Access the Search portion of the GitHub API (https://developer.github.com/v3/search/)
 imports!();
 use client::GetQueryBuilder;
+use search::types::{SortRepositoriesBy, SortCodeBy, SortIssuesBy, SortUsersBy, OrderBy};
 
 new_type!(
     Search
@@ -65,40 +66,40 @@ impl_macro!(
       |
     @SearchRepositories
       |
-      |?> q -> SearchRepositoriesQ = q_str
+      |?> q -> SearchRepositoriesQ = q_str : &str
     @SearchRepositoriesQ
       |
-      |?> sort -> SearchRepositoriesSort = sort_type
+      |?> sort -> SearchRepositoriesSort = sort_type : SortRepositoriesBy
     @SearchRepositoriesSort
       |
-      |?> order -> SearchRepositoriesOrder = order_type
+      |?> order -> SearchRepositoriesOrder = order_type : OrderBy
     @SearchCode
       |
-      |?> q -> SearchCodeQ = q_str
+      |?> q -> SearchCodeQ = q_str : &str
     @SearchCodeQ
       |
-      |?> sort -> SearchCodeSort = sort_type
+      |?> sort -> SearchCodeSort = sort_type : SortCodeBy
     @SearchCodeSort
       |
-      |?> order -> SearchCodeOrder = order_type
+      |?> order -> SearchCodeOrder = order_type : OrderBy
     @SearchIssues
       |
-      |?> q -> SearchIssuesQ = q_str
+      |?> q -> SearchIssuesQ = q_str : &str
     @SearchIssuesQ
       |
-      |?> sort -> SearchIssuesSort = sort_type
+      |?> sort -> SearchIssuesSort = sort_type : SortIssuesBy
     @SearchIssuesSort
       |
-      |?> order -> SearchIssuesOrder = order_type
+      |?> order -> SearchIssuesOrder = order_type : OrderBy
     @SearchUsers
       |
-      |?> q -> SearchUsersQ = q_str
+      |?> q -> SearchUsersQ = q_str : &str
     @SearchUsersQ
       |
-      |?> sort -> SearchUsersSort = sort_type
+      |?> sort -> SearchUsersSort = sort_type : SortUsersBy
     @SearchUsersSort
       |
-      |?> order -> SearchUsersOrder = order_type
+      |?> order -> SearchUsersOrder = order_type : OrderBy
 );
 
 exec!(SearchRepositoriesQ);

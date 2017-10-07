@@ -130,18 +130,30 @@ macros you need to understand, how to use them, and what they do:
   request. It can be used in three different ways:
 
   ```rust
-  impl_macro!(                     //<-- Create a function 'func' which, when
-      @TypeA                       //    called, returns a B
+  // Create a function 'func' which, when called, returns a B
+  impl_macro!(
+      @TypeA
         |=> func -> TypeB
   );
-  impl_macro!(                     //<-- Create a function 'func' which, when
-      @TypeA                       //    called, returns a B with 'path' added
-        |=> func -> TypeB = path   //    to the request URL. 'path' is the name
-  );                               //    of the variable is for documentation
-  impl_macro!(                     //<-- Create a function 'func' which, when
-      @TypeA                       //    called, returns a B with a GET/POST
-        |?> func -> TypeB = param  //    parameter. 'param' is the name of the
-  );                               //    variable and is for documentation
+
+  // Create a function 'func' which, when called, returns a B with 'path' added
+  // to the request URL. 'path' will be the argument name in the generated
+  // documentation.
+  impl_macro!(
+      @TypeA
+        |=> func -> TypeB = path
+  );
+
+  // Create a function 'func' which, when called, accepts an argument of type
+  // 'type' and returns a B with a GET/POST parameter. 'param' will be the
+  // argument name in the generated documentation.
+  // Note: 'type' must implement std::string::ToString; the result of
+  // param.to_string() will be used in the request as the GET/POST parameter's
+  // value.
+  impl_macro!(
+      @TypeA
+        |?> func -> TypeB = param : type
+  );
   ```
 
 - `exec!` is used to terminate the request chain. The result is an

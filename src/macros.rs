@@ -241,7 +241,7 @@ macro_rules! exec {
 macro_rules! impl_macro {
     ($(@$i: ident $(|=> $id1: ident -> $t1: ident)*|
      $(|=> $id2: ident -> $t2: ident = $e2: ident)*
-     $(|?> $id3: ident -> $t3: ident = $e3: ident)*)+
+     $(|?> $id3: ident -> $t3: ident = $e3: ident : $arg_type: ty)*)+
     )=> (
         $(
             impl<'g> $i <'g>{
@@ -272,7 +272,7 @@ macro_rules! impl_macro {
                     self.into()
                 }
             )*$(
-                pub fn $id3(mut self, $e3: &str) -> $t3<'g> {
+                pub fn $id3(mut self, $e3: $arg_type) -> $t3<'g> {
                     self.parameter = Some($e3.to_string());
                     self.into()
                 }
