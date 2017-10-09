@@ -213,7 +213,7 @@ macro_rules! exec {
             /// Execute the query by sending the built up request to GitHub.
             /// The value returned is either an error or the Status Code and
             /// Json after it has been deserialized. Please take a look at
-            /// the GitHub documenation to see what value you should receive
+            /// the GitHub documentation to see what value you should receive
             /// back for good or bad requests.
             fn execute<T>(self) -> Result<(Headers, StatusCode, Option<T>)>
             where T: DeserializeOwned

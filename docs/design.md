@@ -126,7 +126,7 @@ macros you need to understand, how to use them, and what they do:
   ```
 
 - `impl_macro!` is used to create functions on types created by the `new_type!`
-  macro. This is used to implement the functions used when contructing a
+  macro. This is used to implement the functions used when constructing a
   request. It can be used in four different ways:
 
   ```rust
@@ -150,7 +150,7 @@ macros you need to understand, how to use them, and what they do:
 
   ```rust
   exec!(TypeA);            //<-- Creates an impl of Executor for Type A. This
-                           //    is neccessary for every type which needs an
+                           //    is necessary for every type which needs an
                            //    execute method.
   }
   ```
