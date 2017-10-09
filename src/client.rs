@@ -76,7 +76,7 @@ impl Github {
     /// given a valid API Token your requests will work.
     pub fn new<T>(token: T) -> Result<Self>
         where T: ToString {
-        let core = Core::new().chain_err(|| "Unable to build a new Core")?;
+        let core = Core::new()?;
         let handle = core.handle();
         let client = Client::configure()
             .connector(HttpsConnector::new(4,&handle))

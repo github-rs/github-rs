@@ -85,15 +85,14 @@ macro_rules! from {
                 if f.request.is_ok() {
                     // We've checked that this works
                     let mut req = f.request.unwrap();
-                    let url = url_join(req.get_mut().uri(), $e2)
-                        .chain_err(|| "Failed to parse Url");
+                    let url = url_join(req.get_mut().uri(), $e2);
                     match url {
                         Ok(u) => {
                             req.get_mut().set_uri(u);
                             f.request = Ok(req);
                         },
                         Err(e) => {
-                            f.request = Err(e);
+                            f.request = Err(e.into());
                         }
                     }
 
@@ -123,12 +122,8 @@ macro_rules! from {
         impl <'g> From<&'g Github> for $t<'g> {
             fn from(gh: &'g Github) -> Self {
                 use std::result;
-                use errors;
                 use hyper::mime::FromStrError;
-                let url = "https://api.github.com".parse::<Uri>()
-                    .chain_err(||
-                        "Url failed to parse"
-                    );
+                let url = "https://api.github.com".parse::<Uri>();
                 let mime: result::Result<Mime, FromStrError> =
                     "application/vnd.github.v3+json".parse();
                 match (url, mime) {
@@ -151,7 +146,7 @@ macro_rules! from {
                     }
                     (Err(u), Ok(_)) => {
                         Self {
-                            request: Err(u),
+                            request: Err(u.into()),
                             core: &gh.core,
                             client: &gh.client,
                             parameter: None,
@@ -159,12 +154,7 @@ macro_rules! from {
                     }
                     (Ok(_), Err(e)) => {
                         Self {
-                            // Forgive me father for I have sinned and
-                            // abused the error handling
-                            request: Err(errors::Error::from_kind(
-                                ErrorKind::from(
-                                    format!("Mime failed to parse: {:?}", e)
-                                ))),
+                            request: Err(e.into()),
                             core: &gh.core,
                             client: &gh.client,
                             parameter: None,
@@ -218,10 +208,7 @@ macro_rules! exec {
             fn execute<T>(self) -> Result<(Headers, StatusCode, Option<T>)>
             where T: DeserializeOwned
             {
-                let mut core_ref = self.core
-                    .try_borrow_mut()
-                    .chain_err(|| "Unable to get mutable borrow \
-                                          to the event loop")?;
+                let mut core_ref = self.core.try_borrow_mut()?;
                 let client = self.client;
                 let work = client
                     .request(self.request?.into_inner())
@@ -238,13 +225,12 @@ macro_rules! exec {
                                 Ok((
                                         header,
                                         status,
-                                        Some(serde_json::from_slice(&chunks)
-                                             .chain_err(|| "Failed to parse response body")?)
+                                        Some(serde_json::from_slice(&chunks)?)
                                    ))
                             }
                         })
                     });
-                core_ref.run(work).chain_err(|| "Failed to execute request")?
+                core_ref.run(work)?
             }
          }
     );
@@ -272,15 +258,14 @@ macro_rules! impl_macro {
                     if self.request.is_ok() {
                         // We've checked that this works
                         let mut req = self.request.unwrap();
-                        let url = url_join(req.get_mut().uri(), $e2)
-                            .chain_err(|| "Failed to parse Url");
+                        let url = url_join(req.get_mut().uri(), $e2);
                         match url {
                             Ok(u) => {
                                 req.get_mut().set_uri(u);
                                 self.request = Ok(req);
                             },
                             Err(e) => {
-                                self.request = Err(e);
+                                self.request = Err(e.into());
                             }
                         }
                     }
@@ -316,15 +301,14 @@ macro_rules! func_client{
             if self.request.is_ok() {
                 // We've checked that this works
                 let mut req = self.request.unwrap();
-                let url = url_join(req.get_mut().uri(), $e)
-                    .chain_err(|| "Failed to parse Url");
+                let url = url_join(req.get_mut().uri(), $e);
                 match url {
                     Ok(u) => {
                         req.get_mut().set_uri(u);
                         self.request = Ok(req);
                     },
                     Err(e) => {
-                        self.request = Err(e);
+                        self.request = Err(e.into());
                     }
                 }
             }

@@ -18,9 +18,7 @@ extern crate serde_json;
 #[macro_use] mod macros;
 mod util;
 
-pub mod errors {
-    error_chain!{}
-}
+pub mod errors;
 pub mod client;
 pub mod gists;
 pub mod headers;
