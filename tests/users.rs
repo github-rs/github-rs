@@ -1,24 +1,17 @@
 extern crate github_rs as gh;
 extern crate serde_json;
-use gh::client::{ Executor, Github };
+use gh::client::Executor;
 use gh::headers::{ etag, rate_limit_remaining };
 use serde_json::Value;
-use std::io::BufReader;
-use std::io::prelude::*;
-use std::fs::File;
 
-fn auth_token() -> Result<String, std::io::Error> {
-    let file = File::open("tests/auth_token")?;
-    let mut reader = BufReader::new(file);
-    let mut buffer = String::new();
-    let _ = reader.read_line(&mut buffer)?;
-    Ok(buffer)
-}
+mod testutil;
+
+use testutil::*;
 
 #[test]
 fn get_user_repos() {
     // We want it to fail
-    let g = Github::new(&auth_token().unwrap()).unwrap();
+    let g = setup_github_connection();
     let (headers, status, json) = g.get()
                                    .repos()
                                    .owner("mgattozzi")
@@ -35,7 +28,7 @@ fn get_user_repos() {
 #[test]
 fn cached_response() {
     // We want it to fail
-    let g = Github::new(&auth_token().unwrap()).unwrap();
+    let g = setup_github_connection();
     let (headers, _, _) = g.get()
                            .repos()
                            .owner("mgattozzi")
@@ -60,7 +53,7 @@ fn cached_response() {
 
 #[test]
 fn core_exposure() {
-    let g = Github::new(&auth_token().unwrap()).unwrap();
+    let g = setup_github_connection();
     // Can we get the core for users to have?
     let core = g.get_core();
     let core_mut = core.try_borrow_mut().unwrap();
