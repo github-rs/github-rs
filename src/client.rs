@@ -24,6 +24,7 @@ use repos;
 use errors::*;
 use util::url_join;
 use gists;
+use orgs;
 
 use std::rc::Rc;
 use std::cell::RefCell;
@@ -258,6 +259,9 @@ impl <'g> GetQueryBuilder<'g> {
 
     /// Query the gists endpoint
     func_client!(gists, gists::get::Gists<'g>);
+
+    /// Query the orgs endpoint
+    func_client!(orgs, orgs::get::Orgs<'g>);
 
     /// Add an etag to the headers of the request
     pub fn set_etag(mut self, tag: ETag) -> Self {

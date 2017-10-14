@@ -24,20 +24,20 @@ GitHub V3 API
 - [ ] /notifications/threads/:id
 - [ ] /notifications/threads/:id/subscription
 - [ ] /organizations
-- [ ] /orgs/:org
-- [ ] /orgs/:org/events
-- [ ] /orgs/:org/hooks
-- [ ] /orgs/:org/hooks/:id
-- [ ] /orgs/:org/invitations
-- [ ] /orgs/:org/issues
-- [ ] /orgs/:org/members
-- [ ] /orgs/:org/members/:username
-- [ ] /orgs/:org/memberships/:username
-- [ ] /orgs/:org/outside_collaborators
-- [ ] /orgs/:org/public_members
-- [ ] /orgs/:org/public_members/:username
-- [ ] /orgs/:org/repos
-- [ ] /orgs/:org/teams
+- [X] /orgs/:org
+- [X] /orgs/:org/events
+- [X] /orgs/:org/hooks
+- [X] /orgs/:org/hooks/:id
+- [X] /orgs/:org/invitations
+- [X] /orgs/:org/issues
+- [X] /orgs/:org/members
+- [X] /orgs/:org/members/:username
+- [X] /orgs/:org/memberships/:username
+- [X] /orgs/:org/outside_collaborators
+- [X] /orgs/:org/public_members
+- [X] /orgs/:org/public_members/:username
+- [X] /orgs/:org/repos
+- [X] /orgs/:org/teams
 - [X] /rate_limit
 - [X] /repos/:owner/:repo
 - [ ] /repos/:owner/:repo/:archive_format/:ref
