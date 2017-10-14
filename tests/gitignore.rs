@@ -11,7 +11,11 @@ use testutil::*;
 #[test]
 fn get_gitignore_templates() {
     let g = setup_github_connection();
-    let (_headers, status, json) = g.get().gitignore().templates().execute::<Value>().unwrap();
+    let (_headers, status, json) = g.get()
+                                    .gitignore()
+                                    .templates()
+                                    .execute::<Value>()
+                                    .expect(testutil::FAILED_GITHUB_CONNECTION);
     println!("Status: {}\nResponse: {:#?}", status, json);
     assert_eq!(status, StatusCode::Ok);
     if let Some(Value::Array(languages)) = json {
@@ -27,7 +31,7 @@ fn get_gitignore_templates_rust() {
         .templates()
         .lang("Rust")
         .execute::<Value>()
-        .unwrap();
+        .expect(testutil::FAILED_GITHUB_CONNECTION);
     println!("Status: {}\nResponse: {:#?}", status, json);
     assert_eq!(status, StatusCode::Ok);
     if let Some(json) = json {

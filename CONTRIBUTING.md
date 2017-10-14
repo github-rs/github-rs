@@ -9,7 +9,7 @@ docs.
 
 Due to the use of certain features github-rs requires rustc version 1.18 or higher.
 
-To run tests, you will need a auth token from GitHub. You can follow official [GitHub documentation](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/) to get a personal access token for testing. Once you have an access token, create a file tests/auth_token with your token as the only string. Run `cargo test` to make sure all tests pass.
+To run tests, you will need a auth token from GitHub. You can follow the official [GitHub documentation](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/) to get a personal access token for testing. Once you have an access token, create a file under the tests folder called auth_token with your token as the only string. Run `cargo test` to make sure all of the tests pass.
 
 ## Documentation
 As with any project, documentation is a key part that can make or break usage of

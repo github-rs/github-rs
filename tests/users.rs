@@ -17,7 +17,7 @@ fn get_user_repos() {
                                    .owner("mgattozzi")
                                    .repo("github-rs")
                                    .execute::<Value>()
-                                   .unwrap();
+                                   .expect(testutil::FAILED_GITHUB_CONNECTION);
     println!("{}", headers);
     println!("{}", status);
     if let Some(json) = json {
@@ -34,7 +34,7 @@ fn cached_response() {
                            .owner("mgattozzi")
                            .repo("github-rs")
                            .execute::<Value>()
-                           .unwrap();
+                           .expect(testutil::FAILED_GITHUB_CONNECTION);
     let etag = etag(&headers);
     //let limit = rate_limit_remaining(&headers).unwrap();
     let _ = rate_limit_remaining(&headers).unwrap();
@@ -44,7 +44,7 @@ fn cached_response() {
                            .owner("mgattozzi")
                            .repo("github-rs")
                            .execute::<Value>()
-                           .unwrap();
+                           .expect(testutil::FAILED_GITHUB_CONNECTION);
     //let limit2 = rate_limit_remaining(&headers).unwrap();
     let _ = rate_limit_remaining(&headers).unwrap();
     // Spurious test case
