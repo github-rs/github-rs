@@ -17,13 +17,16 @@ new_type!(
     Contents
     ContentsPath
     ContentsReference
+    Contributors
+    Events
+    Forks
     Issues
     IssuesComments
     IssuesCommentsId
     IssuesNumber
     IssuesNumberComments
-    Repo
-    Repos
+    Languages
+    Notifications
     Owner
     Pulls
     PullsComments
@@ -34,6 +37,13 @@ new_type!(
     PullsNumberFiles
     PullsNumberRequestedReviewers
     PullsNumberMerge
+    Readme
+    Repo
+    Repos
+    Stargazers
+    Subscribers
+    Subscription
+    Tags
 );
 
 from!(
@@ -85,8 +95,28 @@ from!(
     @Repo
        -> Contents = "contents"
     @Repo
+       -> Contributors = "contributors"
+    @Repo
+       -> Events = "events"
+    @Repo
+       -> Forks = "forks"
+    @Repo
+       -> Languages = "languages"
+    @Repo
+       -> Notifications = "notifications"
+    @Repo
        -> Pulls = "pulls"
        -> Issues = "issues"
+    @Repo
+       -> Readme = "readme"
+    @Repo
+       -> Stargazers = "stargazers"
+    @Repo
+       -> Subscribers = "subscribers"
+    @Repo
+       -> Subscription = "subscription"
+    @Repo
+       -> Tags = "tags"
     @Repos
        => Owner
 
@@ -154,8 +184,18 @@ impl_macro!(
         |=> collaborators ->  Collaborators
         |=> commits -> Commits
         |=> contents -> Contents
-        |=> pulls -> Pulls
+        |=> contributors -> Contributors
+        |=> events -> Events
+        |=> forks -> Forks
         |=> issues -> Issues
+        |=> languages -> Languages
+        |=> notifications -> Notifications
+        |=> pulls -> Pulls
+        |=> readme -> Readme
+        |=> stargazers -> Stargazers
+        |=> subscribers -> Subscribers
+        |=> subscription -> Subscription
+        |=> tags -> Tags
         |
     @Repos
         |
@@ -191,12 +231,16 @@ exec!(CommitsStatus);
 exec!(CommitsStatuses);
 exec!(ContentsPath);
 exec!(ContentsReference);
+exec!(Contributors);
+exec!(Events);
+exec!(Forks);
 exec!(Issues);
 exec!(IssuesComments);
 exec!(IssuesCommentsId);
 exec!(IssuesNumber);
 exec!(IssuesNumberComments);
-exec!(Repo);
+exec!(Languages);
+exec!(Notifications);
 exec!(Pulls);
 exec!(PullsComments);
 exec!(PullsCommentsId);
@@ -206,3 +250,9 @@ exec!(PullsNumberCommits);
 exec!(PullsNumberFiles);
 exec!(PullsNumberRequestedReviewers);
 exec!(PullsNumberMerge);
+exec!(Readme);
+exec!(Repo);
+exec!(Stargazers);
+exec!(Subscribers);
+exec!(Subscription);
+exec!(Tags);

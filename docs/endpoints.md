@@ -68,12 +68,12 @@ GitHub V3 API
 - [X] /repos/:owner/:repo/commits/:sha/statuses
 - [ ] /repos/:owner/:repo/compare/:base...:head
 - [X] /repos/:owner/:repo/contents/:path
-- [ ] /repos/:owner/:repo/contributors
+- [X] /repos/:owner/:repo/contributors
 - [ ] /repos/:owner/:repo/deployments
 - [ ] /repos/:owner/:repo/deployments/:deployment_id
 - [ ] /repos/:owner/:repo/deployments/:id/statuses
-- [ ] /repos/:owner/:repo/events
-- [ ] /repos/:owner/:repo/forks
+- [X] /repos/:owner/:repo/events
+- [X] /repos/:owner/:repo/forks
 - [ ] /repos/:owner/:repo/git/blobs/:sha
 - [ ] /repos/:owner/:repo/git/commits/:sha
 - [ ] /repos/:owner/:repo/git/refs
@@ -95,11 +95,11 @@ GitHub V3 API
 - [ ] /repos/:owner/:repo/keys/:id
 - [ ] /repos/:owner/:repo/labels
 - [ ] /repos/:owner/:repo/labels/:name
-- [ ] /repos/:owner/:repo/languages
+- [X] /repos/:owner/:repo/languages
 - [ ] /repos/:owner/:repo/milestones
 - [ ] /repos/:owner/:repo/milestones/:number
 - [ ] /repos/:owner/:repo/milestones/:number/labels
-- [ ] /repos/:owner/:repo/notifications
+- [X] /repos/:owner/:repo/notifications
 - [ ] /repos/:owner/:repo/pages/builds
 - [ ] /repos/:owner/:repo/pages/builds/:id
 - [ ] /repos/:owner/:repo/pages/builds/latest
@@ -112,22 +112,22 @@ GitHub V3 API
 - [X] /repos/:owner/:repo/pulls/:number/files
 - [X] /repos/:owner/:repo/pulls/:number/requested_reviewers
 - [X] /repos/:owner/:repo/pulls/:number/merge
-- [ ] /repos/:owner/:repo/readme
+- [X] /repos/:owner/:repo/readme
 - [ ] /repos/:owner/:repo/releases
 - [ ] /repos/:owner/:repo/releases/assets/:id
 - [ ] /repos/:owner/:repo/releases/:id
 - [ ] /repos/:owner/:repo/releases/:id/assets
 - [ ] /repos/:owner/:repo/releases/latest
 - [ ] /repos/:owner/:repo/releases/tags/:tag
-- [ ] /repos/:owner/:repo/stargazers
+- [X] /repos/:owner/:repo/stargazers
 - [ ] /repos/:owner/:repo/stats/code_frequency
 - [ ] /repos/:owner/:repo/stats/commit_activity
 - [ ] /repos/:owner/:repo/stats/contributors
 - [ ] /repos/:owner/:repo/stats/participation
 - [ ] /repos/:owner/:repo/stats/punch_card
-- [ ] /repos/:owner/:repo/subscribers
-- [ ] /repos/:owner/:repo/subscription
-- [ ] /repos/:owner/:repo/tags
+- [X] /repos/:owner/:repo/subscribers
+- [X] /repos/:owner/:repo/subscription
+- [X] /repos/:owner/:repo/tags
 - [ ] /repos/:owner/:repo/teams
 - [ ] /repos/:owner/:repo/traffic/clones
 - [ ] /repos/:owner/:repo/traffic/popular/paths
