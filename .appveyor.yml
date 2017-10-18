@@ -23,6 +23,3 @@ test_script:
   - cargo build
   - cd github-gql-rs
   - cargo build
-cache:
-  - target
-  - C:\Users\appveyor\.cargo\registry
