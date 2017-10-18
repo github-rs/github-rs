@@ -9,6 +9,7 @@ new_type!(
     CollaboratorsUsername
     CollaboratorsUsernamePermission
     CommitsSha
+    CommitsRef
     CommitsComments
     CommitsStatus
     CommitsStatuses
@@ -46,8 +47,15 @@ from!(
        -> CommitsStatus = "status"
     @CommitsSha
        -> CommitsStatuses = "statuses"
+    @CommitsRef
+       -> CommitsComments = "comments"
+    @CommitsRef
+       -> CommitsStatus = "status"
+    @CommitsRef
+       -> CommitsStatuses = "statuses"
     @Commits
        => CommitsSha
+       => CommitsRef
 
     @Contents
        => ContentsPath
@@ -112,9 +120,15 @@ impl_macro!(
         |=> status -> CommitsStatus
         |=> statuses -> CommitsStatuses
         |
+    @CommitsRef
+        |=> comments -> CommitsComments
+        |=> status -> CommitsStatus
+        |=> statuses -> CommitsStatuses
+        |
     @Commits
         |
         |=> sha -> CommitsSha = sha_str
+        |=> reference -> CommitsRef = ref_str
     @Contents
         |
         |=> path -> ContentsPath = path_str
@@ -171,6 +185,7 @@ exec!(CollaboratorsUsername);
 exec!(CollaboratorsUsernamePermission);
 exec!(Commits);
 exec!(CommitsSha);
+exec!(CommitsRef);
 exec!(CommitsComments);
 exec!(CommitsStatus);
 exec!(CommitsStatuses);

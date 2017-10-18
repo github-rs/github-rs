@@ -58,10 +58,10 @@ GitHub V3 API
 - [ ] /repos/:owner/:repo/comments
 - [ ] /repos/:owner/:repo/comments/:id
 - [X] /repos/:owner/:repo/commits
-- [ ] /repos/:owner/:repo/commits/:ref
-- [ ] /repos/:owner/:repo/commits/:ref/comments
-- [ ] /repos/:owner/:repo/commits/:ref/status
-- [ ] /repos/:owner/:repo/commits/:ref/statuses
+- [X] /repos/:owner/:repo/commits/:ref
+- [X] /repos/:owner/:repo/commits/:ref/comments
+- [X] /repos/:owner/:repo/commits/:ref/status
+- [X] /repos/:owner/:repo/commits/:ref/statuses
 - [X] /repos/:owner/:repo/commits/:sha
 - [X] /repos/:owner/:repo/commits/:sha/comments
 - [X] /repos/:owner/:repo/commits/:sha/status
