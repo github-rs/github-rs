@@ -10,3 +10,6 @@ tests/auth_token
 # github-gql-rs
 /github-gql-rs/target
 /github-gql-rs/tests/auth_token
+
+# IntelliJ files
+.idea

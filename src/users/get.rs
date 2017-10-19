@@ -24,6 +24,7 @@ new_type!(
     UsersUsername
     Repos
     ReceivedEvents
+    ReceivedEventsPublic
     Issues
     Public
     Starred
@@ -78,6 +79,7 @@ from!(
         -> Subscriptions = "subscriptions"
         -> UsersStarred = "starred"
         -> ReceivedEvents = "received_events"
+        -> ReceivedEventsPublic = "received_events_public"
 );
 
 // impls of each type
@@ -116,6 +118,7 @@ impl_macro!(
         |=> orgs -> UsersOrgs
         |=> keys -> UsersKeys
         |=> received_events -> ReceivedEvents
+        |=> received_events_public -> ReceivedEventsPublic
         |=> repos -> Repos
         |=> starred -> UsersStarred
         |=> subscriptions -> Subscriptions
@@ -148,6 +151,7 @@ exec!(KeysId);
 exec!(Orgs);
 exec!(Public);
 exec!(ReceivedEvents);
+exec!(ReceivedEventsPublic);
 exec!(Repos);
 exec!(Starred);
 exec!(StarredRepo);
