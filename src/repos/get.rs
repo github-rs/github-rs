@@ -3,13 +3,22 @@ imports!();
 use client::GetQueryBuilder;
 
 new_type!(
+    ArchiveReference
     Assignees
+    AssigneesUsername
     Branches
+    BranchesName
+    BranchesNameProtection
+    BranchesNameProtectionRestrictions
+    BranchesNameProtectionRestrictionsUsers
+    BranchesNameProtectionRequiredPullRequestReviews
+    BranchesNameProtectionRequiredStatusChecks
+    BranchesNameProtectionRequiredStatusChecksContexts
     Collaborators
     CollaboratorsUsername
     CollaboratorsUsernamePermission
     CommitsSha
-    CommitsRef
+    CommitsReference
     CommitsComments
     CommitsStatus
     CommitsStatuses
@@ -44,9 +53,27 @@ new_type!(
     Subscribers
     Subscription
     Tags
+    Tarball
+    Zipball
 );
 
 from!(
+    @Assignees
+       => AssigneesUsername
+
+    @Branches
+       => BranchesName
+    @BranchesName
+       -> BranchesNameProtection = "protection"
+    @BranchesNameProtection
+       -> BranchesNameProtectionRestrictions = "restrictions"
+       -> BranchesNameProtectionRequiredPullRequestReviews = "required_pull_request_reviews"
+       -> BranchesNameProtectionRequiredStatusChecks = "required_status_checks"
+    @BranchesNameProtectionRestrictions
+       -> BranchesNameProtectionRestrictionsUsers = "users"
+    @BranchesNameProtectionRequiredStatusChecks
+       -> BranchesNameProtectionRequiredStatusChecksContexts = "contexts"
+
     @Collaborators
        => CollaboratorsUsername
     @CollaboratorsUsername
@@ -57,15 +84,15 @@ from!(
        -> CommitsStatus = "status"
     @CommitsSha
        -> CommitsStatuses = "statuses"
-    @CommitsRef
+    @CommitsReference
        -> CommitsComments = "comments"
-    @CommitsRef
+    @CommitsReference
        -> CommitsStatus = "status"
-    @CommitsRef
+    @CommitsReference
        -> CommitsStatuses = "statuses"
     @Commits
        => CommitsSha
-       => CommitsRef
+       => CommitsReference
 
     @Contents
        => ContentsPath
@@ -80,6 +107,24 @@ from!(
        => IssuesCommentsId
     @IssuesNumber
        -> IssuesNumberComments = "comments"
+
+    @Pulls
+       -> PullsComments = "comments"
+    @PullsComments
+       => PullsCommentsId
+    @Pulls
+       => PullsNumber
+    @PullsNumber
+       -> PullsNumberComments = "comments"
+    @PullsNumber
+       -> PullsNumberCommits = "commits"
+    @PullsNumber
+       -> PullsNumberFiles = "files"
+    @PullsNumber
+       -> PullsNumberRequestedReviewers = "requested_reviewers"
+    @PullsNumber
+       -> PullsNumberMerge = "merge"
+
     @GetQueryBuilder
        -> Repos = "repos"
     @Owner
@@ -117,28 +162,39 @@ from!(
        -> Subscription = "subscription"
     @Repo
        -> Tags = "tags"
+    @Repo
+       -> Tarball = "tarball"
+       -> Zipball = "zipball"
     @Repos
        => Owner
 
-    @Pulls
-       -> PullsComments = "comments"
-    @PullsComments
-       => PullsCommentsId
-    @Pulls
-       => PullsNumber
-    @PullsNumber
-       -> PullsNumberComments = "comments"
-    @PullsNumber
-       -> PullsNumberCommits = "commits"
-    @PullsNumber
-       -> PullsNumberFiles = "files"
-    @PullsNumber
-       -> PullsNumberRequestedReviewers = "requested_reviewers"
-    @PullsNumber
-       -> PullsNumberMerge = "merge"
+    @Tarball
+       => ArchiveReference
+    @Zipball
+       => ArchiveReference
 );
 
 impl_macro!(
+    @Assignees
+        |
+        |=> username -> AssigneesUsername = username
+    @Branches
+        |
+        |=> name -> BranchesName = name
+    @BranchesName
+        |=> protection -> BranchesNameProtection
+        |
+    @BranchesNameProtection
+        |=> restrictions -> BranchesNameProtectionRestrictions
+        |=> required_pull_request_reviews -> BranchesNameProtectionRequiredPullRequestReviews
+        |=> required_status_checks -> BranchesNameProtectionRequiredStatusChecks
+        |
+    @BranchesNameProtectionRestrictions
+        |=> users -> BranchesNameProtectionRestrictionsUsers
+        |
+    @BranchesNameProtectionRequiredStatusChecks
+        |=> contexts -> BranchesNameProtectionRequiredStatusChecksContexts
+        |
     @Collaborators
         |
         |=> username -> CollaboratorsUsername = username
@@ -150,7 +206,7 @@ impl_macro!(
         |=> status -> CommitsStatus
         |=> statuses -> CommitsStatuses
         |
-    @CommitsRef
+    @CommitsReference
         |=> comments -> CommitsComments
         |=> status -> CommitsStatus
         |=> statuses -> CommitsStatuses
@@ -158,7 +214,7 @@ impl_macro!(
     @Commits
         |
         |=> sha -> CommitsSha = sha_str
-        |=> reference -> CommitsRef = ref_str
+        |=> reference -> CommitsReference = ref_str
     @Contents
         |
         |=> path -> ContentsPath = path_str
@@ -196,6 +252,8 @@ impl_macro!(
         |=> subscribers -> Subscribers
         |=> subscription -> Subscription
         |=> tags -> Tags
+        |=> tarball -> Tarball
+        |=> zipball -> Zipball
         |
     @Repos
         |
@@ -216,16 +274,31 @@ impl_macro!(
         |=> requested_reviewers -> PullsNumberRequestedReviewers
         |=> merge -> PullsNumberMerge
         |
+    @Tarball
+        |
+        |=> reference -> ArchiveReference = ref_str
+    @Zipball
+        |
+        |=> reference -> ArchiveReference = ref_str
 );
 
+exec!(ArchiveReference);
 exec!(Assignees);
+exec!(AssigneesUsername);
 exec!(Branches);
+exec!(BranchesName);
+exec!(BranchesNameProtection);
+exec!(BranchesNameProtectionRestrictions);
+exec!(BranchesNameProtectionRestrictionsUsers);
+exec!(BranchesNameProtectionRequiredPullRequestReviews);
+exec!(BranchesNameProtectionRequiredStatusChecks);
+exec!(BranchesNameProtectionRequiredStatusChecksContexts);
 exec!(Collaborators);
 exec!(CollaboratorsUsername);
 exec!(CollaboratorsUsernamePermission);
 exec!(Commits);
 exec!(CommitsSha);
-exec!(CommitsRef);
+exec!(CommitsReference);
 exec!(CommitsComments);
 exec!(CommitsStatus);
 exec!(CommitsStatuses);
@@ -256,3 +329,5 @@ exec!(Stargazers);
 exec!(Subscribers);
 exec!(Subscription);
 exec!(Tags);
+exec!(Tarball);
+exec!(Zipball);

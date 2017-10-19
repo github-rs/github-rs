@@ -40,18 +40,18 @@ GitHub V3 API
 - [ ] /orgs/:org/teams
 - [X] /rate_limit
 - [X] /repos/:owner/:repo
-- [ ] /repos/:owner/:repo/:archive_format/:ref
+- [X] /repos/:owner/:repo/:archive_format/:ref
 - [X] /repos/:owner/:repo/assignees
-- [ ] /repos/:owner/:repo/assignees/:assignee
+- [X] /repos/:owner/:repo/assignees/:assignee
 - [X] /repos/:owner/:repo/branches
-- [ ] /repos/:owner/:repo/branches/:branch
-- [ ] /repos/:owner/:repo/branches/:branch/protection
-- [ ] /repos/:owner/:repo/branches/:branch/protection/restrictions
+- [X] /repos/:owner/:repo/branches/:branch
+- [X] /repos/:owner/:repo/branches/:branch/protection
+- [X] /repos/:owner/:repo/branches/:branch/protection/restrictions
 - [ ] /repos/:owner/:repo/branches/:branch/protection/restrictions/teams
-- [ ] /repos/:owner/:repo/branches/:branch/protection/restrictions/users
-- [ ] /repos/:owner/:repo/branches/:branch/protection/required_pull_request_reviews
-- [ ] /repos/:owner/:repo/branches/:branch/required_status_checks
-- [ ] /repos/:owner/:repo/branches/:branch/required_status_checks/contexts
+- [X] /repos/:owner/:repo/branches/:branch/protection/restrictions/users
+- [X] /repos/:owner/:repo/branches/:branch/protection/required_pull_request_reviews
+- [X] /repos/:owner/:repo/branches/:branch/protection/required_status_checks
+- [X] /repos/:owner/:repo/branches/:branch/protection/required_status_checks/contexts
 - [X] /repos/:owner/:repo/collaborators
 - [X] /repos/:owner/:repo/collaborators/:username
 - [X] /repos/:owner/:repo/collaborators/:username/permission
