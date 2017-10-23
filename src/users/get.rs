@@ -4,13 +4,16 @@ use client::GetQueryBuilder;
 
 // Declaration of types representing the various items under users
 new_type!(
+    Blocks
     Emails
     Followers
     Following
     FollowingUser
     Keys
     KeysId
+    Memberships
     Orgs
+    OrgsId
     User
     Users
     UsersOrgs
@@ -18,11 +21,13 @@ new_type!(
     EventsOrgs
     EventsOrgsName
     Gists
+    GPGKeys
     UsersKeys
     UsersStarred
     UserUsername
     UsersUsername
     Repos
+    RepositoryInvitations
     ReceivedEvents
     ReceivedEventsPublic
     Issues
@@ -31,6 +36,7 @@ new_type!(
     StarredRepo
     StarredOwner
     Subscriptions
+    Teams
 );
 
 // From implementations for conversion
@@ -61,6 +67,17 @@ from!(
         -> Repos = "repos"
         -> Subscriptions = "subscriptions"
         -> Starred = "starred"
+        -> Blocks = "blocks"
+        -> GPGKeys = "gpg_keys"
+        -> Memberships = "memberships"
+    @Memberships
+        -> Orgs = "orgs"
+    @Orgs
+        => OrgsId
+    @Blocks
+        => UsersUsername
+    @GPGKeys
+        => KeysId
     @Users
         => UsersUsername
     @UserUsername
@@ -80,6 +97,7 @@ from!(
         -> UsersStarred = "starred"
         -> ReceivedEvents = "received_events"
         -> ReceivedEventsPublic = "received_events_public"
+        -> GPGKeys = "gpg_keys"
 );
 
 // impls of each type
@@ -100,6 +118,7 @@ impl_macro!(
         |=> starred -> Starred
         |=> keys -> Keys
         |=> orgs -> Orgs
+        |=> blocks -> Blocks
         |
     @Users
         |
@@ -138,6 +157,7 @@ impl_macro!(
         |=> username -> Following = username_str
 );
 
+exec!(Blocks);
 exec!(Emails);
 exec!(Events);
 exec!(EventsOrgsName);
@@ -145,17 +165,22 @@ exec!(Followers);
 exec!(Following);
 exec!(FollowingUser);
 exec!(Gists);
+exec!(GPGKeys);
 exec!(Issues);
 exec!(Keys);
 exec!(KeysId);
+exec!(Memberships);
 exec!(Orgs);
+exec!(OrgsId);
 exec!(Public);
 exec!(ReceivedEvents);
 exec!(ReceivedEventsPublic);
 exec!(Repos);
+exec!(RepositoryInvitations);
 exec!(Starred);
 exec!(StarredRepo);
 exec!(Subscriptions);
+exec!(Teams);
 exec!(User);
 exec!(UserUsername);
 exec!(Users);

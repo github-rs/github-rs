@@ -344,16 +344,16 @@ GitHub V3 API Pre-release
 - [ ] /repositories/:repo_id/invitations
 - [ ] /search/commits
 - [ ] /teams/:id/repos/:owner/:repo
-- [ ] /user/blocks
-- [ ] /user/blocks/:username
-- [ ] /user/gpg_keys
-- [ ] /user/gpg_keys/:id
+- [X] /user/blocks
+- [X] /user/blocks/:username
+- [X] /user/gpg_keys
+- [X] /user/gpg_keys/:id
 - [ ] /user/installations?access_token=...
-- [ ] /user/memberships/orgs
-- [ ] /user/memberships/orgs/:org
-- [ ] /user/repository_invitations
-- [ ] /user/teams
-- [ ] /users/:username/gpg_keys
+- [X] /user/memberships/orgs
+- [X] /user/memberships/orgs/:org
+- [X] /user/repository_invitations
+- [X] /user/teams
+- [X] /users/:username/gpg_keys
 
 ## POST
 - [ ] /installations/:installation_id/access_tokens
