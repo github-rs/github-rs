@@ -138,11 +138,11 @@ GitHub V3 API
 - [ ] /search/issues
 - [ ] /search/repositories
 - [ ] /search/users
-- [ ] /teams/:id
-- [ ] /teams/:id/invitations
-- [ ] /teams/:id/members
-- [ ] /teams/:id/memberships/:username
-- [ ] /teams/:id/repos
+- [X] /teams/:id
+- [X] /teams/:id/invitations
+- [X] /teams/:id/members
+- [X] /teams/:id/memberships/:username
+- [X] /teams/:id/repos
 - [X] /user
 - [X] /user/emails
 - [X] /user/followers
@@ -235,7 +235,7 @@ GitHub V3 API
 - [ ] /repos/:owner/:repo/notifications
 - [ ] /repos/:owner/:repo/pulls/:number/merge
 - [ ] /repos/:owner/:repo/subscription
-- [ ] /teams/:id/memberships/:username
+- [X] /teams/:id/memberships/:username
 - [X] /user/following/:username
 - [ ] /user/starred/:owner/:repo
 
@@ -273,8 +273,8 @@ GitHub V3 API
 - [ ] /repos/:owner/:repo/releases/assets/:id
 - [ ] /repos/:owner/:repo/releases/:id
 - [ ] /repos/:owner/:repo/subscription
-- [ ] /teams/:id
-- [ ] /teams/:id/memberships/:username
+- [X] /teams/:id
+- [X] /teams/:id/memberships/:username
 - [X] /user/emails
 - [ ] /user/following/:username
 - [ ] /user/keys/:id
@@ -300,7 +300,7 @@ GitHub V3 API
 - [ ] /repos/:owner/:repo/pulls/:number
 - [ ] /repos/:owner/:repo/releases/assets/:id
 - [ ] /repos/:owner/:repo/releases/:id
-- [ ] /teams/:id
+- [X] /teams/:id
 - [ ] /user
 - [X] /user/email/visibility
 
@@ -343,7 +343,7 @@ GitHub V3 API Pre-release
 - [ ] /repositories/:repo_id/community/profile
 - [ ] /repositories/:repo_id/invitations
 - [ ] /search/commits
-- [ ] /teams/:id/repos/:owner/:repo
+- [X] /teams/:id/repos/:owner/:repo
 - [ ] /user/blocks
 - [ ] /user/blocks/:username
 - [ ] /user/gpg_keys
@@ -378,7 +378,7 @@ GitHub V3 API Pre-release
 - [ ] /installations/:installation_id/repositories/:repository_id
 - [ ] /orgs/:org/blocks/:username
 - [ ] /repos/:owner/:repo/pulls/:number/reviews/:id/dismissals
-- [ ] /teams/:id/repos/:org/:repo
+- [X] /teams/:id/repos/:org/:repo
 - [ ] /user/blocks/:username
 
 ## DELETE
@@ -392,7 +392,7 @@ GitHub V3 API Pre-release
 - [ ] /repos/:owner/:repo/pulls/:number/requested_reviewers
 - [ ] /repos/:owner/:repo/pulls/:number/reviews/:id
 - [ ] /repositories/:repo_id/invitations/:invitation_id
-- [ ] /teams/:id/repos/:owner/:repo
+- [X] /teams/:id/repos/:owner/:repo
 - [ ] /user/blocks/:username
 - [ ] /user/emails
 - [ ] /user/gpg_keys/:id
