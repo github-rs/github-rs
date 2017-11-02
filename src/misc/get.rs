@@ -11,6 +11,7 @@ new_type!(
     GitignoreTemplatesLang
     Meta
     RateLimit
+    Organizations
 );
 
 from!(
@@ -21,6 +22,7 @@ from!(
        -> Gitignore = "gitignore"
        -> Meta = "meta"
        -> RateLimit = "rate_limit"
+       -> Organizations = "organizations"
     @Gitignore
        -> GitignoreTemplates = "templates"
     @GitignoreTemplates
@@ -43,3 +45,4 @@ exec!(GitignoreTemplates);
 exec!(GitignoreTemplatesLang);
 exec!(Meta);
 exec!(RateLimit);
+exec!(Organizations);

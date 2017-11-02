@@ -263,6 +263,9 @@ impl <'g> GetQueryBuilder<'g> {
     /// Query the orgs endpoint
     func_client!(orgs, orgs::get::Orgs<'g>);
 
+    /// Query the organizations endpoint
+    func_client!(organizations, misc::get::Organizations<'g>);
+
     /// Add an etag to the headers of the request
     pub fn set_etag(mut self, tag: ETag) -> Self {
         match self.request {

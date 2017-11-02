@@ -23,7 +23,7 @@ GitHub V3 API
 - [ ] /notifications
 - [ ] /notifications/threads/:id
 - [ ] /notifications/threads/:id/subscription
-- [ ] /organizations
+- [X] /organizations
 - [X] /orgs/:org
 - [X] /orgs/:org/events
 - [X] /orgs/:org/hooks
