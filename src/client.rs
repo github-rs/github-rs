@@ -6,7 +6,7 @@ use tokio_core::reactor::Core;
 // Hyper Imports
 use hyper::{ self, Body, Headers, Uri, Method };
 use hyper::client::{ Client, Request };
-use hyper::header::{ Authorization, Accept, ContentType,
+use hyper::header::{ Header, Authorization, Accept, ContentType,
                      ETag, IfNoneMatch, UserAgent, qitem };
 use hyper::mime::Mime;
 use hyper::StatusCode;
@@ -422,3 +422,20 @@ from!(
     @DeleteQueryBuilder
        => CustomQuery
 );
+
+impl<'a> CustomQuery<'a>
+{
+    /// Set custom header for request.
+    /// Useful for custom headers (sometimes using in api preview).
+    pub fn set_header<H : Header>(mut self, accept_header: H) -> Self
+    {
+        match self.request {
+            Ok(mut req) => {
+                req.get_mut().headers_mut().set(accept_header);
+                self.request = Ok(req);
+                self
+            }
+            Err(_) => self,
+        }
+    }
+}
