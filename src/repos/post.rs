@@ -8,6 +8,7 @@ new_type!(
     Repo
     Repos
     Owner
+    Issues
 );
 
 from!(
@@ -19,8 +20,10 @@ from!(
         => Repo
     @Repo
         -> Statuses = "statuses"
+        -> Issues = "issues"
     @Statuses
         => Sha
+
 );
 
 impl_macro!(
@@ -32,10 +35,14 @@ impl_macro!(
         |=> repo -> Repo = repo_str
     @Repo
         |=> statuses -> Statuses
+        |=> issues -> Issues
         |
     @Statuses
         |
         |=> sha -> Sha = sha_str
+    @Issues
+        |
 );
 
 exec!(Sha);
+exec!(Issues);

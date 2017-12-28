@@ -198,7 +198,7 @@ GitHub V3 API
 - [ ] /repos/:owner/:repo/hooks
 - [ ] /repos/:owner/:repo/hooks/:id/pings
 - [ ] /repos/:owner/:repo/hooks/:id/tests
-- [ ] /repos/:owner/:repo/issues
+- [X] /repos/:owner/:repo/issues
 - [ ] /repos/:owner/:repo/issues/:number/assignees
 - [ ] /repos/:owner/:repo/issues/:number/comments
 - [ ] /repos/:owner/:repo/issues/:number/labels
