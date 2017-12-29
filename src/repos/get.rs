@@ -30,6 +30,7 @@ new_type!(
     Events
     Forks
     Issues
+    IssuesState
     IssuesComments
     IssuesCommentsId
     IssuesNumber
@@ -107,6 +108,8 @@ from!(
        => IssuesCommentsId
     @IssuesNumber
        -> IssuesNumberComments = "comments"
+    @Issues
+        ?> IssuesState = "state"
 
     @Pulls
        -> PullsComments = "comments"
@@ -225,6 +228,7 @@ impl_macro!(
         |=> comments -> IssuesComments
         |
         |=> number -> IssuesNumber = issue_number
+        |?> state -> IssuesState = state
     @IssuesComments
         |
         |=> id -> IssuesCommentsId = comment_id
@@ -308,6 +312,7 @@ exec!(Contributors);
 exec!(Events);
 exec!(Forks);
 exec!(Issues);
+exec!(IssuesState);
 exec!(IssuesComments);
 exec!(IssuesCommentsId);
 exec!(IssuesNumber);
