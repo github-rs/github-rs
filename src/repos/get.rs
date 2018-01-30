@@ -23,6 +23,9 @@ new_type!(
     CommitsStatus
     CommitsStatuses
     Commits
+    Compare
+    CompareBase
+    CompareBaseHead
     Contents
     ContentsPath
     ContentsReference
@@ -95,6 +98,11 @@ from!(
        => CommitsSha
        => CommitsReference
 
+    @Compare
+       => CompareBase
+    @CompareBase
+       => CompareBaseHead
+
     @Contents
        => ContentsPath
     @ContentsPath
@@ -140,6 +148,8 @@ from!(
        -> Collaborators = "collaborators"
     @Repo
        -> Commits = "commits"
+    @Repo
+       -> Compare = "compare"
     @Repo
        -> Contents = "contents"
     @Repo
@@ -218,6 +228,12 @@ impl_macro!(
         |
         |=> sha -> CommitsSha = sha_str
         |=> reference -> CommitsReference = ref_str
+    @Compare
+        |
+        |=> base -> CompareBase = base_branch
+    @CompareBase
+        |
+        |...> head -> CompareBaseHead = head_branch
     @Contents
         |
         |=> path -> ContentsPath = path_str
@@ -243,6 +259,7 @@ impl_macro!(
         |=> branches ->  Branches
         |=> collaborators ->  Collaborators
         |=> commits -> Commits
+        |=> compare -> Compare
         |=> contents -> Contents
         |=> contributors -> Contributors
         |=> events -> Events
@@ -306,6 +323,7 @@ exec!(CommitsReference);
 exec!(CommitsComments);
 exec!(CommitsStatus);
 exec!(CommitsStatuses);
+exec!(CompareBaseHead);
 exec!(ContentsPath);
 exec!(ContentsReference);
 exec!(Contributors);
