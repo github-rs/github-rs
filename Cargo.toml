@@ -8,13 +8,17 @@ repository = "https://github.com/mgattozzi/github-rs.git"
 homepage = "https://github.com/mgattozzi/github-rs"
 documentation = "https://docs.rs/github-rs/"
 
+[features]
+default = ["rustls"]
+rustls = ["hyper-rustls"]
+
 [badges]
 travis-ci = { repository = "mgattozzi/github-rs", branch = "master" }
 appveyor = { repository = "mgattozzi/github-rs", branch = "master", service = "github" }
 
 [dependencies]
 hyper = "0.11"
-hyper-rustls = "0.12"
+hyper-rustls = { version = "0.12", optional = true }
 error-chain = "0.11"
 tokio-core = "0.1"
 futures = "0.1"

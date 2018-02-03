@@ -11,6 +11,10 @@ readme = "README.md"
 keywords = []
 categories = []
 
+[features]
+default = ["rustls"]
+rustls = ["hyper-rustls"]
+
 [badges]
 travis-ci = { repository = "mgattozzi/github-rs", branch = "master" }
 appveyor = { repository = "mgattozzi/github-rs", branch = "master", service = "github" }
@@ -20,7 +24,7 @@ name = "github_gql"
 
 [dependencies]
 hyper = "0.11"
-hyper-rustls = "0.11"
+hyper-rustls = { version = "0.11", optional = true }
 error-chain = "0.11"
 tokio-core = "0.1"
 futures = "0.1"

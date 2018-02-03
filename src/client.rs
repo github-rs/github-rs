@@ -10,6 +10,7 @@ use hyper::header::{ Header, Authorization, Accept, ContentType,
                      ETag, IfNoneMatch, UserAgent, qitem };
 use hyper::mime::Mime;
 use hyper::StatusCode;
+#[cfg(feature = "rustls")]
 use hyper_rustls::HttpsConnector;
 
 // Serde Imports

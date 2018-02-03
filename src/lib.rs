@@ -9,6 +9,7 @@
 #[macro_use]
 extern crate error_chain;
 extern crate hyper;
+#[cfg(feature = "rustls")]
 extern crate hyper_rustls;
 extern crate futures;
 extern crate tokio_core;

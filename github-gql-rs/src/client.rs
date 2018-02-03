@@ -8,6 +8,7 @@ use serde_json;
 use hyper::{ self, Headers };
 use hyper::client::Client;
 use hyper::StatusCode;
+#[cfg(feature = "rustls")]
 use hyper_rustls::HttpsConnector;
 
 // Serde Imports
