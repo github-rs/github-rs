@@ -14,6 +14,7 @@ categories = []
 [features]
 default = ["rustls"]
 rustls = ["hyper-rustls"]
+rust-native-tls = ["native-tls", "hyper-tls"]
 
 [badges]
 travis-ci = { repository = "mgattozzi/github-rs", branch = "master" }
@@ -25,6 +26,8 @@ name = "github_gql"
 [dependencies]
 hyper = "0.11"
 hyper-rustls = { version = "0.11", optional = true }
+hyper-tls = { version = "0.1", optional = true }
+native-tls = { version = "0.1", optional = true }
 error-chain = "0.11"
 tokio-core = "0.1"
 futures = "0.1"

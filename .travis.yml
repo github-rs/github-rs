@@ -5,7 +5,10 @@ os:
   - osx
 rust:
   - stable
+env:
+  - FEATURES=default
+  - FEATURES=rust-native-tls
 script:
-- cargo build
+- cargo build --no-default-features --features "$FEATURES"
 - cd github-gql-rs
-- cargo build
+- cargo build --no-default-features --features "$FEATURES"

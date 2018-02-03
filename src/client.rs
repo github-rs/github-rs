@@ -12,6 +12,10 @@ use hyper::mime::Mime;
 use hyper::StatusCode;
 #[cfg(feature = "rustls")]
 use hyper_rustls::HttpsConnector;
+#[cfg(feature = "rust-native-tls")]
+use hyper_tls;
+#[cfg(feature = "rust-native-tls")]
+type HttpsConnector = hyper_tls::HttpsConnector<hyper::client::HttpConnector>;
 
 // Serde Imports
 use serde::de::DeserializeOwned;
@@ -80,8 +84,13 @@ impl Github {
         where T: ToString {
         let core = Core::new()?;
         let handle = core.handle();
+        #[cfg(feature = "rustls")]
         let client = Client::configure()
             .connector(HttpsConnector::new(4,&handle))
+            .build(&handle);
+        #[cfg(feature = "rust-native-tls")]
+        let client = Client::configure()
+            .connector(HttpsConnector::new(4,&handle)?)
             .build(&handle);
         Ok(Self {
             token: token.to_string(),

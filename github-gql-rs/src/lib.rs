@@ -5,6 +5,10 @@ extern crate error_chain;
 extern crate hyper;
 #[cfg(feature = "rustls")]
 extern crate hyper_rustls;
+#[cfg(feature = "rust-native-tls")]
+extern crate hyper_tls;
+#[cfg(feature = "rust-native-tls")]
+extern crate native_tls;
 extern crate futures;
 extern crate tokio_core;
 extern crate serde;
@@ -19,6 +23,9 @@ pub mod errors {
                 #[doc = "`serde_json::Error` converted to an error-chain type"];
             Hyper(::hyper::Error)
                 #[doc = "`hyper::Error` converted to an error-chain type"];
+            NativeTls(::native_tls::Error)
+                #[cfg(feature = "rust-native-tls")]
+                #[doc = "`native_tls::Error` converted to an error-chain type"];
         }
     }
 }

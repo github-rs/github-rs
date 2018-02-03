@@ -7,8 +7,16 @@ environment:
   matrix:
     - TARGET: i686-pc-windows-msvc
       BITS: 32
+      FEATURES: default
     - TARGET: x86_64-pc-windows-msvc
       BITS: 64
+      FEATURES: default
+    - TARGET: i686-pc-windows-msvc
+      BITS: 32
+      FEATURES: rust-native-tls
+    - TARGET: x86_64-pc-windows-msvc
+      BITS: 64
+      FEATURES: rust-native-tls
 install:
   # Install Rust
   - curl -sSf -o rustup-init.exe https://win.rustup.rs/
@@ -20,6 +28,6 @@ install:
 build: false
 
 test_script:
-  - cargo build
+  - cargo build --no-default-features --features "%FEATURES%"
   - cd github-gql-rs
-  - cargo build
+  - cargo build --no-default-features --features "%FEATURES%"

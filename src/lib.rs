@@ -11,6 +11,10 @@ extern crate error_chain;
 extern crate hyper;
 #[cfg(feature = "rustls")]
 extern crate hyper_rustls;
+#[cfg(feature = "native-tls")]
+extern crate hyper_tls;
+#[cfg(feature = "native-tls")]
+extern crate native_tls;
 extern crate futures;
 extern crate tokio_core;
 extern crate serde;

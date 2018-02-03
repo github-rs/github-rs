@@ -323,6 +323,10 @@ macro_rules! imports{
         use tokio_core::reactor::Core;
         #[cfg(feature = "rustls")]
         use hyper_rustls::HttpsConnector;
+        #[cfg(feature = "rust-native-tls")]
+        use hyper_tls;
+        #[cfg(feature = "rust-native-tls")]
+        type HttpsConnector = hyper_tls::HttpsConnector<hyper::client::HttpConnector>;
         use hyper::client::Client;
         use hyper::client::Request;
         use hyper::StatusCode;
