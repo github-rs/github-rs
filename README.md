@@ -22,6 +22,25 @@ github-rs is intended to work on all tier 1 supported Rust systems:
 - Linux
 - MacOSX
 
+github-rs supports [rustls] and [rust-native-tls] for TLS connectivity.
+`rustls` is used by default, but one can toggle support with Cargo features:
+
+```toml
+[dependencies.github-rs]
+version = "0.6"
+default-features = false
+features = ["rust-native-tls"]
+```
+
+Since `rustls` depends on [`ring`][ring] for cryptography, hardware support is
+limited to what `ring` supports, currently ARM and x86 (both 32- and 64-bit).
+If you're compiling for other architectures then you may use the
+`rust-native-tls` feature for maximum portability.
+
+[rustls]: https://github.com/ctz/rustls
+[rust-native-tls]: https://github.com/sfackler/rust-native-tls
+[ring]: https://github.com/briansmith/ring
+
 ## Minimum Compiler Version
 Due to the use of certain features github-rs requires rustc version 1.18 or
 higher.
