@@ -134,10 +134,10 @@ GitHub V3 API
 - [ ] /repos/:owner/:repo/traffic/popular/referrers
 - [ ] /repos/:owner/:repo/traffic/views
 - [ ] /repositories
-- [ ] /search/code
-- [ ] /search/issues
-- [ ] /search/repositories
-- [ ] /search/users
+- [X] /search/code
+- [X] /search/issues
+- [X] /search/repositories
+- [X] /search/users
 - [ ] /teams/:id
 - [ ] /teams/:id/invitations
 - [ ] /teams/:id/members

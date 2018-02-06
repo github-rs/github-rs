@@ -223,7 +223,7 @@ impl_macro!(
         |=> path -> ContentsPath = path_str
     @ContentsPath
         |
-        |?> reference -> ContentsReference = ref_str
+        |?> reference -> ContentsReference = ref_str : &str
     @Issues
         |=> comments -> IssuesComments
         |
