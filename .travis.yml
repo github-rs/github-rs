@@ -13,5 +13,7 @@ env:
   - FEATURES=rust-native-tls
 script:
 - cargo build --no-default-features --features "$FEATURES"
+- cargo test
 - cd github-gql-rs
 - cargo build --no-default-features --features "$FEATURES"
+- cargo test
