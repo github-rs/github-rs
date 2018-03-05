@@ -69,16 +69,16 @@ fn main() {
     // with a HOORAY emoji!
     let (headers, status, json) = g.mutation::<Value>(
         &Mutation::new_raw(
-        "mutation AddReactionToIssue { \
-            addReaction( input: { subjectId: \\\"MDU6SXNzdWUyMzEzOTE1NTE=\\\", content: HOORAY } ) { \
-                reaction { \
-                    content \
-                } \
-                subject { \
-                    id \
-                } \
-            } \
-        }")
+        r#"mutation AddReactionToIssue { 
+            addReaction( input: { subjectId: "MDU6SXNzdWUyMzEzOTE1NTE=", content: HOORAY } ) { 
+                reaction { 
+                    content 
+                } 
+                subject { 
+                    id 
+                } 
+            } 
+        }"#)
     ).unwrap();
     println!("{}", headers);
     println!("{}", status);

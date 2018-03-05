@@ -53,7 +53,13 @@ impl IntoGithubRequest for Query {
                 Uri::from_str("https://api.github.com/graphql")
                     .chain_err(|| "Unable to for URL to make the request")?);
             let mut q = String::from("{ \"query\": \"");
-            q.push_str(&self.query);
+
+            //escaping new lines and quotation marks for json
+            let mut escaped = (&self.query).to_string();
+            escaped = escaped.replace("\n", "\\n");
+            escaped = escaped.replace("\"", "\\\"");
+        
+            q.push_str(&escaped);
             q.push_str("\" }");
             req.set_body(q);
             let token = String::from("token ") + &token;
