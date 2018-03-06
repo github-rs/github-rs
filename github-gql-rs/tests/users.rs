@@ -30,6 +30,32 @@ fn graphql_basic_test() {
     }
 }
 
+//testing if escaping json properly
+#[test]
+fn graphql_escaping_test()
+{
+    let q_str = r#"{
+  user(login: "mgattozzi") {
+    login
+  }
+}
+"#;
+
+    let mut g = Github::new(&auth_token().unwrap()).unwrap();
+    let (headers, status, json) = g.query::<Value>(
+        &Query::new_raw(q_str)
+    ).unwrap();
+
+    println!("{}", headers);
+    println!("response status: {}", status);
+    if let Some(ref json) = json {
+        println!("{}", json);
+    }
+    assert_eq!(json.unwrap()["data"]["user"]["login"].as_str().unwrap(),"mgattozzi");
+
+}
+
+
 // #[test]
 // fn add_reaction() {
 //     let mut g = Github::new(&auth_token().unwrap()).unwrap();
