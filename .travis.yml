@@ -5,8 +5,7 @@ os:
 - osx
 rust:
 - stable
-- nightly
-- beta
+
 env:
 - FEATURES=default
 - FEATURES=rust-native-tls
