@@ -5,7 +5,13 @@ os:
 - osx
 rust:
 - stable
-
+- beta
+- nightly
+matrix:
+  allow_failures:
+    - rust: 
+      - beta
+      - nightly
 env:
 - FEATURES=default
 - FEATURES=rust-native-tls
