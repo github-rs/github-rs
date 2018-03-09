@@ -12,6 +12,7 @@ matrix:
     - rust: 
       - beta
       - nightly
+  fast_finish: true    
 env:
 - FEATURES=default
 - FEATURES=rust-native-tls
