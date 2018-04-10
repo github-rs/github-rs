@@ -23,10 +23,7 @@ env:
 script:
 - cargo build --no-default-features --features "$FEATURES"
 #- cargo test
-- |
-  if [[ "$TRAVIS_RUST_VERSION" == nightly* ]]; then
-      (cd compile_tests && cargo test --no-default-features --features "$FEATURES")
-  fi
+- (cd compile_tests && cargo test --no-default-features --features "$FEATURES")
 - cd github-gql-rs
 - cargo build --no-default-features --features "$FEATURES"
 #- cargo test

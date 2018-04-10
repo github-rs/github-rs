@@ -7,6 +7,8 @@ default = ["github-rs/default"]
 rust-native-tls = ["github-rs/rust-native-tls"]
 
 [dependencies]
-compiletest_rs = "0.3"
 github-rs = { version = "*", path = "../", default-features = false, optional = true }
 
+[dependencies.compiletest_rs]
+version = "0.3"
+features = ["stable"]
