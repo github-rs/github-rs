@@ -68,8 +68,6 @@ new_type!(DeleteQueryBuilder);
 new_type!(PatchQueryBuilder);
 
 /// Queries for endpoints that aren't in this library can be crafted here
-new_type!(CustomQuery);
-
 exec!(CustomQuery);
 
 pub trait Executor {

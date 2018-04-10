@@ -5,7 +5,6 @@ use client::PutQueryBuilder;
 new_type!(
     Gists
     GistsId
-    GistsIdStar
 );
 
 from!(

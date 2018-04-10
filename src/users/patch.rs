@@ -5,7 +5,6 @@ use client::PatchQueryBuilder;
 new_type!(
     User
     Email
-    Visibility
 );
 
 from!(

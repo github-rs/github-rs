@@ -3,22 +3,7 @@ imports!();
 use client::GetQueryBuilder;
 
 new_type!(
-    Orgs
-    OrgsOrg
-    OrgsOrgEvents
-    OrgsOrgHooks
-    OrgsOrgHooksId
-    OrgsOrgInvitations
-    OrgsOrgIssues
-    OrgsOrgMembers
-    OrgsOrgMembersUsername
     OrgsOrgMemberships
-    OrgsOrgMembershipsUsername
-    OrgsOrgOutsidecollaborators
-    OrgsOrgPublicmembers
-    OrgsOrgPublicmembersUsername
-    OrgsOrgRepos
-    OrgsOrgTeams
 );
 
 from!(
