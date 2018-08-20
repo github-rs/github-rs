@@ -29,6 +29,7 @@ new_type!(
     Contributors
     Events
     Forks
+    Git
     Issues
     IssuesState
     IssuesComments
@@ -48,6 +49,8 @@ new_type!(
     PullsNumberRequestedReviewers
     PullsNumberMerge
     Readme
+    Reference
+    Refs
     Repo
     Repos
     Stargazers
@@ -100,6 +103,9 @@ from!(
     @ContentsPath
        ?> ContentsReference = "ref"
 
+    @Git
+       -> Refs = "refs"
+
     @Issues
        -> IssuesComments = "comments"
     @Issues
@@ -132,6 +138,8 @@ from!(
        -> Repos = "repos"
     @Owner
        => Repo
+    @Refs
+       -> Reference = "ref"
     @Repo
        -> Assignees = "assignees"
     @Repo
@@ -148,6 +156,8 @@ from!(
        -> Events = "events"
     @Repo
        -> Forks = "forks"
+    @Repo
+       -> Git = "git"
     @Repo
        -> Languages = "languages"
     @Repo
@@ -224,6 +234,9 @@ impl_macro!(
     @ContentsPath
         |
         |?> reference -> ContentsReference = ref_str
+    @Git
+        |
+        |?> refs -> Refs = reference_str
     @Issues
         |=> comments -> IssuesComments
         |
@@ -247,6 +260,7 @@ impl_macro!(
         |=> contributors -> Contributors
         |=> events -> Events
         |=> forks -> Forks
+        |=> git -> Git
         |=> issues -> Issues
         |=> languages -> Languages
         |=> notifications -> Notifications
@@ -329,6 +343,7 @@ exec!(PullsNumberFiles);
 exec!(PullsNumberRequestedReviewers);
 exec!(PullsNumberMerge);
 exec!(Readme);
+exec!(Refs);
 exec!(Repo);
 exec!(Stargazers);
 exec!(Subscribers);
