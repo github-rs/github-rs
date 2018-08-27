@@ -52,7 +52,13 @@ impl IntoGithubRequest for Mutation {
                 Uri::from_str("https://api.github.com/graphql")
                     .chain_err(|| "Unable to for URL to make the request")?);
             let mut q = String::from("{ \"query\": \"");
-            q.push_str(&self.mutation);
+
+            //escaping new lines and quotation marks for json
+            let mut escaped = (&self.mutation).to_string();
+            escaped = escaped.replace("\n", "\\n");
+            escaped = escaped.replace("\"", "\\\"");
+
+            q.push_str(&escaped);
             q.push_str("\" }");
             println!("{}", q);
             req.set_body(q);
