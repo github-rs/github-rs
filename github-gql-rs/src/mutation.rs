@@ -51,10 +51,9 @@ impl IntoGithubRequest for Mutation {
                 Method::Post,
                 Uri::from_str("https://api.github.com/graphql")
                     .chain_err(|| "Unable to for URL to make the request")?);
-            let mut q = String::from("{ \"query\": \"");
-            q.push_str(&self.mutation);
-            q.push_str("\" }");
-            println!("{}", q);
+
+            println!("{}", self.build_query());
+            let q = self.build_query();
             req.set_body(q);
             let token = String::from("token ") + &token;
             {
@@ -64,5 +63,9 @@ impl IntoGithubRequest for Mutation {
                 headers.set(Authorization(token));
             }
             Ok(req)
+    }
+
+    fn body(&self) -> String {
+        self.mutation.clone()
     }
 }
