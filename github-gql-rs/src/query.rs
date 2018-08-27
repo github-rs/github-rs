@@ -58,7 +58,7 @@ impl IntoGithubRequest for Query {
             let mut escaped = (&self.query).to_string();
             escaped = escaped.replace("\n", "\\n");
             escaped = escaped.replace("\"", "\\\"");
-        
+
             q.push_str(&escaped);
             q.push_str("\" }");
             req.set_body(q);
