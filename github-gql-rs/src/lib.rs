@@ -39,4 +39,18 @@ pub use hyper::{Headers, StatusCode};
 use errors::Result;
 pub trait IntoGithubRequest {
     fn into_github_req(&self, token: &str) -> Result<hyper::Request>;
+    fn body(&self) -> String;
+    fn build_query(&self) -> String {
+            let mut q = String::from("{ \"query\": \"");
+
+            q.push_str(&self.escaped_body());
+            q.push_str("\" }");
+            q
+    }
+
+    fn escaped_body(&self) -> String {
+            let mut body = (&self.body()).to_string();
+            body = body.replace("\n", "\\n");
+            body.replace("\"", "\\\"")
+    }
 }
