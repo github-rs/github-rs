@@ -1,7 +1,7 @@
 # API Design
 You want to help out? Awesome! Chances are you don't know how everything is
 structured, where everything is, etc. This document will help you out by
-explaining how the API works, how it's structured, the macros used to generate
+explaining how the API works, how it's structured, how the macros used to generate
 all of the code work and how to add new endpoints.
 
 ## Builder Pattern Queries
