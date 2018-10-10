@@ -4,11 +4,13 @@ use hyper::{Method, Request, Uri};
 use std::str::FromStr;
 use IntoGithubRequest;
 
+const PUBLIC_GITHUB_BASEURL: &str = "https://api.github.com/graphql";
 
 /// Used to query information from the GitHub API to possibly be used in
 /// a `Mutation` or for information to make decisions with how to interact.
 pub struct Query {
     pub(crate) query: String,
+    base_url: String,
 }
 
 impl Query {
@@ -16,6 +18,20 @@ impl Query {
     pub fn new() -> Self {
         Self {
             query: String::new(),
+            base_url: PUBLIC_GITHUB_BASEURL.into(),
+        }
+    }
+
+    /// Create a new Query for a given Github Enterprise instance by providing the base url of the graphql endpoint.
+    ///
+    /// ```
+    /// let mut q = Query::with_base_url("https://github.corporate.net/api/graphql");
+    /// q.raw_query("query { viewer { login } }");
+    /// ```
+    pub fn with_base_url(base_url: impl Into<String>) -> Self {
+        Self {
+            query: String::new(),
+            base_url: base_url.into(),
         }
     }
     /// Create a new `Query` using the given value as the input for the query to
@@ -38,6 +54,7 @@ impl Query {
     {
         Self {
             query: q.to_string(),
+            base_url: PUBLIC_GITHUB_BASEURL.into(),
         }
     }
 
@@ -57,8 +74,7 @@ impl IntoGithubRequest for Query {
     fn into_github_req(&self, token: &str) -> Result<Request> {
         let mut req = Request::new(
             Method::Post,
-            Uri::from_str("https://api.github.com/graphql")
-                .chain_err(|| "Unable to for URL to make the request")?,
+            Uri::from_str(&self.base_url).chain_err(|| "Unable to for URL to make the request")?,
         );
         let mut q = String::from("{ \"query\": \"");
 
