@@ -2,6 +2,7 @@
 
 #[macro_use]
 extern crate error_chain;
+extern crate futures;
 extern crate hyper;
 #[cfg(feature = "rustls")]
 extern crate hyper_rustls;
@@ -9,10 +10,9 @@ extern crate hyper_rustls;
 extern crate hyper_tls;
 #[cfg(feature = "rust-native-tls")]
 extern crate native_tls;
-extern crate futures;
-extern crate tokio_core;
 extern crate serde;
 extern crate serde_json;
+extern crate tokio_core;
 
 pub mod errors {
     error_chain!{
@@ -31,8 +31,8 @@ pub mod errors {
 }
 
 pub mod client;
-pub mod query;
 pub mod mutation;
+pub mod query;
 
 pub use hyper::{Headers, StatusCode};
 

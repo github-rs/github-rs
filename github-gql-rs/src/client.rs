@@ -1,13 +1,13 @@
 // Tokio/Future Imports
-use tokio_core::reactor::Core;
 use futures::future::ok;
-use futures::{ Stream, Future };
+use futures::{Future, Stream};
+use tokio_core::reactor::Core;
 
 use serde_json;
 // Hyper Imports
-use hyper::{ self, Headers };
 use hyper::client::Client;
 use hyper::StatusCode;
+use hyper::{self, Headers};
 #[cfg(feature = "rustls")]
 use hyper_rustls::HttpsConnector;
 #[cfg(feature = "rust-native-tls")]
@@ -20,13 +20,13 @@ use serde::de::DeserializeOwned;
 
 // Lib Imports
 use errors::*;
-use query::Query;
 use mutation::Mutation;
+use query::Query;
 use IntoGithubRequest;
 
 // Std Imports
-use std::rc::Rc;
 use std::cell::RefCell;
+use std::rc::Rc;
 
 /// Struct used to make calls to the Github API.
 pub struct Github {
@@ -50,17 +50,18 @@ impl Github {
     /// a `String` (`&str` or `Vec<u8>` for example). As long as the function is
     /// given a valid API Token your requests will work.
     pub fn new<T>(token: T) -> Result<Self>
-        where T: ToString
+    where
+        T: ToString,
     {
         let core = Core::new()?;
         let handle = core.handle();
         #[cfg(feature = "rustls")]
         let client = Client::configure()
-            .connector(HttpsConnector::new(4,&handle))
+            .connector(HttpsConnector::new(4, &handle))
             .build(&handle);
         #[cfg(feature = "rust-native-tls")]
         let client = Client::configure()
-            .connector(HttpsConnector::new(4,&handle)?)
+            .connector(HttpsConnector::new(4, &handle)?)
             .build(&handle);
         Ok(Self {
             token: token.to_string(),
@@ -77,7 +78,9 @@ impl Github {
     /// Change the currently set Authorization Token using a type that can turn
     /// into an &str. Must be a valid API Token for requests to work.
     pub fn set_token<T>(&mut self, token: T)
-        where T: ToString {
+    where
+        T: ToString,
+    {
         self.token = token.to_string();
     }
 
@@ -102,51 +105,57 @@ impl Github {
         &self.core
     }
 
-    pub fn query<T>(
-        &mut self,
-        query: &Query) -> Result<(Headers, StatusCode, Option<T>)>
-            where T:DeserializeOwned
+    pub fn query<T>(&mut self, query: &Query) -> Result<(Headers, StatusCode, Option<T>)>
+    where
+        T: DeserializeOwned,
     {
         self.run(query)
     }
 
-    pub fn mutation<T>(&mut self, mutation: &Mutation)
-        -> Result<(Headers, StatusCode, Option<T>)>
-        where T:DeserializeOwned
+    pub fn mutation<T>(&mut self, mutation: &Mutation) -> Result<(Headers, StatusCode, Option<T>)>
+    where
+        T: DeserializeOwned,
     {
         self.run(mutation)
     }
 
-    fn run<T,I>(&mut self, request: &I) -> Result<(Headers, StatusCode, Option<T>)>
-            where T: DeserializeOwned,
-                  I: IntoGithubRequest,
+    fn run<T, I>(&mut self, request: &I) -> Result<(Headers, StatusCode, Option<T>)>
+    where
+        T: DeserializeOwned,
+        I: IntoGithubRequest,
     {
-        let mut core_ref = self.core
-            .try_borrow_mut()
-            .chain_err(|| "Unable to get mutable borrow \
-                                    to the event loop")?;
+        let mut core_ref = self.core.try_borrow_mut().chain_err(|| {
+            "Unable to get mutable borrow \
+             to the event loop"
+        })?;
         let client = &self.client;
         let work = client
             .request(request.into_github_req(&self.token)?)
             .and_then(|res| {
                 let header = res.headers().clone();
                 let status = res.status();
-                res.body().fold(Vec::new(), |mut v, chunk| {
-                    v.extend(&chunk[..]);
-                    ok::<_, hyper::Error>(v)
-                }).map(move |chunks| {
-                    if chunks.is_empty() {
-                        Ok((header, status, None))
-                    } else {
-                        Ok((
-                            header,
-                            status,
-                            Some(serde_json::from_slice(&chunks)
-                                    .chain_err(|| "Failed to parse response body")?)
-                        ))
-                    }
-                })
+                res.body()
+                    .fold(Vec::new(), |mut v, chunk| {
+                        v.extend(&chunk[..]);
+                        ok::<_, hyper::Error>(v)
+                    })
+                    .map(move |chunks| {
+                        if chunks.is_empty() {
+                            Ok((header, status, None))
+                        } else {
+                            Ok((
+                                header,
+                                status,
+                                Some(
+                                    serde_json::from_slice(&chunks)
+                                        .chain_err(|| "Failed to parse response body")?,
+                                ),
+                            ))
+                        }
+                    })
             });
-        core_ref.run(work).chain_err(|| "Failed to execute request")?
+        core_ref
+            .run(work)
+            .chain_err(|| "Failed to execute request")?
     }
 }
