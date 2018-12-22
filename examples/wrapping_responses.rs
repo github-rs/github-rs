@@ -18,7 +18,7 @@ trait TryExecute: Executor {
         }
 
         match self.execute::<Value>() {
-            Ok((_, StatusCode::Ok, Some(response))) => Ok(response),
+            Ok((_, StatusCode::OK, Some(response))) => Ok(response),
             Ok((_, _, Some(response))) => {
                 serde_json::from_value::<GithubError>(response)
                     .map_err(|err| format!("Failed to parse error response: {}", err))

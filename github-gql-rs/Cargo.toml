@@ -24,10 +24,10 @@ appveyor = { repository = "mgattozzi/github-rs", branch = "master", service = "g
 name = "github_gql"
 
 [dependencies]
-hyper = "0.11"
-hyper-rustls = { version = "0.11", optional = true }
-hyper-tls = { version = "0.1", optional = true }
-native-tls = { version = "0.1", optional = true }
+hyper = "0.12"
+hyper-rustls = { version = "0.15", optional = true }
+hyper-tls = { version = "0.3", optional = true }
+native-tls = { version = "0.2", optional = true }
 error-chain = "0.11"
 tokio-core = "0.1"
 futures = "0.1"

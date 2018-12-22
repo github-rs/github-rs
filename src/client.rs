@@ -4,14 +4,12 @@ use futures::future::ok;
 use tokio_core::reactor::Core;
 
 // Hyper Imports
-use hyper::{ self, Body, Headers, Uri, Method };
-use hyper::client::{ Client, Request };
-use hyper::header::{ Header, Authorization, Accept, ContentType,
-                     ETag, IfNoneMatch, UserAgent, qitem };
-use hyper::mime::Mime;
+use hyper::{ self, Body, HeaderMap };
+use hyper::{ Client, Request };
+use hyper::header::{ HeaderValue, HeaderName, IF_NONE_MATCH };
 use hyper::StatusCode;
 #[cfg(feature = "rustls")]
-use hyper_rustls::HttpsConnector;
+type HttpsConnector = hyper_rustls::HttpsConnector<hyper::client::HttpConnector>;
 #[cfg(feature = "rust-native-tls")]
 use hyper_tls;
 #[cfg(feature = "rust-native-tls")]
@@ -73,7 +71,7 @@ new_type!(CustomQuery);
 exec!(CustomQuery);
 
 pub trait Executor {
-    fn execute<T>(self) -> Result<(Headers, StatusCode, Option<T>)>
+    fn execute<T>(self) -> Result<(HeaderMap, StatusCode, Option<T>)>
         where T: DeserializeOwned;
 }
 
@@ -84,15 +82,12 @@ impl Github {
     pub fn new<T>(token: T) -> Result<Self>
         where T: ToString {
         let core = Core::new()?;
-        let handle = core.handle();
         #[cfg(feature = "rustls")]
-        let client = Client::configure()
-            .connector(HttpsConnector::new(4,&handle))
-            .build(&handle);
+        let client = Client::builder()
+            .build(HttpsConnector::new(4));
         #[cfg(feature = "rust-native-tls")]
-        let client = Client::configure()
-            .connector(HttpsConnector::new(4,&handle)?)
-            .build(&handle);
+        let client = Client::builder()
+            .build(HttpsConnector::new(4,&handle)?);
         Ok(Self {
             token: token.to_string(),
             core: Rc::new(RefCell::new(core)),
@@ -151,7 +146,7 @@ impl Github {
             let serialized = serde_json::to_vec(&body);
             match serialized {
                 Ok(json) => {
-                    qbr.get_mut().set_body(json);
+                    *qbr.get_mut().body_mut() = json.into();
                     qb.request = Ok(qbr);
                 },
                 Err(_) => {
@@ -170,7 +165,7 @@ impl Github {
             let serialized = serde_json::to_vec(&body);
             match serialized {
                 Ok(json) => {
-                    qbr.get_mut().set_body(json);
+                    *qbr.get_mut().body_mut() = json.into();
                     qb.request = Ok(qbr);
                 },
                 Err(_) => {
@@ -190,7 +185,7 @@ impl Github {
             let serialized = serde_json::to_vec(&body);
             match serialized {
                 Ok(json) => {
-                    qbr.get_mut().set_body(json);
+                    *qbr.get_mut().body_mut() = json.into();
                     qb.request = Ok(qbr);
                 },
                 Err(_) => {
@@ -210,7 +205,7 @@ impl Github {
             let serialized = serde_json::to_vec(&body);
             match serialized {
                 Ok(json) => {
-                    qbr.get_mut().set_body(json);
+                    *qbr.get_mut().body_mut() = json.into();
                     qb.request = Ok(qbr);
                 },
                 Err(_) => {
@@ -281,11 +276,10 @@ impl <'g> GetQueryBuilder<'g> {
     func_client!(notifications, notifications::get::Notifications<'g>);
 
     /// Add an etag to the headers of the request
-    pub fn set_etag(mut self, tag: ETag) -> Self {
+    pub fn set_etag(mut self, tag: impl Into<HeaderValue>) -> Self {
         match self.request {
             Ok(mut req) => {
-                let ETag(tag) = tag;
-                req.get_mut().headers_mut().set(IfNoneMatch::Items(vec![tag]));
+                req.get_mut().headers_mut().insert(IF_NONE_MATCH, tag.into());
                 self.request = Ok(req);
                 self
             }
@@ -311,11 +305,10 @@ impl <'g> PutQueryBuilder<'g> {
     func_client!(notifications, notifications::put::Notifications<'g>);
 
     /// Add an etag to the headers of the request
-    pub fn set_etag(mut self, tag: ETag) -> Self {
+    pub fn set_etag(mut self, tag: impl Into<HeaderValue>) -> Self {
         match self.request {
             Ok(mut req) => {
-                let ETag(tag) = tag;
-                req.get_mut().headers_mut().set(IfNoneMatch::Items(vec![tag]));
+                req.get_mut().headers_mut().insert(IF_NONE_MATCH, tag.into());
                 self.request = Ok(req);
                 self
             }
@@ -341,11 +334,10 @@ impl <'g> DeleteQueryBuilder<'g> {
     func_client!(notifications, notifications::delete::Notifications<'g>);
 
     /// Add an etag to the headers of the request
-    pub fn set_etag(mut self, tag: ETag) -> Self {
+    pub fn set_etag(mut self, tag: impl Into<HeaderValue>) -> Self {
         match self.request {
             Ok(mut req) => {
-                let ETag(tag) = tag;
-                req.get_mut().headers_mut().set(IfNoneMatch::Items(vec![tag]));
+                req.get_mut().headers_mut().insert(IF_NONE_MATCH, tag.into());
                 self.request = Ok(req);
                 self
             }
@@ -371,11 +363,10 @@ impl <'g> PostQueryBuilder<'g> {
     func_client!(gists, gists::post::Gists<'g>);
 
     /// Add an etag to the headers of the request
-    pub fn set_etag(mut self, tag: ETag) -> Self {
+    pub fn set_etag(mut self, tag: impl Into<HeaderValue>) -> Self {
         match self.request {
             Ok(mut req) => {
-                let ETag(tag) = tag;
-                req.get_mut().headers_mut().set(IfNoneMatch::Items(vec![tag]));
+                req.get_mut().headers_mut().insert(IF_NONE_MATCH, tag.into());
                 self.request = Ok(req);
                 self
             },
@@ -401,11 +392,10 @@ impl <'g> PatchQueryBuilder<'g> {
     func_client!(notifications, notifications::patch::Notifications<'g>);
 
     /// Add an etag to the headers of the request
-    pub fn set_etag(mut self, tag: ETag) -> Self {
+    pub fn set_etag(mut self, tag: impl Into<HeaderValue>) -> Self {
         match self.request {
             Ok(mut req) => {
-                let ETag(tag) = tag;
-                req.get_mut().headers_mut().set(IfNoneMatch::Items(vec![tag]));
+                req.get_mut().headers_mut().insert(IF_NONE_MATCH, tag.into());
                 self.request = Ok(req);
                 self
             }
@@ -418,15 +408,15 @@ impl <'g> PatchQueryBuilder<'g> {
 // request method
 from!(
     @GetQueryBuilder
-        => Method::Get
+        => "GET"
     @PutQueryBuilder
-        => Method::Put
+        => "PUT"
     @PostQueryBuilder
-        => Method::Post
+        => "POST"
     @PatchQueryBuilder
-        => Method::Patch
+        => "PATCH"
     @DeleteQueryBuilder
-        => Method::Delete
+        => "DELETE"
 );
 
 // Custom Url based from impls
@@ -447,11 +437,11 @@ impl<'a> CustomQuery<'a>
 {
     /// Set custom header for request.
     /// Useful for custom headers (sometimes using in api preview).
-    pub fn set_header<H : Header>(mut self, accept_header: H) -> Self
+    pub fn set_header(mut self, header_name: impl Into<HeaderName>, accept_header: impl Into<HeaderValue>) -> Self
     {
         match self.request {
             Ok(mut req) => {
-                req.get_mut().headers_mut().set(accept_header);
+                req.get_mut().headers_mut().insert(header_name.into(), accept_header.into());
                 self.request = Ok(req);
                 self
             }

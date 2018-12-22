@@ -18,12 +18,12 @@ fn auth_token() -> Result<String, std::io::Error> {
 
 #[test]
 fn graphql_basic_test() {
-    let mut g = Github::new(&auth_token().unwrap()).unwrap();
+    let mut g = Github::new(&auth_token().expect("auth token")).unwrap();
     let (headers, status, json) = g.query::<Value>(
         &Query::new_raw("query { viewer { login } }")
     ).unwrap();
 
-    println!("{}", headers);
+    println!("{:#?}", headers);
     println!("{}", status);
     if let Some(json) = json {
         println!("{}", json);
@@ -41,12 +41,12 @@ fn graphql_escaping_test()
 }
 "#;
 
-    let mut g = Github::new(&auth_token().unwrap()).unwrap();
+    let mut g = Github::new(&auth_token().expect("auth token")).unwrap();
     let (headers, status, json) = g.query::<Value>(
         &Query::new_raw(q_str)
     ).unwrap();
 
-    println!("{}", headers);
+    println!("{:#?}", headers);
     println!("response status: {}", status);
     if let Some(ref json) = json {
         println!("{}", json);
@@ -72,7 +72,7 @@ fn graphql_escaping_test()
 //             } \
 //         }")
 //     ).unwrap();
-//     println!("{}", headers);
+//     println!("{:#?}", headers);
 //     println!("{}", status);
 //     if let Some(json) = json {
 //         println!("{}", json);

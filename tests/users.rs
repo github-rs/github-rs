@@ -18,7 +18,7 @@ fn get_user_repos() {
                                    .repo("github-rs")
                                    .execute::<Value>()
                                    .expect(testutil::FAILED_GITHUB_CONNECTION);
-    println!("{}", headers);
+    println!("{:#?}", headers);
     println!("{}", status);
     if let Some(json) = json {
         println!("{}", json);

@@ -2,9 +2,8 @@ extern crate github_rs;
 extern crate serde_json;
 extern crate hyper;
 use github_rs::client::{Executor, Github};
-use github_rs::{Headers, StatusCode};
-use hyper::header::{Accept, qitem};
-use hyper::mime::Mime;
+use github_rs::{HeaderMap, StatusCode};
+use hyper::header::{HeaderValue, ACCEPT};
 use serde_json::Value;
 
 fn main() {
@@ -32,7 +31,7 @@ fn main() {
             .expect("failed to get reactions");
 
         //... do something with reactions
-        println!("reactions: 
+        println!("reactions:
 {:?}",
                  reactions);
 
@@ -68,28 +67,23 @@ fn get_reactions(client: &Github,
                                      issue_number);
 
     println!("reactions endpoint: {:?}", &reactions_endpoint);
-    //need add this to header for reactions api
-    let media_type_text = "application/vnd.github.squirrel-girl-preview";
-    //prepare header
-    let mimed: Mime = media_type_text.parse().expect("failed to create mime");
-    let accept_header = Accept(vec![qitem(mimed)]);
     //send request with custom header
     let reactions_response = client
         .get()
         .custom_endpoint(&reactions_endpoint)
-        .set_header(accept_header)
+        .set_header(ACCEPT, HeaderValue::from_static("application/vnd.github.squirrel-girl-preview"))
         .execute::<Value>();
 
     print_info_and_get_json(reactions_response)
 }
 
 //printing headers and status or error and returning json on success
-fn print_info_and_get_json(response: Result<(Headers, StatusCode, Option<Value>),
+fn print_info_and_get_json(response: Result<(HeaderMap, StatusCode, Option<Value>),
                                             github_rs::errors::Error>)
                            -> Option<Value> {
     match response {
         Ok((headers, status, json)) => {
-            println!("{}", headers);
+            println!("{:#?}", headers);
             println!("{}", status);
             json
         }

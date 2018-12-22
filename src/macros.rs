@@ -48,7 +48,7 @@ macro_rules! from {
                         });
                     match url {
                         Ok(u) => {
-                            req.get_mut().set_uri(u);
+                            *req.get_mut().uri_mut() = u;
                             f.request = Ok(req);
                         },
                         Err(e) => {
@@ -85,10 +85,10 @@ macro_rules! from {
                 if f.request.is_ok() {
                     // We've checked that this works
                     let mut req = f.request.unwrap();
-                    let url = url_join(req.get_mut().uri(), $e2);
+                    let url = url_join(req.borrow().uri(), $e2);
                     match url {
                         Ok(u) => {
-                            req.get_mut().set_uri(u);
+                            *req.get_mut().uri_mut() = u;
                             f.request = Ok(req);
                         },
                         Err(e) => {
@@ -117,25 +117,28 @@ macro_rules! from {
         }
         )*)*
     );
-    ($(@$t: ident => $p: path)*) => (
+    ($(@$t: ident => $p: expr)*) => (
         $(
         impl <'g> From<&'g Github> for $t<'g> {
             fn from(gh: &'g Github) -> Self {
-                use std::result;
-                use hyper::mime::FromStrError;
-                let url = "https://api.github.com".parse::<Uri>();
-                let mime: result::Result<Mime, FromStrError> =
-                    "application/vnd.github.v3+json".parse();
-                match (url, mime) {
-                    (Ok(u), Ok(m)) => {
-                        let mut req = Request::new($p, u);
+                use hyper::header::{ ACCEPT, AUTHORIZATION, CONTENT_TYPE, USER_AGENT };
+                let res = Request::builder().method($p)
+                    .uri("https://api.github.com")
+                    .body(hyper::Body::empty())
+                    .map_err(From::from)
+                    .and_then(|req| {
                         let token = String::from("token ") + &gh.token;
+                        HeaderValue::from_str(&token).map(|token| (req, token))
+                            .map_err(From::from)
+                    });
+                match res {
+                    Ok((mut req, token)) => {
                         {
                             let headers = req.headers_mut();
-                            headers.set(ContentType::json());
-                            headers.set(UserAgent::new(String::from("github-rs")));
-                            headers.set(Accept(vec![qitem(m)]));
-                            headers.set(Authorization(token));
+                            headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
+                            headers.insert(USER_AGENT, HeaderValue::from_static("github-rs"));
+                            headers.insert(ACCEPT, HeaderValue::from_static("application/vnd.github.v3+json"));
+                            headers.insert(AUTHORIZATION, token);
                         }
                         Self {
                             request: Ok(RefCell::new(req)),
@@ -144,27 +147,9 @@ macro_rules! from {
                             parameter: None,
                         }
                     }
-                    (Err(u), Ok(_)) => {
+                    Err(err) => {
                         Self {
-                            request: Err(u.into()),
-                            core: &gh.core,
-                            client: &gh.client,
-                            parameter: None,
-                        }
-                    }
-                    (Ok(_), Err(e)) => {
-                        Self {
-                            request: Err(e.into()),
-                            core: &gh.core,
-                            client: &gh.client,
-                            parameter: None,
-                        }
-                    }
-                    (Err(u), Err(e)) => {
-                        Self {
-                            request: Err(u).chain_err(||
-                                format!("Mime failed to parse: {:?}", e)
-                            ),
+                            request: Err(err),
                             core: &gh.core,
                             client: &gh.client,
                             parameter: None,
@@ -205,7 +190,7 @@ macro_rules! exec {
             /// Json after it has been deserialized. Please take a look at
             /// the GitHub documentation to see what value you should receive
             /// back for good or bad requests.
-            fn execute<T>(self) -> Result<(Headers, StatusCode, Option<T>)>
+            fn execute<T>(self) -> Result<(HeaderMap, StatusCode, Option<T>)>
             where T: DeserializeOwned
             {
                 let mut core_ref = self.core.try_borrow_mut()?;
@@ -215,7 +200,7 @@ macro_rules! exec {
                     .and_then(|res| {
                         let header = res.headers().clone();
                         let status = res.status();
-                        res.body().fold(Vec::new(), |mut v, chunk| {
+                        res.into_body().fold(Vec::new(), |mut v, chunk| {
                             v.extend(&chunk[..]);
                             ok::<_, hyper::Error>(v)
                         }).map(move |chunks| {
@@ -258,10 +243,10 @@ macro_rules! impl_macro {
                     if self.request.is_ok() {
                         // We've checked that this works
                         let mut req = self.request.unwrap();
-                        let url = url_join(req.get_mut().uri(), $e2);
+                        let url = url_join(req.borrow().uri(), $e2);
                         match url {
                             Ok(u) => {
-                                req.get_mut().set_uri(u);
+                                *req.get_mut().uri_mut() = u;
                                 self.request = Ok(req);
                             },
                             Err(e) => {
@@ -301,10 +286,10 @@ macro_rules! func_client{
             if self.request.is_ok() {
                 // We've checked that this works
                 let mut req = self.request.unwrap();
-                let url = url_join(req.get_mut().uri(), $e);
+                let url = url_join(req.borrow().uri(), $e);
                 match url {
                     Ok(u) => {
-                        req.get_mut().set_uri(u);
+                        *req.get_mut().uri_mut() = u;
                         self.request = Ok(req);
                     },
                     Err(e) => {
@@ -322,15 +307,16 @@ macro_rules! imports{
     () => (
         use tokio_core::reactor::Core;
         #[cfg(feature = "rustls")]
-        use hyper_rustls::HttpsConnector;
+        type HttpsConnector = hyper_rustls::HttpsConnector<hyper::client::HttpConnector>;
         #[cfg(feature = "rust-native-tls")]
         use hyper_tls;
         #[cfg(feature = "rust-native-tls")]
         type HttpsConnector = hyper_tls::HttpsConnector<hyper::client::HttpConnector>;
         use hyper::client::Client;
-        use hyper::client::Request;
+        use hyper::Request;
         use hyper::StatusCode;
-        use hyper::{ self, Body, Headers };
+        #[allow(unused)]
+        use hyper::{ self, Body, HeaderMap };
         use errors::*;
         use futures::{ Future, Stream };
         use futures::future::ok;

@@ -95,7 +95,7 @@ fn main() {
                    .execute::<Value>();
     match me {
         Ok((headers, status, json)) => {
-            println!("{}", headers);
+            println!("{:#?}", headers);
             println!("{}", status);
             if let Some(json) = json{
                 println!("{}", json);

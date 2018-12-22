@@ -5,11 +5,11 @@ use futures::{ Stream, Future };
 
 use serde_json;
 // Hyper Imports
-use hyper::{ self, Headers };
+use hyper::{ self, HeaderMap };
 use hyper::client::Client;
 use hyper::StatusCode;
 #[cfg(feature = "rustls")]
-use hyper_rustls::HttpsConnector;
+type HttpsConnector = hyper_rustls::HttpsConnector<hyper::client::HttpConnector>;
 #[cfg(feature = "rust-native-tls")]
 use hyper_tls;
 #[cfg(feature = "rust-native-tls")]
@@ -32,7 +32,7 @@ use std::cell::RefCell;
 pub struct Github {
     token: String,
     core: Rc<RefCell<Core>>,
-    client: Rc<Client<HttpsConnector>>,
+    client: Rc<Client<HttpsConnector, hyper::Body>>,
 }
 
 impl Clone for Github {
@@ -55,13 +55,11 @@ impl Github {
         let core = Core::new()?;
         let handle = core.handle();
         #[cfg(feature = "rustls")]
-        let client = Client::configure()
-            .connector(HttpsConnector::new(4,&handle))
-            .build(&handle);
+        let client = Client::builder()
+            .build(HttpsConnector::new(4));
         #[cfg(feature = "rust-native-tls")]
-        let client = Client::configure()
-            .connector(HttpsConnector::new(4,&handle)?)
-            .build(&handle);
+        let client = Client::builder()
+            .build(HttpsConnector::new(4,&handle)?);
         Ok(Self {
             token: token.to_string(),
             core: Rc::new(RefCell::new(core)),
@@ -104,20 +102,20 @@ impl Github {
 
     pub fn query<T>(
         &mut self,
-        query: &Query) -> Result<(Headers, StatusCode, Option<T>)>
+        query: &Query) -> Result<(HeaderMap, StatusCode, Option<T>)>
             where T:DeserializeOwned
     {
         self.run(query)
     }
 
     pub fn mutation<T>(&mut self, mutation: &Mutation)
-        -> Result<(Headers, StatusCode, Option<T>)>
+        -> Result<(HeaderMap, StatusCode, Option<T>)>
         where T:DeserializeOwned
     {
         self.run(mutation)
     }
 
-    fn run<T,I>(&mut self, request: &I) -> Result<(Headers, StatusCode, Option<T>)>
+    fn run<T,I>(&mut self, request: &I) -> Result<(HeaderMap, StatusCode, Option<T>)>
             where T: DeserializeOwned,
                   I: IntoGithubRequest,
     {
@@ -131,7 +129,7 @@ impl Github {
             .and_then(|res| {
                 let header = res.headers().clone();
                 let status = res.status();
-                res.body().fold(Vec::new(), |mut v, chunk| {
+                res.into_body().fold(Vec::new(), |mut v, chunk| {
                     v.extend(&chunk[..]);
                     ok::<_, hyper::Error>(v)
                 }).map(move |chunks| {

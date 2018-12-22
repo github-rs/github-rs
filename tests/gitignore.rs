@@ -17,7 +17,7 @@ fn get_gitignore_templates() {
                                     .execute::<Value>()
                                     .expect(testutil::FAILED_GITHUB_CONNECTION);
     println!("Status: {}\nResponse: {:#?}", status, json);
-    assert_eq!(status, StatusCode::Ok);
+    assert_eq!(status, StatusCode::OK);
     if let Some(Value::Array(languages)) = json {
         assert!(languages.contains(&Value::String("Rust".into())))
     }
@@ -33,7 +33,7 @@ fn get_gitignore_templates_rust() {
         .execute::<Value>()
         .expect(testutil::FAILED_GITHUB_CONNECTION);
     println!("Status: {}\nResponse: {:#?}", status, json);
-    assert_eq!(status, StatusCode::Ok);
+    assert_eq!(status, StatusCode::OK);
     if let Some(json) = json {
         assert!(
             json.get("source")

@@ -59,7 +59,7 @@ fn main() {
         &Query::new_raw("query { viewer { login } }")
     ).unwrap();
 
-    println!("{}", headers);
+    println!("{:#?}", headers);
     println!("{}", status);
     if let Some(json) = json {
         println!("{}", json);
@@ -80,7 +80,7 @@ fn main() {
             } 
         }"#)
     ).unwrap();
-    println!("{}", headers);
+    println!("{:#?}", headers);
     println!("{}", status);
     if let Some(json) = json {
         println!("{}", json);

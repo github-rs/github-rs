@@ -1,6 +1,6 @@
 use IntoGithubRequest;
-use hyper::{ Uri, Method, Request };
-use hyper::header::{ Authorization, ContentType, UserAgent };
+use hyper::{ Request };
+use hyper::header::{ HeaderValue, AUTHORIZATION, CONTENT_TYPE, USER_AGENT };
 use errors::*;
 use std::str::FromStr;
 
@@ -46,22 +46,22 @@ impl Mutation {
 }
 
 impl IntoGithubRequest for Mutation {
-    fn into_github_req(&self, token: &str) -> Result<Request> {
-            let mut req = Request::new(
-                Method::Post,
-                Uri::from_str("https://api.github.com/graphql")
-                    .chain_err(|| "Unable to for URL to make the request")?);
+    fn into_github_req(&self, token: &str) -> Result<Request<hyper::Body>> {
             let mut q = String::from("{ \"query\": \"");
             q.push_str(&self.mutation);
             q.push_str("\" }");
             println!("{}", q);
-            req.set_body(q);
+            let mut req = Request::builder()
+                .method("POST")
+                .uri("https://api.github.com/graphql")
+                .body(q.into())
+                .chain_err(|| "Unable to for URL to make the request")?;
             let token = String::from("token ") + &token;
             {
                 let headers = req.headers_mut();
-                headers.set(ContentType::json());
-                headers.set(UserAgent::new(String::from("github-rs")));
-                headers.set(Authorization(token));
+                headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
+                headers.insert(USER_AGENT, HeaderValue::from_static("github-rs"));
+                headers.insert(AUTHORIZATION, HeaderValue::from_str(&token).chain_err(|| "token parse")?);
             }
             Ok(req)
     }

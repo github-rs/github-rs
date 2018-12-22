@@ -14,6 +14,7 @@ extern crate tokio_core;
 extern crate serde;
 extern crate serde_json;
 
+#[allow(deprecated)] // error_chain uses cause()
 pub mod errors {
     error_chain!{
         foreign_links {
@@ -34,9 +35,9 @@ pub mod client;
 pub mod query;
 pub mod mutation;
 
-pub use hyper::{Headers, StatusCode};
+pub use hyper::{HeaderMap, StatusCode};
 
 use errors::Result;
 pub trait IntoGithubRequest {
-    fn into_github_req(&self, token: &str) -> Result<hyper::Request>;
+    fn into_github_req(&self, token: &str) -> Result<hyper::Request<hyper::Body>>;
 }
