@@ -46,14 +46,14 @@ impl Mutation {
 }
 
 impl IntoGithubRequest for Mutation {
-    fn into_github_req(&self, token: &str) -> Result<Request<hyper::Body>> {
+    fn into_github_req(&self, hostname: &str, token: &str) -> Result<Request<hyper::Body>> {
             let mut q = String::from("{ \"query\": \"");
             q.push_str(&self.mutation);
             q.push_str("\" }");
             println!("{}", q);
             let mut req = Request::builder()
                 .method("POST")
-                .uri("https://api.github.com/graphql")
+                .uri(format!("https://{}/graphql", hostname))
                 .body(q.into())
                 .chain_err(|| "Unable to for URL to make the request")?;
             let token = String::from("token ") + &token;
