@@ -11,9 +11,12 @@ Due to the use of certain features github-rs requires rustc version 1.18 or high
 
 To run tests, you will need an auth token from GitHub. You can follow the
 official [GitHub documentation][gh-access-token-docs] to get a personal access
-token for testing. Once you have an access token, create a file under the `tests`
-folder called `auth_token` with your token as the only string.
-Run `cargo test` to make sure all of the tests pass.
+token for testing. This token should have at least the `read:user`,
+`public_repo`, `repo:status`, and `notifications` scopes.
+
+Once you have an access token, create a file under the `tests` folder called
+`auth_token` with your token as the only string. Run `cargo test` to make sure
+all of the tests pass.
 
 [gh-access-token-docs]: https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/
 
