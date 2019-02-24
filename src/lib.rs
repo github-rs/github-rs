@@ -1,6 +1,5 @@
 //! Library to used to access the Github API with Rust
 #![allow(dead_code)] // Until every starting struct gets used
-
 #![deny(//missing_docs,
         unsafe_code,
         unused_import_braces,

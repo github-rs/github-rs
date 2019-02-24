@@ -22,7 +22,6 @@ pub fn last_modified(head: &HeaderMap) -> Option<&HeaderValue> {
     head.get(LAST_MODIFIED)
 }
 
-
 /// Extract however many requests the authenticated user can
 /// do from the Headers
 pub fn rate_limit_remaining(head: &HeaderMap) -> Option<u32> {

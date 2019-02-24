@@ -220,7 +220,6 @@ impl Github {
     pub fn delete_empty(&self) -> DeleteQueryBuilder {
         self.into()
     }
-
 }
 
 impl <'g> GetQueryBuilder<'g> {

@@ -52,9 +52,7 @@ fn graphql_escaping_test()
         println!("{}", json);
     }
     assert_eq!(json.unwrap()["data"]["user"]["login"].as_str().unwrap(),"mgattozzi");
-
 }
-
 
 // #[test]
 // fn add_reaction() {

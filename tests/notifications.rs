@@ -76,7 +76,6 @@ fn put_notifications(id: &str) {
     println!("{:#?}", headers);
     println!("{}", status);
     assert_eq!(status, StatusCode::RESET_CONTENT);
-
 }
 
 fn put_subscriptions_for_a_thread(id: &str) {

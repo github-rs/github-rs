@@ -11,7 +11,6 @@ fn main() {
                    .execute::<Value>();
     match me {
         Ok((headers, _, _)) => {
-
             if let Some(etag) = etag(&headers) {
                 let limit = rate_limit_remaining(&headers);
                 let (headers, _, _) = client.get()

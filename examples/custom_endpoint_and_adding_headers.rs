@@ -34,7 +34,6 @@ fn main() {
         println!("reactions:
 {:?}",
                  reactions);
-
     } else {
         println!("no issues!");
     }
@@ -42,7 +41,6 @@ fn main() {
 
 //get all issues for repo
 fn get_issues(client: &Github, owner: &str, repo_name: &str) -> Option<Value> {
-
     //endpoint found on https://developer.github.com/v3/issues/#list-issues-for-a-repository
     let issues_endpoint = format!("repos/{}/{}/issues", owner, repo_name);
     //execute
