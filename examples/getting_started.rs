@@ -12,7 +12,7 @@ fn main() {
         Ok((headers, status, json)) => {
             println!("{:#?}", headers);
             println!("{}", status);
-            if let Some(json) = json{
+            if let Some(json) = json {
                 println!("{}", json);
             }
         },

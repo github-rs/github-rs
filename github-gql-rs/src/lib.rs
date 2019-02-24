@@ -16,7 +16,7 @@ extern crate tokio_core;
 
 #[allow(deprecated)] // error_chain uses cause()
 pub mod errors {
-    error_chain!{
+    error_chain! {
         foreign_links {
             Io(::std::io::Error)
                 #[doc = "`std::io::Error` converted to an error-chain type"];

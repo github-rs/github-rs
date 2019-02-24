@@ -1,5 +1,5 @@
 #![allow(deprecated)] // cause()
-error_chain!{
+error_chain! {
     foreign_links {
         CellBorrowMut(::std::cell::BorrowMutError);
         Hyper(::hyper::Error);
