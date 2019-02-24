@@ -5,9 +5,7 @@ use serde_json::Value;
 
 fn main() {
     let client = Github::new("API TOKEN").unwrap();
-    let me = client.get()
-                   .user()
-                   .execute::<Value>();
+    let me = client.get().user().execute::<Value>();
     match me {
         Ok((headers, status, json)) => {
             println!("{:#?}", headers);
@@ -15,7 +13,7 @@ fn main() {
             if let Some(json) = json {
                 println!("{}", json);
             }
-        },
-        Err(e) => println!("{}", e)
+        }
+        Err(e) => println!("{}", e),
     }
 }

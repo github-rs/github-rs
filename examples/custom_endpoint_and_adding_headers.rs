@@ -8,8 +8,7 @@ use serde_json::Value;
 
 fn main() {
     //create new client
-    let client = Github::new("API TOKEN")
-        .expect("failed to create client");
+    let client = Github::new("API TOKEN").expect("failed to create client");
     //github username
     let owner = "rust-lang";
     //repository name
@@ -27,13 +26,15 @@ fn main() {
         //println!("{:?}", &first_issue);
         let number_as_value = &first_issue["number"];
         let number = number_as_value.as_u64().unwrap();
-        let reactions = get_reactions(&client, owner, repo_name, number)
-            .expect("failed to get reactions");
+        let reactions =
+            get_reactions(&client, owner, repo_name, number).expect("failed to get reactions");
 
         //... do something with reactions
-        println!("reactions:
+        println!(
+            "reactions:
 {:?}",
-                 reactions);
+            reactions
+        );
     } else {
         println!("no issues!");
     }
@@ -53,32 +54,36 @@ fn get_issues(client: &Github, owner: &str, repo_name: &str) -> Option<Value> {
 }
 
 //get reactions for particular issue
-fn get_reactions(client: &Github,
-                 owner: &str,
-                 repo_name: &str,
-                 issue_number: u64)
-                 -> Option<Value> {
+fn get_reactions(
+    client: &Github,
+    owner: &str,
+    repo_name: &str,
+    issue_number: u64,
+) -> Option<Value> {
     //build endpoint
-    let reactions_endpoint = format!("repos/{}/{}/issues/{}/reactions",
-                                     owner,
-                                     repo_name,
-                                     issue_number);
+    let reactions_endpoint = format!(
+        "repos/{}/{}/issues/{}/reactions",
+        owner, repo_name, issue_number
+    );
 
     println!("reactions endpoint: {:?}", &reactions_endpoint);
     //send request with custom header
     let reactions_response = client
         .get()
         .custom_endpoint(&reactions_endpoint)
-        .set_header(ACCEPT, HeaderValue::from_static("application/vnd.github.squirrel-girl-preview"))
+        .set_header(
+            ACCEPT,
+            HeaderValue::from_static("application/vnd.github.squirrel-girl-preview"),
+        )
         .execute::<Value>();
 
     print_info_and_get_json(reactions_response)
 }
 
 //printing headers and status or error and returning json on success
-fn print_info_and_get_json(response: Result<(HeaderMap, StatusCode, Option<Value>),
-                                            github_rs::errors::Error>)
-                           -> Option<Value> {
+fn print_info_and_get_json(
+    response: Result<(HeaderMap, StatusCode, Option<Value>), github_rs::errors::Error>,
+) -> Option<Value> {
     match response {
         Ok((headers, status, json)) => {
             println!("{:#?}", headers);

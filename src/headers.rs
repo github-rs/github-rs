@@ -6,10 +6,12 @@ use std::str::FromStr;
 /// Checks to see if a received payload from GitHub contains
 /// the GitHub-Hookshot header in the `UserAgent`.
 pub fn has_github_hookshot(head: &HeaderMap) -> bool {
-    head.get(USER_AGENT)
-        .map_or(false, |user_agent| {
-            user_agent.to_str().ok().map_or(false, |s| s.starts_with("GitHub-Hookshot"))
-        })
+    head.get(USER_AGENT).map_or(false, |user_agent| {
+        user_agent
+            .to_str()
+            .ok()
+            .map_or(false, |s| s.starts_with("GitHub-Hookshot"))
+    })
 }
 
 /// Extract an `ETag` from the Headers if it exists
@@ -26,11 +28,7 @@ pub fn last_modified(head: &HeaderMap) -> Option<&HeaderValue> {
 /// do from the Headers
 pub fn rate_limit_remaining(head: &HeaderMap) -> Option<u32> {
     head.get("X-RateLimit-Remaining")
-        .map(|limit| {
-            u32::from_str(
-                limit.to_str().unwrap_or("")
-            ).ok()
-        })
+        .map(|limit| u32::from_str(limit.to_str().unwrap_or("")).ok())
         .unwrap_or(None)
 }
 
@@ -38,11 +36,7 @@ pub fn rate_limit_remaining(head: &HeaderMap) -> Option<u32> {
 /// make from the Headers
 pub fn rate_limit(head: &HeaderMap) -> Option<u32> {
     head.get("X-RateLimit-Limit")
-        .map(|limit| {
-            u32::from_str(
-                limit.to_str().unwrap_or("")
-            ).ok()
-        })
+        .map(|limit| u32::from_str(limit.to_str().unwrap_or("")).ok())
         .unwrap_or(None)
 }
 
@@ -50,10 +44,6 @@ pub fn rate_limit(head: &HeaderMap) -> Option<u32> {
 /// is reset from the Headers
 pub fn rate_limit_reset(head: &HeaderMap) -> Option<u32> {
     head.get("X-RateLimit-Reset")
-        .map(|limit| {
-            u32::from_str(
-                limit.to_str().unwrap_or("")
-            ).ok()
-        })
+        .map(|limit| u32::from_str(limit.to_str().unwrap_or("")).ok())
         .unwrap_or(None)
 }

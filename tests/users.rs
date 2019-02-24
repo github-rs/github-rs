@@ -12,12 +12,13 @@ use testutil::*;
 fn get_user_repos() {
     // We want it to fail
     let g = setup_github_connection();
-    let (headers, status, json) = g.get()
-                                   .repos()
-                                   .owner("mgattozzi")
-                                   .repo("github-rs")
-                                   .execute::<Value>()
-                                   .expect(testutil::FAILED_GITHUB_CONNECTION);
+    let (headers, status, json) = g
+        .get()
+        .repos()
+        .owner("mgattozzi")
+        .repo("github-rs")
+        .execute::<Value>()
+        .expect(testutil::FAILED_GITHUB_CONNECTION);
     println!("{:#?}", headers);
     println!("{}", status);
     if let Some(json) = json {
@@ -29,22 +30,24 @@ fn get_user_repos() {
 fn cached_response() {
     // We want it to fail
     let g = setup_github_connection();
-    let (headers, _, _) = g.get()
-                           .repos()
-                           .owner("mgattozzi")
-                           .repo("github-rs")
-                           .execute::<Value>()
-                           .expect(testutil::FAILED_GITHUB_CONNECTION);
+    let (headers, _, _) = g
+        .get()
+        .repos()
+        .owner("mgattozzi")
+        .repo("github-rs")
+        .execute::<Value>()
+        .expect(testutil::FAILED_GITHUB_CONNECTION);
     let etag = etag(&headers);
     //let limit = rate_limit_remaining(&headers).unwrap();
     let _ = rate_limit_remaining(&headers).unwrap();
-    let (headers, _, _) = g.get()
-                           .set_etag(etag.unwrap())
-                           .repos()
-                           .owner("mgattozzi")
-                           .repo("github-rs")
-                           .execute::<Value>()
-                           .expect(testutil::FAILED_GITHUB_CONNECTION);
+    let (headers, _, _) = g
+        .get()
+        .set_etag(etag.unwrap())
+        .repos()
+        .owner("mgattozzi")
+        .repo("github-rs")
+        .execute::<Value>()
+        .expect(testutil::FAILED_GITHUB_CONNECTION);
     //let limit2 = rate_limit_remaining(&headers).unwrap();
     let _ = rate_limit_remaining(&headers).unwrap();
     // Spurious test case

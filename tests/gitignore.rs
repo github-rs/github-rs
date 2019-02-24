@@ -11,11 +11,12 @@ use testutil::*;
 #[test]
 fn get_gitignore_templates() {
     let g = setup_github_connection();
-    let (_headers, status, json) = g.get()
-                                    .gitignore()
-                                    .templates()
-                                    .execute::<Value>()
-                                    .expect(testutil::FAILED_GITHUB_CONNECTION);
+    let (_headers, status, json) = g
+        .get()
+        .gitignore()
+        .templates()
+        .execute::<Value>()
+        .expect(testutil::FAILED_GITHUB_CONNECTION);
     println!("Status: {}\nResponse: {:#?}", status, json);
     assert_eq!(status, StatusCode::OK);
     if let Some(Value::Array(languages)) = json {
@@ -26,7 +27,8 @@ fn get_gitignore_templates() {
 #[test]
 fn get_gitignore_templates_rust() {
     let g = setup_github_connection();
-    let (_headers, status, json) = g.get()
+    let (_headers, status, json) = g
+        .get()
         .gitignore()
         .templates()
         .lang("Rust")
@@ -35,12 +37,11 @@ fn get_gitignore_templates_rust() {
     println!("Status: {}\nResponse: {:#?}", status, json);
     assert_eq!(status, StatusCode::OK);
     if let Some(json) = json {
-        assert!(
-            json.get("source")
-                .unwrap()
-                .as_str()
-                .unwrap()
-                .contains("Cargo")
-        )
+        assert!(json
+            .get("source")
+            .unwrap()
+            .as_str()
+            .unwrap()
+            .contains("Cargo"))
     }
 }

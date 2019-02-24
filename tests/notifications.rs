@@ -15,7 +15,8 @@ use testutil::*;
 #[test]
 fn get_notifications() {
     let g = setup_github_connection();
-    let (headers, status, json) = g.get()
+    let (headers, status, json) = g
+        .get()
         .notifications()
         .execute::<Value>()
         .expect(testutil::FAILED_GITHUB_CONNECTION);
@@ -25,18 +26,19 @@ fn get_notifications() {
     assert_eq!(status, StatusCode::OK);
     if let Some(json) = json {
         if !json.as_array().unwrap().is_empty() {
-                let id = json[0].get("id").unwrap().as_str().unwrap();
-                get_single_thread_of_notifications(id);
-                get_subscriptions_of_single_thread(id);
-                put_subscriptions_for_a_thread(id);
-                put_notifications(id);
+            let id = json[0].get("id").unwrap().as_str().unwrap();
+            get_single_thread_of_notifications(id);
+            get_subscriptions_of_single_thread(id);
+            put_subscriptions_for_a_thread(id);
+            put_notifications(id);
         }
     }
 }
 
 fn get_single_thread_of_notifications(id: &str) {
     let g = setup_github_connection();
-    let (headers, status, json) = g.get()
+    let (headers, status, json) = g
+        .get()
         .notifications()
         .threads()
         .id(id)
@@ -52,7 +54,8 @@ fn get_single_thread_of_notifications(id: &str) {
 
 fn get_subscriptions_of_single_thread(id: &str) {
     let g = setup_github_connection();
-    let (headers, status, json) = g.get()
+    let (headers, status, json) = g
+        .get()
         .notifications()
         .threads()
         .id(id)
@@ -62,14 +65,15 @@ fn get_subscriptions_of_single_thread(id: &str) {
     println!("{:#?}", headers);
     println!("{}", status);
 
-        if let Some(json) = json {
+    if let Some(json) = json {
         println!("{}", json);
     }
 }
 
 fn put_notifications(id: &str) {
     let g = setup_github_connection();
-    let (headers, status, _) = g.put(json!({"id" : id}))
+    let (headers, status, _) = g
+        .put(json!({ "id": id }))
         .notifications()
         .execute::<Value>()
         .expect(testutil::FAILED_GITHUB_CONNECTION);
@@ -80,7 +84,8 @@ fn put_notifications(id: &str) {
 
 fn put_subscriptions_for_a_thread(id: &str) {
     let g = setup_github_connection();
-    let (headers, status, _) = g.put(json!({"subscribed": true, "ignored": false}))
+    let (headers, status, _) = g
+        .put(json!({"subscribed": true, "ignored": false}))
         .notifications()
         .threads()
         .id(id)

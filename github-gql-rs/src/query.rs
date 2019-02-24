@@ -12,7 +12,9 @@ pub struct Query {
 impl Query {
     /// Create a new `Query`
     pub fn new() -> Self {
-        Self { query: String::new() }
+        Self {
+            query: String::new(),
+        }
     }
     /// Create a new `Query` using the given value as the input for the query to
     /// GitHub. Any other methods used will assume the `String` is empty. This
@@ -29,9 +31,12 @@ impl Query {
     /// let q = Query::new_raw("my query which won't work");
     /// ```
     pub fn new_raw<T>(q: T) -> Self
-        where T: ToString
+    where
+        T: ToString,
     {
-        Self { query: q.to_string() }
+        Self {
+            query: q.to_string(),
+        }
     }
 
     /// Whatever you put here becomes your query and replaces anything you might
@@ -39,7 +44,8 @@ impl Query {
     /// API so no guarantees can be made here that it will work, only that if
     /// used this can be used to make a query using the `client::Github` type.
     pub fn raw_query<T>(&mut self, q: T)
-        where T: ToString
+    where
+        T: ToString,
     {
         self.query = q.to_string();
     }
@@ -47,28 +53,30 @@ impl Query {
 
 impl IntoGithubRequest for Query {
     fn into_github_req(&self, token: &str) -> Result<Request<hyper::Body>> {
+        //escaping new lines and quotation marks for json
+        let mut escaped = (&self.query).to_string();
+        escaped = escaped.replace("\n", "\\n");
+        escaped = escaped.replace("\"", "\\\"");
 
-            //escaping new lines and quotation marks for json
-            let mut escaped = (&self.query).to_string();
-            escaped = escaped.replace("\n", "\\n");
-            escaped = escaped.replace("\"", "\\\"");
+        let mut q = String::from("{ \"query\": \"");
+        q.push_str(&escaped);
+        q.push_str("\" }");
+        let mut req = Request::builder()
+            .method("POST")
+            .uri("https://api.github.com/graphql")
+            .body(q.into())
+            .chain_err(|| "Unable to for URL to make the request")?;
 
-            let mut q = String::from("{ \"query\": \"");
-            q.push_str(&escaped);
-            q.push_str("\" }");
-            let mut req = Request::builder()
-                .method("POST")
-                .uri("https://api.github.com/graphql")
-                .body(q.into())
-                .chain_err(|| "Unable to for URL to make the request")?;
-
-            let token = String::from("token ") + &token;
-            {
-                let headers = req.headers_mut();
-                headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
-                headers.insert(USER_AGENT, HeaderValue::from_static("github-rs"));
-                headers.insert(AUTHORIZATION, HeaderValue::from_str(&token).chain_err(|| "token parse")?);
-            }
-            Ok(req)
+        let token = String::from("token ") + &token;
+        {
+            let headers = req.headers_mut();
+            headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
+            headers.insert(USER_AGENT, HeaderValue::from_static("github-rs"));
+            headers.insert(
+                AUTHORIZATION,
+                HeaderValue::from_str(&token).chain_err(|| "token parse")?,
+            );
+        }
+        Ok(req)
     }
 }
