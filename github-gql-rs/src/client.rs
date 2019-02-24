@@ -1,13 +1,13 @@
 // Tokio/Future Imports
-use tokio_core::reactor::Core;
 use futures::future::ok;
-use futures::{ Stream, Future };
+use futures::{Future, Stream};
+use tokio_core::reactor::Core;
 
 use serde_json;
 // Hyper Imports
-use hyper::{ self, HeaderMap };
 use hyper::client::Client;
 use hyper::StatusCode;
+use hyper::{self, HeaderMap};
 #[cfg(feature = "rustls")]
 type HttpsConnector = hyper_rustls::HttpsConnector<hyper::client::HttpConnector>;
 #[cfg(feature = "rust-native-tls")]
@@ -20,13 +20,13 @@ use serde::de::DeserializeOwned;
 
 // Lib Imports
 use errors::*;
-use query::Query;
 use mutation::Mutation;
+use query::Query;
 use IntoGithubRequest;
 
 // Std Imports
-use std::rc::Rc;
 use std::cell::RefCell;
+use std::rc::Rc;
 
 /// Struct used to make calls to the Github API.
 pub struct Github {

@@ -8,6 +8,7 @@
 
 #[macro_use]
 extern crate error_chain;
+extern crate futures;
 extern crate hyper;
 #[cfg(feature = "rustls")]
 extern crate hyper_rustls;
@@ -15,16 +16,16 @@ extern crate hyper_rustls;
 extern crate hyper_tls;
 #[cfg(feature = "native-tls")]
 extern crate native_tls;
-extern crate futures;
-extern crate tokio_core;
 extern crate serde;
 extern crate serde_json;
+extern crate tokio_core;
 
-#[macro_use] mod macros;
+#[macro_use]
+mod macros;
 mod util;
 
-pub mod errors;
 pub mod client;
+pub mod errors;
 pub mod gists;
 pub mod headers;
 pub mod issues;

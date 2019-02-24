@@ -1,5 +1,5 @@
-use hyper::http::HttpTryFrom;
 use hyper::http::uri::InvalidUriParts;
+use hyper::http::HttpTryFrom;
 use hyper::Uri;
 
 /// Add an extra subdirectory to the end of the url. This utilizes

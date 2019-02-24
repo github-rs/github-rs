@@ -1,10 +1,10 @@
 extern crate github_rs as gh;
 
 use gh::client::Github;
+use std::fs::File;
+use std::io::prelude::*;
 use std::io::BufReader;
 use std::io::Error;
-use std::io::prelude::*;
-use std::fs::File;
 
 const INVALID_TOKEN_FILE: &'static str = "Your auth_token file is not setup properly. \
 Refer to the contributing guidelines to see how to set one up.";

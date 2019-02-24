@@ -3,8 +3,8 @@ extern crate github_rs;
 extern crate serde_derive;
 extern crate serde_json;
 
+use github_rs::client::{Executor, Github};
 use github_rs::StatusCode;
-use github_rs::client::{ Executor, Github };
 use serde_json::Value;
 
 trait TryExecute: Executor {

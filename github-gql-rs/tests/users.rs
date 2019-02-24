@@ -3,9 +3,9 @@ extern crate serde_json;
 use gh::client::Github;
 use gh::query::Query;
 use serde_json::Value;
-use std::io::BufReader;
-use std::io::prelude::*;
 use std::fs::File;
+use std::io::prelude::*;
+use std::io::BufReader;
 //use gh::mutation::Mutation;
 
 fn auth_token() -> Result<String, std::io::Error> {

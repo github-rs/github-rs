@@ -2,8 +2,8 @@ extern crate github_rs as gh;
 #[macro_use]
 extern crate serde_json;
 use gh::client::Executor;
-use serde_json::Value;
 use gh::StatusCode;
+use serde_json::Value;
 
 mod testutil;
 

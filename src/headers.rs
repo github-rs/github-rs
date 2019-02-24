@@ -1,7 +1,7 @@
 //! Helper functions for end users for GitHub response Headers
-use std::str::FromStr;
+use hyper::header::{HeaderValue, ETAG, LAST_MODIFIED, USER_AGENT};
 use hyper::HeaderMap;
-use hyper::header::{ HeaderValue, ETAG, LAST_MODIFIED, USER_AGENT };
+use std::str::FromStr;
 
 /// Checks to see if a received payload from GitHub contains
 /// the GitHub-Hookshot header in the `UserAgent`.

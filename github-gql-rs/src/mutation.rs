@@ -1,8 +1,8 @@
-use IntoGithubRequest;
-use hyper::{ Request };
-use hyper::header::{ HeaderValue, AUTHORIZATION, CONTENT_TYPE, USER_AGENT };
 use errors::*;
+use hyper::header::{HeaderValue, AUTHORIZATION, CONTENT_TYPE, USER_AGENT};
+use hyper::Request;
 use std::str::FromStr;
+use IntoGithubRequest;
 
 /// Used to mutate information on GitHub
 pub struct Mutation {

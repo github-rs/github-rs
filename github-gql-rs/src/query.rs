@@ -1,7 +1,7 @@
-use IntoGithubRequest;
-use hyper::{ Uri, Method, Request };
-use hyper::header::{ HeaderValue, AUTHORIZATION, CONTENT_TYPE, USER_AGENT };
 use errors::*;
+use hyper::header::{HeaderValue, AUTHORIZATION, CONTENT_TYPE, USER_AGENT};
+use hyper::{Method, Request, Uri};
+use IntoGithubRequest;
 
 /// Used to query information from the GitHub API to possibly be used in
 /// a `Mutation` or for information to make decisions with how to interact.

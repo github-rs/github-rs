@@ -1,7 +1,7 @@
 extern crate github_rs as gh;
 extern crate serde_json;
 use gh::client::Executor;
-use gh::headers::{ etag, rate_limit_remaining };
+use gh::headers::{etag, rate_limit_remaining};
 use serde_json::Value;
 
 mod testutil;
