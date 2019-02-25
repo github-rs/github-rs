@@ -46,7 +46,7 @@ impl Query {
 }
 
 impl IntoGithubRequest for Query {
-    fn into_github_req(&self, token: &str) -> Result<Request<hyper::Body>> {
+    fn into_github_req(&self, hostname: &str, token: &str) -> Result<Request<hyper::Body>> {
 
             //escaping new lines and quotation marks for json
             let mut escaped = (&self.query).to_string();
@@ -58,7 +58,7 @@ impl IntoGithubRequest for Query {
             q.push_str("\" }");
             let mut req = Request::builder()
                 .method("POST")
-                .uri("https://api.github.com/graphql")
+                .uri(format!("https://{}/graphql", hostname))
                 .body(q.into())
                 .chain_err(|| "Unable to for URL to make the request")?;
 

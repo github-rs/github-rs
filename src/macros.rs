@@ -123,7 +123,7 @@ macro_rules! from {
             fn from(gh: &'g Github) -> Self {
                 use hyper::header::{ ACCEPT, AUTHORIZATION, CONTENT_TYPE, USER_AGENT };
                 let res = Request::builder().method($p)
-                    .uri("https://api.github.com")
+                    .uri(format!("https://{}", &gh.hostname))
                     .body(hyper::Body::empty())
                     .map_err(From::from)
                     .and_then(|req| {

@@ -30,12 +30,14 @@ use util::url_join;
 use gists;
 use orgs;
 
+// Std Imports
 use std::rc::Rc;
 use std::cell::RefCell;
 
 /// Struct used to make calls to the Github API.
 pub struct Github {
     token: String,
+    hostname: String,
     core: Rc<RefCell<Core>>,
     client: Rc<Client<HttpsConnector>>,
 }
@@ -44,6 +46,7 @@ impl Clone for Github {
     fn clone(&self) -> Self {
         Self {
             token: self.token.clone(),
+            hostname: self.hostname.clone(),
             core: Rc::clone(&self.core),
             client: Rc::clone(&self.client),
         }
@@ -90,6 +93,7 @@ impl Github {
             .build(HttpsConnector::new(4,&handle)?);
         Ok(Self {
             token: token.to_string(),
+            hostname: "api.github.com".to_string(),
             core: Rc::new(RefCell::new(core)),
             client: Rc::new(client),
         })
@@ -105,6 +109,17 @@ impl Github {
     pub fn set_token<T>(&mut self, token: T)
         where T: ToString {
         self.token = token.to_string();
+    }
+
+    /// Get the currently set hostname, which defaults to api.github.com.
+    pub fn get_hostname(&self) -> &str {
+        &self.hostname
+    }
+
+    /// Change the hostname that API requests will be made against.
+    pub fn set_hostname<T>(&mut self, hostname: T)
+        where T: ToString {
+        self.hostname = hostname.to_string();
     }
 
     /// Exposes the inner event loop for those who need

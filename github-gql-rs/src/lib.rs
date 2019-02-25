@@ -39,5 +39,5 @@ pub use hyper::{HeaderMap, StatusCode};
 
 use errors::Result;
 pub trait IntoGithubRequest {
-    fn into_github_req(&self, token: &str) -> Result<hyper::Request<hyper::Body>>;
+    fn into_github_req(&self, hostname: &str, token: &str) -> Result<hyper::Request<hyper::Body>>;
 }

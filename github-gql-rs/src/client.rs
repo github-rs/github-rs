@@ -31,6 +31,7 @@ use std::cell::RefCell;
 /// Struct used to make calls to the Github API.
 pub struct Github {
     token: String,
+    hostname: String,
     core: Rc<RefCell<Core>>,
     client: Rc<Client<HttpsConnector, hyper::Body>>,
 }
@@ -39,6 +40,7 @@ impl Clone for Github {
     fn clone(&self) -> Self {
         Self {
             token: self.token.clone(),
+            hostname: self.hostname.clone(),
             core: self.core.clone(),
             client: self.client.clone(),
         }
@@ -62,6 +64,7 @@ impl Github {
             .build(HttpsConnector::new(4,&handle)?);
         Ok(Self {
             token: token.to_string(),
+            hostname: "api.github.com".to_string(),
             core: Rc::new(RefCell::new(core)),
             client: Rc::new(client),
         })
@@ -77,6 +80,17 @@ impl Github {
     pub fn set_token<T>(&mut self, token: T)
         where T: ToString {
         self.token = token.to_string();
+    }
+
+    /// Get the currently set hostname, which defaults to api.github.com.
+    pub fn get_hostname(&self) -> &str {
+        &self.hostname
+    }
+
+    /// Change the hostname that API requests will be made against.
+    pub fn set_hostname<T>(&mut self, hostname: T)
+        where T: ToString {
+        self.hostname = hostname.to_string();
     }
 
     /// Exposes the inner event loop for those who need
@@ -125,7 +139,7 @@ impl Github {
                                     to the event loop")?;
         let client = &self.client;
         let work = client
-            .request(request.into_github_req(&self.token)?)
+            .request(request.into_github_req(&self.hostname, &self.token)?)
             .and_then(|res| {
                 let header = res.headers().clone();
                 let status = res.status();
