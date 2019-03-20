@@ -4,8 +4,8 @@ version = "0.0.1"
 authors = ["Michael Gattozzi <mgattozzi@gmail.com>"]
 description = "Pure Rust bindings to the Github V4 API using GraphQL"
 license = "MIT/Apache-2.0"
-repository = "https://github.com/mgattozzi/github-rs.git"
-homepage = "https://github.com/mgattozzi/github-rs"
+repository = "https://github.com/github-rs/github-rs.git"
+homepage = "https://github.com/github-rs/github-rs"
 documentation = "https://docs.rs/github-rs/"
 readme = "README.md"
 keywords = []
@@ -17,8 +17,8 @@ rustls = ["hyper-rustls"]
 rust-native-tls = ["native-tls", "hyper-tls"]
 
 [badges]
-travis-ci = { repository = "mgattozzi/github-rs", branch = "master" }
-appveyor = { repository = "mgattozzi/github-rs", branch = "master", service = "github" }
+travis-ci = { repository = "github-rs/github-rs", branch = "master" }
+appveyor = { repository = "github-rs/github-rs", branch = "master", service = "github" }
 
 [lib]
 name = "github_gql"

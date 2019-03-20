@@ -4,8 +4,8 @@ description = "Pure Rust bindings to the Github API"
 name = "github-rs"
 version = "0.6.1"
 license = "MIT"
-repository = "https://github.com/mgattozzi/github-rs.git"
-homepage = "https://github.com/mgattozzi/github-rs"
+repository = "https://github.com/github-rs/github-rs.git"
+homepage = "https://github.com/github-rs/github-rs"
 documentation = "https://docs.rs/github-rs/"
 
 [features]
@@ -14,8 +14,8 @@ rustls = ["hyper-rustls"]
 rust-native-tls = ["native-tls", "hyper-tls"]
 
 [badges]
-travis-ci = { repository = "mgattozzi/github-rs", branch = "master" }
-appveyor = { repository = "mgattozzi/github-rs", branch = "master", service = "github" }
+travis-ci = { repository = "github-rs/github-rs", branch = "master" }
+appveyor = { repository = "github-rs/github-rs", branch = "master", service = "github" }
 
 [dependencies]
 hyper = "0.12"
