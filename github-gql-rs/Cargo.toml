@@ -10,6 +10,7 @@ documentation = "https://docs.rs/github-rs/"
 readme = "README.md"
 keywords = []
 categories = []
+edition = "2018"
 
 [features]
 default = ["rustls"]

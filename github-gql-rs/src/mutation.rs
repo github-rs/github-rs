@@ -1,8 +1,7 @@
-use errors::*;
+use crate::errors::*;
 use hyper::header::{HeaderValue, AUTHORIZATION, CONTENT_TYPE, USER_AGENT};
 use hyper::Request;
-use std::str::FromStr;
-use IntoGithubRequest;
+use crate::IntoGithubRequest;
 
 /// Used to mutate information on GitHub
 pub struct Mutation {

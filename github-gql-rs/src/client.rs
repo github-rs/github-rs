@@ -19,10 +19,10 @@ type HttpsConnector = hyper_tls::HttpsConnector<hyper::client::HttpConnector>;
 use serde::de::DeserializeOwned;
 
 // Lib Imports
-use errors::*;
-use mutation::Mutation;
-use query::Query;
-use IntoGithubRequest;
+use crate::errors::*;
+use crate::mutation::Mutation;
+use crate::query::Query;
+use crate::IntoGithubRequest;
 
 // Std Imports
 use std::cell::RefCell;
@@ -54,11 +54,10 @@ impl Github {
         T: ToString,
     {
         let core = Core::new()?;
-        let handle = core.handle();
         #[cfg(feature = "rustls")]
         let client = Client::builder().build(HttpsConnector::new(4));
         #[cfg(feature = "rust-native-tls")]
-        let client = Client::builder().build(HttpsConnector::new(4, &handle)?);
+        let client = Client::builder().build(HttpsConnector::new(4)?);
         Ok(Self {
             token: token.to_string(),
             core: Rc::new(RefCell::new(core)),

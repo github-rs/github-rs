@@ -1,7 +1,7 @@
-use errors::*;
+use crate::errors::*;
 use hyper::header::{HeaderValue, AUTHORIZATION, CONTENT_TYPE, USER_AGENT};
-use hyper::{Method, Request, Uri};
-use IntoGithubRequest;
+use hyper::Request;
+use crate::IntoGithubRequest;
 
 /// Used to query information from the GitHub API to possibly be used in
 /// a `Mutation` or for information to make decisions with how to interact.
