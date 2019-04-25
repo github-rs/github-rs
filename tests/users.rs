@@ -1,6 +1,6 @@
-use github_rs as gh;
 use gh::client::Executor;
 use gh::headers::{etag, rate_limit_remaining};
+use github_rs as gh;
 use serde_json::Value;
 
 mod testutil;

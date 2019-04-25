@@ -310,6 +310,7 @@ macro_rules! imports {
         #[cfg(feature = "rust-native-tls")]
         type HttpsConnector = hyper_tls::HttpsConnector<hyper::client::HttpConnector>;
         use crate::errors::*;
+        use crate::util::url_join;
         use futures::future::ok;
         use futures::{Future, Stream};
         use hyper::client::Client;
@@ -320,7 +321,6 @@ macro_rules! imports {
         use serde_json;
         use std::cell::RefCell;
         use std::rc::Rc;
-        use crate::util::url_join;
 
         use $crate::client::Executor;
     };

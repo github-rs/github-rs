@@ -1,6 +1,6 @@
-use github_gql as gh;
 use gh::client::Github;
 use gh::query::Query;
+use github_gql as gh;
 use serde_json::Value;
 use std::fs::File;
 use std::io::prelude::*;
