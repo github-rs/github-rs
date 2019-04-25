@@ -19,6 +19,8 @@ fn auth_token() -> Result<String, Error> {
     let mut reader = BufReader::new(file);
     let mut buffer = String::new();
     reader.read_line(&mut buffer)?;
+    // Editors may add a newline at the end of a file, so this trims it off
+    buffer = buffer.trim_end().to_string();
     Ok(buffer)
 }
 

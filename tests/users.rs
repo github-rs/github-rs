@@ -33,7 +33,7 @@ fn cached_response() {
     let (headers, _, _) = g
         .get()
         .repos()
-        .owner("mgattozzi")
+        .owner("github-rs")
         .repo("github-rs")
         .execute::<Value>()
         .expect(testutil::FAILED_GITHUB_CONNECTION);
@@ -44,7 +44,7 @@ fn cached_response() {
         .get()
         .set_etag(etag.unwrap())
         .repos()
-        .owner("mgattozzi")
+        .owner("github-rs")
         .repo("github-rs")
         .execute::<Value>()
         .expect(testutil::FAILED_GITHUB_CONNECTION);
