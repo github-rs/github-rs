@@ -9,10 +9,10 @@ rust:
 - nightly
 matrix:
   allow_failures:
-    - rust: 
+    - rust:
       - beta
       - nightly
-  fast_finish: true    
+  fast_finish: true
 env:
 - FEATURES=default
 - FEATURES=rust-native-tls
