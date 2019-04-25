@@ -50,22 +50,16 @@ impl Clone for Github {
     }
 }
 
-/// All GET based queries can be constructed from this type
 new_type!(GetQueryBuilder);
 
-/// All PUT based queries can be constructed from this type
 new_type!(PutQueryBuilder);
 
-/// All POST based queries can be constructed from this type
 new_type!(PostQueryBuilder);
 
-/// All DELETE based queries can be constructed from this type
 new_type!(DeleteQueryBuilder);
 
-/// All PATCH based queries can be constructed from this type
 new_type!(PatchQueryBuilder);
 
-/// Queries for endpoints that aren't in this library can be crafted here
 new_type!(CustomQuery);
 
 exec!(CustomQuery);
