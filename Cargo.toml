@@ -18,18 +18,18 @@ travis-ci = { repository = "github-rs/github-rs", branch = "master" }
 appveyor = { repository = "github-rs/github-rs", branch = "master", service = "github" }
 
 [dependencies]
-hyper = "0.12"
-hyper-rustls = { version = "0.15", optional = true }
-hyper-tls = { version = "0.3", optional = true }
-native-tls = { version = "0.2", optional = true }
-error-chain = "0.12"
-tokio-core = "0.1"
-futures = "0.1"
-serde = "1.0"
-serde_json = "1.0"
+hyper = "0.12.27"
+hyper-rustls = { version = "0.16.1", optional = true }
+hyper-tls = { version = "0.3.2", optional = true }
+native-tls = { version = "0.2.2", optional = true }
+error-chain = "0.12.0"
+tokio-core = "0.1.17"
+futures = "0.1.26"
+serde = "1.0.90"
+serde_json = "1.0.39"
 
 [dev-dependencies]
-serde_derive = "1.0"
+serde_derive = "1.0.90"
 
 [workspace]
 members = ["github-gql-rs"]
