@@ -1,6 +1,6 @@
 //! Access the Users portion of the GitHub API
 imports!();
-use client::PutQueryBuilder;
+use crate::client::PutQueryBuilder;
 
 new_type!(
     User

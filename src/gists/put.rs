@@ -1,6 +1,6 @@
 //! Access the Gists portion of the GitHub API
 imports!();
-use client::PutQueryBuilder;
+use crate::client::PutQueryBuilder;
 
 new_type!(
     Gists

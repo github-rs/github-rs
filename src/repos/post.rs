@@ -1,6 +1,6 @@
 //! Access the Repos portion of the GitHub API
 imports!();
-use client::PostQueryBuilder;
+use crate::client::PostQueryBuilder;
 
 new_type!(
     Sha

@@ -1,6 +1,6 @@
 //! Access the Gists portion of the Github API
 imports!();
-use client::DeleteQueryBuilder;
+use crate::client::DeleteQueryBuilder;
 
 new_type!(
     Gists

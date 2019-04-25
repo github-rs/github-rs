@@ -1,6 +1,6 @@
 //! Access the Users portion of the GitHub API
 imports!();
-use client::DeleteQueryBuilder;
+use crate::client::DeleteQueryBuilder;
 
 new_type!(
     User

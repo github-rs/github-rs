@@ -1,7 +1,7 @@
 //! Access the (notifications)[https://developer.github.com/v3/activity/notifications/]
 //! portion of the GitHub API
 imports!();
-use client::PutQueryBuilder;
+use crate::client::PutQueryBuilder;
 
 new_type!(
     Notifications

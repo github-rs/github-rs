@@ -1,6 +1,6 @@
 //! Access the Users portion of the GitHub API
 imports!();
-use client::GetQueryBuilder;
+use crate::client::GetQueryBuilder;
 
 // Declaration of types representing the various items under users
 new_type!(

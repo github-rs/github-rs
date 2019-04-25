@@ -1,6 +1,6 @@
 //! Access the Misc portion of the GitHub API
 imports!();
-use client::GetQueryBuilder;
+use crate::client::GetQueryBuilder;
 
 new_type!(
     Emojis

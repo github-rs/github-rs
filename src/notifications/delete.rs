@@ -1,7 +1,7 @@
 //! Access the (notifications)[https://developer.github.com/v3/activity/notifications/]
 //! portion of the GitHub API
 imports!();
-use client::DeleteQueryBuilder;
+use crate::client::DeleteQueryBuilder;
 
 new_type!(
     Notifications

@@ -21,14 +21,14 @@ use serde::Serialize;
 use serde_json;
 
 // Internal Library Imports
-use errors::*;
-use gists;
-use misc;
-use notifications;
-use orgs;
-use repos;
-use users;
-use util::url_join;
+use crate::errors::*;
+use crate::gists;
+use crate::misc;
+use crate::notifications;
+use crate::orgs;
+use crate::repos;
+use crate::users;
+use crate::util::url_join;
 
 use std::cell::RefCell;
 use std::rc::Rc;

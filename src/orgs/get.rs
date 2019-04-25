@@ -1,6 +1,6 @@
 //! Access the Organizations portion of the Github API
 imports!();
-use client::GetQueryBuilder;
+use crate::client::GetQueryBuilder;
 
 new_type!(
     Orgs
