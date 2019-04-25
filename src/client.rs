@@ -88,7 +88,7 @@ impl Github {
         #[cfg(feature = "rustls")]
         let client = Client::builder().build(HttpsConnector::new(4));
         #[cfg(feature = "rust-native-tls")]
-        let client = Client::builder().build(HttpsConnector::new(4, &handle)?);
+        let client = Client::builder().build(HttpsConnector::new(4)?);
         Ok(Self {
             token: token.to_string(),
             core: Rc::new(RefCell::new(core)),
