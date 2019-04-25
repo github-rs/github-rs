@@ -21,8 +21,5 @@ before_install:
   -in auth_token.enc -out tests/auth_token -d
 - cp tests/auth_token github-gql-rs/tests/auth_token
 script:
-- cargo build --no-default-features --features "$FEATURES"
-- cargo test
-- cd github-gql-rs
-- cargo build --no-default-features --features "$FEATURES"
-- cargo test
+- cargo build --no-default-features --features "$FEATURES" --all
+- cargo test --all
