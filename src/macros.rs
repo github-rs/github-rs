@@ -315,7 +315,6 @@ macro_rules! imports {
         use hyper::client::Client;
         use hyper::Request;
         use hyper::StatusCode;
-        #[allow(unused)]
         use hyper::{self, Body, HeaderMap};
         use serde::de::DeserializeOwned;
         use serde_json;
