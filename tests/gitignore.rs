@@ -1,5 +1,4 @@
-extern crate github_rs as gh;
-extern crate serde_json;
+use github_rs as gh;
 use gh::client::Executor;
 use gh::StatusCode;
 use serde_json::Value;

@@ -39,7 +39,6 @@ github-gql-rs = "0.0.1"
 Then in your `lib.rs` or `main.rs` file add:
 
 ```rust
-extern crate github_gql;
 use github_gql::client::Github;
 ```
 
@@ -47,8 +46,7 @@ Now you can start making queries. Here's a small example to get your user
 information:
 
 ```rust
-extern crate github_gql as gh;
-extern crate serde_json;
+use github_gql as gh;
 use gh::client::Github;
 use gh::query::Query;
 use serde_json::Value;

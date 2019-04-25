@@ -2,17 +2,6 @@
 
 #[macro_use]
 extern crate error_chain;
-extern crate futures;
-extern crate hyper;
-#[cfg(feature = "rustls")]
-extern crate hyper_rustls;
-#[cfg(feature = "rust-native-tls")]
-extern crate hyper_tls;
-#[cfg(feature = "rust-native-tls")]
-extern crate native_tls;
-extern crate serde;
-extern crate serde_json;
-extern crate tokio_core;
 
 #[allow(deprecated)] // error_chain uses cause()
 pub mod errors {

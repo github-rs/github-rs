@@ -1,4 +1,4 @@
-extern crate github_rs as gh;
+use github_rs as gh;
 #[macro_use]
 extern crate serde_json;
 use gh::client::Executor;

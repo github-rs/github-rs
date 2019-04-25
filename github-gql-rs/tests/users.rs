@@ -1,5 +1,4 @@
-extern crate github_gql as gh;
-extern crate serde_json;
+use github_gql as gh;
 use gh::client::Github;
 use gh::query::Query;
 use serde_json::Value;

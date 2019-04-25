@@ -1,6 +1,3 @@
-extern crate github_rs;
-extern crate hyper;
-extern crate serde_json;
 use github_rs::client::{Executor, Github};
 use github_rs::{HeaderMap, StatusCode};
 use hyper::header::{HeaderValue, ACCEPT};

@@ -1,4 +1,4 @@
-extern crate github_rs as gh;
+use github_rs as gh;
 
 use gh::client::Github;
 use std::fs::File;

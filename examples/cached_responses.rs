@@ -1,5 +1,3 @@
-extern crate github_rs;
-extern crate serde_json;
 use github_rs::client::{Executor, Github};
 use github_rs::headers::{etag, rate_limit_remaining};
 use serde_json::Value;

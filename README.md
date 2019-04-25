@@ -73,8 +73,6 @@ serde_json = "1.0"
 Then in your `lib.rs` or `main.rs` file add:
 
 ```rust
-extern crate github_rs;
-extern crate serde_json;
 use github_rs::client::{Executor, Github};
 use serde_json::Value;
 ```
@@ -83,8 +81,6 @@ Now you can start making queries. Here's a small example to get your user
 information:
 
 ```rust
-extern crate github_rs;
-extern crate serde_json;
 use github_rs::client::{Executor, Github};
 use serde_json::Value;
 
