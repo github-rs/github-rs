@@ -1,10 +1,11 @@
 use crate::errors::*;
+use crate::IntoGithubRequest;
 use hyper::header::{HeaderValue, AUTHORIZATION, CONTENT_TYPE, USER_AGENT};
 use hyper::Request;
-use crate::IntoGithubRequest;
 
 /// Used to query information from the GitHub API to possibly be used in
 /// a `Mutation` or for information to make decisions with how to interact.
+#[derive(Default)]
 pub struct Query {
     pub(crate) query: String,
 }
@@ -67,7 +68,7 @@ impl IntoGithubRequest for Query {
             .body(q.into())
             .chain_err(|| "Unable to for URL to make the request")?;
 
-        let token = String::from("token ") + &token;
+        let token = String::from("token ") + token;
         {
             let headers = req.headers_mut();
             headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));

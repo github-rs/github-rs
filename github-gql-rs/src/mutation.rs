@@ -1,9 +1,10 @@
 use crate::errors::*;
+use crate::IntoGithubRequest;
 use hyper::header::{HeaderValue, AUTHORIZATION, CONTENT_TYPE, USER_AGENT};
 use hyper::Request;
-use crate::IntoGithubRequest;
 
 /// Used to mutate information on GitHub
+#[derive(Default)]
 pub struct Mutation {
     pub(crate) mutation: String,
 }
@@ -61,7 +62,7 @@ impl IntoGithubRequest for Mutation {
             .uri("https://api.github.com/graphql")
             .body(q.into())
             .chain_err(|| "Unable to for URL to make the request")?;
-        let token = String::from("token ") + &token;
+        let token = String::from("token ") + token;
         {
             let headers = req.headers_mut();
             headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
