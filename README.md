@@ -27,7 +27,7 @@ github-rs supports [rustls] and [rust-native-tls] for TLS connectivity.
 
 ```toml
 [dependencies.github-rs]
-version = "0.6"
+version = "0.7"
 default-features = false
 features = ["rust-native-tls"]
 ```
@@ -66,7 +66,7 @@ Add the following to your `Cargo.toml`
 
 ```toml
 [dependencies]
-github-rs = "0.6"
+github-rs = "0.7"
 serde_json = "1.0"
 ```
 
