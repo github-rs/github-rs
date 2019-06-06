@@ -33,7 +33,8 @@ Add the following to your `Cargo.toml`
 
 ```toml
 [dependencies]
-github-gql-rs = "0.0.1"
+serde_json = "1.0"
+github-gql-rs = { git = "https://github.com/github-rs/github-rs.git", branch = "master" }
 ```
 
 Then in your `lib.rs` or `main.rs` file add:
@@ -46,9 +47,13 @@ Now you can start making queries. Here's a small example to get your user
 information:
 
 ```rust
-use github_gql as gh;
-use gh::client::Github;
-use gh::query::Query;
+extern crate github_gql;
+extern crate serde_json;
+use github_gql::{
+    client::Github,
+    mutation::Mutation,
+    query::Query
+};
 use serde_json::Value;
 
 fn main() {
