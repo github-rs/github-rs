@@ -113,11 +113,11 @@ GitHub V3 API
 - [X] /repos/:owner/:repo/pulls/:number/requested_reviewers
 - [X] /repos/:owner/:repo/pulls/:number/merge
 - [X] /repos/:owner/:repo/readme
-- [ ] /repos/:owner/:repo/releases
+- [X] /repos/:owner/:repo/releases
 - [ ] /repos/:owner/:repo/releases/assets/:id
 - [ ] /repos/:owner/:repo/releases/:id
 - [ ] /repos/:owner/:repo/releases/:id/assets
-- [ ] /repos/:owner/:repo/releases/latest
+- [X] /repos/:owner/:repo/releases/latest
 - [ ] /repos/:owner/:repo/releases/tags/:tag
 - [X] /repos/:owner/:repo/stargazers
 - [ ] /repos/:owner/:repo/stats/code_frequency

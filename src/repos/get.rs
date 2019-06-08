@@ -48,6 +48,8 @@ new_type!(
     PullsNumberRequestedReviewers
     PullsNumberMerge
     Readme
+    Releases
+    ReleasesLatest
     Repo
     Repos
     Stargazers
@@ -132,6 +134,8 @@ from!(
        -> Repos = "repos"
     @Owner
        => Repo
+    @Releases
+       -> ReleasesLatest = "latest"
     @Repo
        -> Assignees = "assignees"
     @Repo
@@ -157,6 +161,8 @@ from!(
        -> Issues = "issues"
     @Repo
        -> Readme = "readme"
+    @Repo
+       -> Releases = "releases"
     @Repo
        -> Stargazers = "stargazers"
     @Repo
@@ -238,6 +244,9 @@ impl_macro!(
     @Owner
         |
         |=> repo -> Repo = repo_str
+    @Releases
+        |=> latest -> ReleasesLatest
+        |
     @Repo
         |=> assignees ->  Assignees
         |=> branches ->  Branches
@@ -252,6 +261,7 @@ impl_macro!(
         |=> notifications -> Notifications
         |=> pulls -> Pulls
         |=> readme -> Readme
+        |=> releases -> Releases
         |=> stargazers -> Stargazers
         |=> subscribers -> Subscribers
         |=> subscription -> Subscription
@@ -329,6 +339,8 @@ exec!(PullsNumberFiles);
 exec!(PullsNumberRequestedReviewers);
 exec!(PullsNumberMerge);
 exec!(Readme);
+exec!(Releases);
+exec!(ReleasesLatest);
 exec!(Repo);
 exec!(Stargazers);
 exec!(Subscribers);
