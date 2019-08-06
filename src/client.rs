@@ -1,6 +1,5 @@
 // Tokio/Future Imports
-use futures::future::ok;
-use futures::{Future, Stream};
+use futures::Future;
 use tokio_core::reactor::Core;
 
 // Hyper Imports
@@ -68,6 +67,9 @@ pub trait Executor {
     fn execute<T>(self) -> Result<(HeaderMap, StatusCode, Option<T>)>
     where
         T: DeserializeOwned;
+    fn paginated_execute<T>(self) -> Result<Vec<(HeaderMap, StatusCode, T)>>
+        where
+            T: DeserializeOwned;
 }
 
 impl Github {

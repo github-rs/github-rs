@@ -179,6 +179,32 @@ macro_rules! new_type {
     );
 }
 
+use hyper::{Body, HeaderMap, Response, Result, StatusCode};
+use serde::de::DeserializeOwned;
+use futures::future::ok;
+
+// XXX this file is _supposed_ to be only macros, so this may not be the right place for this
+// function.
+pub fn deserialize_response<T>(response: Response<Body>) -> Result<(HeaderMap, StatusCode, Option<T>)>
+where
+    T: DeserializeOwned,
+{
+    let header = response.headers().clone();
+    let status = response.status();
+    response.into_body()
+        .fold(Vec::new(), |mut v, chunk| {
+            v.extend(&chunk[..]);
+            ok::<_, hyper::Error>(v)
+        })
+    .map(move |chunks| {
+        if chunks.is_empty() {
+            Ok((header, status, None))
+        } else {
+            Ok((header, status, Some(serde_json::from_slice(&chunks)?)))
+        }
+    })
+}
+
 /// Used to generate an execute function for a terminal type in a query
 /// pipeline. If passed a type it creates the impl as well as it needs
 /// no extra functions.
@@ -194,93 +220,76 @@ macro_rules! exec {
             where
                 T: DeserializeOwned,
             {
+                use crate::macros::deserialize_response;
+
                 let mut core_ref = self.core.try_borrow_mut()?;
                 let client = self.client;
                 let work = client.request(self.request?.into_inner()).and_then(|res| {
-                    let header = res.headers().clone();
-                    let status = res.status();
-                    res.into_body()
-                        .fold(Vec::new(), |mut v, chunk| {
-                            v.extend(&chunk[..]);
-                            ok::<_, hyper::Error>(v)
-                        })
-                        .map(move |chunks| {
-                            if chunks.is_empty() {
-                                Ok((header, status, None))
-                            } else {
-                                Ok((header, status, Some(serde_json::from_slice(&chunks)?)))
-                            }
-                        })
+                    deserialize_response(res)
                 });
-                core_ref.run(work)?
+                core_ref.run(work).map_err(|e| e.into())
             }
 
-            fn paginated_execute<T>(self) -> Result<Vec<(Headers, StatusCode, T)>>
+            fn paginated_execute<T>(self) -> Result<Vec<(HeaderMap, StatusCode, T)>>
                 where T: DeserializeOwned
-                {
-                    use hyper::header::LINK;
-                    use hyper::Uri;
-                    use std::str::FromStr;
+            {
+                use crate::macros::deserialize_response;
 
-                    let clone_req = |req: &Request| -> Request {
-                        let mut request = Request::new(req.method().to_owned(), req.uri().to_owned());
-                        request.set_uri(req.uri().to_owned());
-                        *request.headers_mut() = req.headers().to_owned();
-                        request
-                    };
+                use hyper::header::LINK;
+                // use hyper::Uri;
+                // use std::str::FromStr;
 
-                    let client = self.client;
-                    let work = move |req| {
-                        client
-                            .request(req)
-                            .and_then(|res| {
-                                let headers = res.headers().clone();
-                                let status = res.status();
-                                res.body().concat2().map(move |chunks| {
-                                    Ok((headers, status, serde_json::from_slice::<Vec<T>>(&chunks)?))
-                                })
-                            })
-                    };
+                let clone_req = |req: &Request<Body>| -> Request<Body> {
+                    let mut req_builder = Request::builder();
+                    req_builder.method(req.method().to_owned())
+                                .uri(req.uri().to_owned());
+                    *req_builder.headers_mut().unwrap() = req.headers().to_owned();
+                    req_builder.body(hyper::Body::empty()).unwrap()
+                };
 
-                    let mut core_ref = self.core.try_borrow_mut()?;
-                    let request = self.request?.into_inner();
+                let client = self.client;
+                let work = move |req| {
+                    client.request(req).and_then(|res| {
+                        deserialize_response(res)
+                    })
+                };
 
-                    let mut req = clone_req(&request);
-                    let mut results = Vec::new();
+                let mut core_ref = self.core.try_borrow_mut()?;
+                let request = self.request?.into_inner();
 
-                    match core_ref.run(work(request))? {
-                        Ok((headers, status, body)) => {
-                            results.push((headers.clone(), status, body));
-                            if let Some(link) = headers.get(LINK) {
-                                // We know the values because this is how github does pagination
-                                // so as long as we have a link header using indexing is fine here
-                                println!("Got link: {:#?}", link);
-                                /*  XXX
-                                let mut next = link.values()[0].link().to_string();
-                                let last = link.values()[1].link().split("page=").last()
-                                    .unwrap().parse::<i32>().unwrap();
-                                for _ in 0 .. last {
-                                    let mut request = clone_req(&req);
-                                    req.set_uri(Uri::from_str(&next).unwrap());
-                                    let (headers, status, body) = core_ref.run(work(request))??;
-                                    results.push((headers.clone(), status, body));
-                                    if let Some(link) = headers.get::<Link>() {
-                                        next = link.values()[0].link().to_string();
-                                    }
-                                }
-                                */
-                            }
-                            let mut flat = Vec::new();
-                            for (headers, status, json) in results {
-                                for item in json {
-                                    flat.push((headers.clone(), status.clone(), item));
-                                }
-                            }
-                            Ok(flat)
-                        },
-                        Err(e) => Err(e)
+                let /* mut */ req = clone_req(&request);
+                println!("Cloned req: {:#?}", req); // XXX
+                let mut results = Vec::new();
+
+                let (headers, status, body) = core_ref.run(work(request))?;
+                results.push((headers.clone(), status, body));
+                if let Some(link) = headers.get(LINK) {
+                    println!("Got link: {:#?}", link);  // XXX
+                    /*  XXX
+                    // We know the values because this is how github does pagination
+                    // so as long as we have a link header using indexing is fine here
+                    let mut next = link.values()[0].link().to_string();
+                    let last = link.values()[1].link().split("page=").last()
+                        .unwrap().parse::<i32>().unwrap();
+                    for _ in 0 .. last {
+                        let mut request = clone_req(&req);
+                        let (headers, status, body) = core_ref.run(work(request))??;
+                        results.push((headers.clone(), status, body));
+                        if let Some(link) = headers.get(LINK) {
+                            next = link.values()[0].link().to_string();
+                        }
+                        req.set_uri(Uri::from_str(&next).unwrap());
+                    }
+                    */
+                }
+                let mut flat = Vec::new();
+                for (headers, status, json) in results {
+                    for item in json {
+                        flat.push((headers.clone(), status.clone(), item));
                     }
                 }
+                Ok(flat)
+            }
         }
     };
 }
@@ -378,14 +387,12 @@ macro_rules! imports {
         type HttpsConnector = hyper_tls::HttpsConnector<hyper::client::HttpConnector>;
         use crate::errors::*;
         use crate::util::url_join;
-        use futures::future::ok;
-        use futures::{Future, Stream};
+        use futures::Future;
         use hyper::client::Client;
         use hyper::Request;
         use hyper::StatusCode;
         use hyper::{self, Body, HeaderMap};
         use serde::de::DeserializeOwned;
-        use serde_json;
         use std::cell::RefCell;
         use std::rc::Rc;
 
