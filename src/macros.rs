@@ -218,7 +218,7 @@ macro_rules! exec {
             fn paginated_execute<T>(self) -> Result<Vec<(Headers, StatusCode, T)>>
                 where T: DeserializeOwned
                 {
-                    use hyper::header::Link;
+                    use hyper::header::LINK;
                     use hyper::Uri;
                     use std::str::FromStr;
 
@@ -234,10 +234,10 @@ macro_rules! exec {
                         client
                             .request(req)
                             .and_then(|res| {
-                                let header = res.headers().clone();
+                                let headers = res.headers().clone();
                                 let status = res.status();
                                 res.body().concat2().map(move |chunks| {
-                                    Ok((header, status, serde_json::from_slice::<Vec<T>>(&chunks)?))
+                                    Ok((headers, status, serde_json::from_slice::<Vec<T>>(&chunks)?))
                                 })
                             })
                     };
@@ -249,23 +249,26 @@ macro_rules! exec {
                     let mut results = Vec::new();
 
                     match core_ref.run(work(request))? {
-                        Ok((header, status, body)) => {
-                            results.push((header.clone(), status, body));
-                            if let Some(link) = header.get::<Link>() {
+                        Ok((headers, status, body)) => {
+                            results.push((headers.clone(), status, body));
+                            if let Some(link) = headers.get(LINK) {
                                 // We know the values because this is how github does pagination
                                 // so as long as we have a link header using indexing is fine here
+                                println!("Got link: {:#?}", link);
+                                /*  XXX
                                 let mut next = link.values()[0].link().to_string();
                                 let last = link.values()[1].link().split("page=").last()
                                     .unwrap().parse::<i32>().unwrap();
                                 for _ in 0 .. last {
                                     let mut request = clone_req(&req);
                                     req.set_uri(Uri::from_str(&next).unwrap());
-                                    let (header, status, body) = core_ref.run(work(request))??;
-                                    results.push((header.clone(), status, body));
-                                    if let Some(link) = header.get::<Link>() {
+                                    let (headers, status, body) = core_ref.run(work(request))??;
+                                    results.push((headers.clone(), status, body));
+                                    if let Some(link) = headers.get::<Link>() {
                                         next = link.values()[0].link().to_string();
                                     }
                                 }
+                                */
                             }
                             let mut flat = Vec::new();
                             for (headers, status, json) in results {
