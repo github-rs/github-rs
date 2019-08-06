@@ -179,30 +179,30 @@ macro_rules! new_type {
     );
 }
 
-use hyper::{Body, HeaderMap, Response, Result, StatusCode};
+use crate::errors::Error;
+use hyper::{self, Body, HeaderMap, Response, StatusCode};
 use serde::de::DeserializeOwned;
-use futures::future::ok;
+use futures::{Future, Stream};
 
 // XXX this file is _supposed_ to be only macros, so this may not be the right place for this
 // function.
-pub fn deserialize_response<T>(response: Response<Body>) -> Result<(HeaderMap, StatusCode, Option<T>)>
+pub fn deserialize_response<T>(response: Response<Body>) -> impl Future<Item = Result<(HeaderMap, StatusCode, Option<T>), Error>, Error = Error>
 where
     T: DeserializeOwned,
 {
     let header = response.headers().clone();
     let status = response.status();
     response.into_body()
-        .fold(Vec::new(), |mut v, chunk| {
-            v.extend(&chunk[..]);
-            ok::<_, hyper::Error>(v)
+        .concat2()
+        .map(move |payload| {
+            if payload.is_empty() {
+                Ok((header, status, None))
+            } else {
+                // Ok((header, status, Some(serde_json::from_slice(&payload)?)))    // XXX ...
+                Ok((header, status, Some(serde_json::from_slice(&payload).unwrap())))
+            }
         })
-    .map(move |chunks| {
-        if chunks.is_empty() {
-            Ok((header, status, None))
-        } else {
-            Ok((header, status, Some(serde_json::from_slice(&chunks)?)))
-        }
-    })
+        .map_err(|e| e.into())
 }
 
 /// Used to generate an execute function for a terminal type in a query
@@ -216,7 +216,7 @@ macro_rules! exec {
             /// Json after it has been deserialized. Please take a look at
             /// the GitHub documentation to see what value you should receive
             /// back for good or bad requests.
-            fn execute<T>(self) -> Result<(HeaderMap, StatusCode, Option<T>)>
+            fn execute<T>(self) -> std::Result<(HeaderMap, StatusCode, Option<T>), Error>
             where
                 T: DeserializeOwned,
             {
@@ -227,10 +227,10 @@ macro_rules! exec {
                 let work = client.request(self.request?.into_inner()).and_then(|res| {
                     deserialize_response(res)
                 });
-                core_ref.run(work).map_err(|e| e.into())
+                core_ref.run(work).map_err(|e| e.into())?
             }
 
-            fn paginated_execute<T>(self) -> Result<Vec<(HeaderMap, StatusCode, T)>>
+            fn paginated_execute<T>(self) -> std::Result<Vec<(HeaderMap, StatusCode, T)>, Error>
                 where T: DeserializeOwned
             {
                 use crate::macros::deserialize_response;
@@ -249,7 +249,8 @@ macro_rules! exec {
 
                 let client = self.client;
                 let work = move |req| {
-                    client.request(req).and_then(|res| {
+                    client.request(req)
+                          .and_then(|res| {
                         deserialize_response(res)
                     })
                 };
@@ -261,7 +262,7 @@ macro_rules! exec {
                 println!("Cloned req: {:#?}", req); // XXX
                 let mut results = Vec::new();
 
-                let (headers, status, body) = core_ref.run(work(request))?;
+                let (headers, status, body) = core_ref.run(work(request)).map_err(|e| e.into())??;
                 results.push((headers.clone(), status, body));
                 if let Some(link) = headers.get(LINK) {
                     println!("Got link: {:#?}", link);  // XXX
