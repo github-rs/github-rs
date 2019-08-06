@@ -214,6 +214,70 @@ macro_rules! exec {
                 });
                 core_ref.run(work)?
             }
+
+            fn paginated_execute<T>(self) -> Result<Vec<(Headers, StatusCode, T)>>
+                where T: DeserializeOwned
+                {
+                    use hyper::header::Link;
+                    use hyper::Uri;
+                    use std::str::FromStr;
+
+                    let clone_req = |req: &Request| -> Request {
+                        let mut request = Request::new(req.method().to_owned(), req.uri().to_owned());
+                        request.set_uri(req.uri().to_owned());
+                        *request.headers_mut() = req.headers().to_owned();
+                        request
+                    };
+
+                    let client = self.client;
+                    let work = move |req| {
+                        client
+                            .request(req)
+                            .and_then(|res| {
+                                let header = res.headers().clone();
+                                let status = res.status();
+                                res.body().concat2().map(move |chunks| {
+                                    Ok((header, status, serde_json::from_slice::<Vec<T>>(&chunks)?))
+                                })
+                            })
+                    };
+
+                    let mut core_ref = self.core.try_borrow_mut()?;
+                    let request = self.request?.into_inner();
+
+                    let mut req = clone_req(&request);
+                    let mut results = Vec::new();
+
+                    match core_ref.run(work(request))? {
+                        Ok((header, status, body)) => {
+                            results.push((header.clone(), status, body));
+                            if let Some(link) = header.get::<Link>() {
+                                // We know the values because this is how github does pagination
+                                // so as long as we have a link header using indexing is fine here
+                                let mut next = link.values()[0].link().to_string();
+                                let last = link.values()[1].link().split("page=").last()
+                                    .unwrap().parse::<i32>().unwrap();
+                                for _ in 0 .. last {
+                                    let mut request = clone_req(&req);
+                                    req.set_uri(Uri::from_str(&next).unwrap());
+                                    let (header, status, body) = core_ref.run(work(request))??;
+                                    results.push((header.clone(), status, body));
+                                    if let Some(link) = header.get::<Link>() {
+                                        next = link.values()[0].link().to_string();
+                                    }
+                                }
+                            }
+                            let mut flat = Vec::new();
+                            for (headers, status, json) in results {
+                                for item in json {
+                                    flat.push((headers.clone(), status.clone(), item));
+                                }
+                            }
+                            Ok(flat)
+                        },
+                        Err(e) => Err(e)
+                    }
+                }
         }
     };
 }
