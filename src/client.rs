@@ -120,7 +120,8 @@ where Self: Sized + 'a
         let client = self.client();
         let work = move |req| {
             client.request(req)
-                    .and_then(|res| {
+                  .map_err(|e| e.into())
+                  .and_then(|res| {
                 deserialize_response(res)
             })
         };
@@ -132,7 +133,7 @@ where Self: Sized + 'a
         println!("Cloned req: {:#?}", req); // XXX
         let mut results = Vec::new();
 
-        let (headers, status, body) = core_ref.run(work(request)).map_err(|e| e.into())??;
+        let (headers, status, body) = core_ref.run(work(request))??;
         results.push((headers.clone(), status, body));
         if let Some(link) = headers.get(LINK) {
             println!("Got link: {:#?}", link);  // XXX
