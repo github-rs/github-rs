@@ -179,117 +179,20 @@ macro_rules! new_type {
     );
 }
 
-use crate::errors::Error;
-use hyper::{self, Body, HeaderMap, Response, StatusCode};
-use serde::de::DeserializeOwned;
-use futures::{Future, Stream};
-
-// XXX this file is _supposed_ to be only macros, so this may not be the right place for this
-// function.
-pub fn deserialize_response<T>(response: Response<Body>) -> impl Future<Item = Result<(HeaderMap, StatusCode, Option<T>), Error>, Error = Error>
-where
-    T: DeserializeOwned,
-{
-    let header = response.headers().clone();
-    let status = response.status();
-    response.into_body()
-        .concat2()
-        .map(move |payload| {
-            if payload.is_empty() {
-                Ok((header, status, None))
-            } else {
-                // Ok((header, status, Some(serde_json::from_slice(&payload)?)))    // XXX ...
-                Ok((header, status, Some(serde_json::from_slice(&payload).unwrap())))
-            }
-        })
-        .map_err(|e| e.into())
-}
-
-/// Used to generate an execute function for a terminal type in a query
-/// pipeline. If passed a type it creates the impl as well as it needs
-/// no extra functions.
+/// Used to generate a terminal type in a query pipeline.
 macro_rules! exec {
     ($t: ident) => {
-        impl<'a> Executor for $t<'a> {
-            /// Execute the query by sending the built up request to GitHub.
-            /// The value returned is either an error or the Status Code and
-            /// Json after it has been deserialized. Please take a look at
-            /// the GitHub documentation to see what value you should receive
-            /// back for good or bad requests.
-            fn execute<T>(self) -> std::Result<(HeaderMap, StatusCode, Option<T>), Error>
-            where
-                T: DeserializeOwned,
+        impl<'g> Executor<'g> for $t<'g> {
+            fn request(&self) -> Result<Request<Body>>
             {
-                use crate::macros::deserialize_response;
-
-                let mut core_ref = self.core.try_borrow_mut()?;
-                let client = self.client;
-                let work = client.request(self.request?.into_inner()).and_then(|res| {
-                    deserialize_response(res)
-                });
-                core_ref.run(work).map_err(|e| e.into())?
+                Ok(self.request?.into_inner())
             }
-
-            fn paginated_execute<T>(self) -> std::Result<Vec<(HeaderMap, StatusCode, T)>, Error>
-                where T: DeserializeOwned
+            fn core_ref(self) -> Result<RefMut<'g, Core>> {
+                self.core.try_borrow_mut().map_err(|e| e.into())
+            }
+            fn client(&self) -> &Rc<Client<HttpsConnector>>
             {
-                use crate::macros::deserialize_response;
-
-                use hyper::header::LINK;
-                // use hyper::Uri;
-                // use std::str::FromStr;
-
-                let clone_req = |req: &Request<Body>| -> Request<Body> {
-                    let mut req_builder = Request::builder();
-                    req_builder.method(req.method().to_owned())
-                                .uri(req.uri().to_owned());
-                    *req_builder.headers_mut().unwrap() = req.headers().to_owned();
-                    req_builder.body(hyper::Body::empty()).unwrap()
-                };
-
-                let client = self.client;
-                let work = move |req| {
-                    client.request(req)
-                          .and_then(|res| {
-                        deserialize_response(res)
-                    })
-                };
-
-                let mut core_ref = self.core.try_borrow_mut()?;
-                let request = self.request?.into_inner();
-
-                let /* mut */ req = clone_req(&request);
-                println!("Cloned req: {:#?}", req); // XXX
-                let mut results = Vec::new();
-
-                let (headers, status, body) = core_ref.run(work(request)).map_err(|e| e.into())??;
-                results.push((headers.clone(), status, body));
-                if let Some(link) = headers.get(LINK) {
-                    println!("Got link: {:#?}", link);  // XXX
-                    /*  XXX
-                    // We know the values because this is how github does pagination
-                    // so as long as we have a link header using indexing is fine here
-                    let mut next = link.values()[0].link().to_string();
-                    let last = link.values()[1].link().split("page=").last()
-                        .unwrap().parse::<i32>().unwrap();
-                    for _ in 0 .. last {
-                        let mut request = clone_req(&req);
-                        let (headers, status, body) = core_ref.run(work(request))??;
-                        results.push((headers.clone(), status, body));
-                        if let Some(link) = headers.get(LINK) {
-                            next = link.values()[0].link().to_string();
-                        }
-                        req.set_uri(Uri::from_str(&next).unwrap());
-                    }
-                    */
-                }
-                let mut flat = Vec::new();
-                for (headers, status, json) in results {
-                    for item in json {
-                        flat.push((headers.clone(), status.clone(), item));
-                    }
-                }
-                Ok(flat)
+                self.client
             }
         }
     };
@@ -388,13 +291,10 @@ macro_rules! imports {
         type HttpsConnector = hyper_tls::HttpsConnector<hyper::client::HttpConnector>;
         use crate::errors::*;
         use crate::util::url_join;
-        use futures::Future;
         use hyper::client::Client;
         use hyper::Request;
-        use hyper::StatusCode;
-        use hyper::{self, Body, HeaderMap};
-        use serde::de::DeserializeOwned;
-        use std::cell::RefCell;
+        use hyper::{self, Body};
+        use std::cell::{RefCell, RefMut};
         use std::rc::Rc;
 
         use $crate::client::Executor;

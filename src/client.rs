@@ -1,12 +1,12 @@
 // Tokio/Future Imports
-use futures::Future;
+use futures::{Future, Stream};
 use tokio_core::reactor::Core;
 
 // Hyper Imports
-use hyper::header::{HeaderName, HeaderValue, IF_NONE_MATCH};
-use hyper::StatusCode;
-use hyper::{self, Body, HeaderMap};
-use hyper::{Client, Request};
+use hyper::header::{HeaderName, HeaderValue, IF_NONE_MATCH, LINK};
+use hyper::{self, Body, HeaderMap, StatusCode};
+use hyper::{Client, Response, Request};
+// use hyper::Uri;
 #[cfg(feature = "rustls")]
 type HttpsConnector = hyper_rustls::HttpsConnector<hyper::client::HttpConnector>;
 #[cfg(feature = "rust-native-tls")]
@@ -29,8 +29,9 @@ use crate::repos;
 use crate::users;
 use crate::util::url_join;
 
-use std::cell::RefCell;
+use std::cell::{RefCell, RefMut};
 use std::rc::Rc;
+// use std::str::FromStr;
 
 /// Struct used to make calls to the Github API.
 pub struct Github {
@@ -63,13 +64,104 @@ new_type!(CustomQuery);
 
 exec!(CustomQuery);
 
-pub trait Executor {
+pub fn deserialize_response<T>(response: Response<Body>) -> impl Future<Item = Result<(HeaderMap, StatusCode, Option<T>)>, Error = Error>
+where
+    T: DeserializeOwned,
+{
+    let header = response.headers().clone();
+    let status = response.status();
+    response.into_body()
+        .concat2()
+        .map(move |payload| {
+            if payload.is_empty() {
+                Ok((header, status, None))
+            } else {
+                Ok((header, status, Some(serde_json::from_slice(&payload)?)))
+            }
+        })
+    .map_err(|e| e.into())
+}
+
+pub trait Executor<'a>
+where Self: Sized + 'a
+{
+    fn request(&self) -> Result<Request<Body>>;
+    fn core_ref(self) -> Result<RefMut<'a, Core>>;
+    fn client(&self) -> &Rc<Client<HttpsConnector>>;
+
+    /// Execute the query by sending the built up request to GitHub.
+    /// The value returned is either an error or the Status Code and
+    /// Json after it has been deserialized. Please take a look at
+    /// the GitHub documentation to see what value you should receive
+    /// back for good or bad requests.
     fn execute<T>(self) -> Result<(HeaderMap, StatusCode, Option<T>)>
     where
-        T: DeserializeOwned;
+        T: DeserializeOwned
+    {
+        let client = self.client();
+        let work = client.request(self.request()?).and_then(|res| {
+            deserialize_response(res)
+        });
+        self.core_ref().run(work).map_err(|e| e.into())?
+    }
+
     fn paginated_execute<T>(self) -> Result<Vec<(HeaderMap, StatusCode, T)>>
-        where
-            T: DeserializeOwned;
+    where
+        T: DeserializeOwned
+    {
+        let clone_req = |req: &Request<Body>| -> Request<Body> {
+            let mut req_builder = Request::builder();
+            req_builder.method(req.method().to_owned())
+                        .uri(req.uri().to_owned());
+            *req_builder.headers_mut().unwrap() = req.headers().to_owned();
+            req_builder.body(hyper::Body::empty()).unwrap()
+        };
+
+        let client = self.client();
+        let work = move |req| {
+            client.request(req)
+                    .and_then(|res| {
+                deserialize_response(res)
+            })
+        };
+
+        let request = self.request()?;
+        let mut core_ref = self.core_ref()?;
+
+        let /* mut */ req = clone_req(&request);
+        println!("Cloned req: {:#?}", req); // XXX
+        let mut results = Vec::new();
+
+        let (headers, status, body) = core_ref.run(work(request)).map_err(|e| e.into())??;
+        results.push((headers.clone(), status, body));
+        if let Some(link) = headers.get(LINK) {
+            println!("Got link: {:#?}", link);  // XXX
+            /*  XXX
+            // We know the values because this is how github does pagination
+            // so as long as we have a link header using indexing is fine here
+            let mut next = link.values()[0].link().to_string();
+            let last = link.values()[1].link().split("page=").last()
+                .unwrap().parse::<i32>().unwrap();
+            for _ in 0 .. last {
+                let mut request = clone_req(&req);
+                let (headers, status, body) = core_ref.run(work(request))??;
+                results.push((headers.clone(), status, body));
+                if let Some(link) = headers.get(LINK) {
+                    next = link.values()[0].link().to_string();
+                }
+                req.set_uri(Uri::from_str(&next).unwrap());
+            }
+            */
+        }
+        let mut flat = Vec::new();
+        for (headers, status, json) in results {
+            for item in json {
+                flat.push((headers.clone(), status.clone(), item));
+            }
+        }
+        Ok(flat)
+    }
+
 }
 
 impl Github {
