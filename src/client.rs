@@ -85,9 +85,9 @@ where
 pub trait Executor<'a>
 where Self: Sized + 'a
 {
-    fn request(&self) -> Result<Request<Body>>;
-    fn core_ref(self) -> Result<RefMut<'a, Core>>;
-    fn client(&self) -> &Rc<Client<HttpsConnector>>;
+    fn request(self) -> Result<Request<Body>>;
+    fn core_ref(&self) -> Result<RefMut<'a, Core>>;
+    fn client(&self) -> Rc<Client<HttpsConnector>>;
 
     /// Execute the query by sending the built up request to GitHub.
     /// The value returned is either an error or the Status Code and
@@ -99,10 +99,11 @@ where Self: Sized + 'a
         T: DeserializeOwned
     {
         let client = self.client();
+        let mut core_ref = self.core_ref()?;
         let work = client.request(self.request()?)
                          .map_err(|e| e.into())
                          .and_then(deserialize_response);
-        self.core_ref()?.run(work)?
+        core_ref.run(work)?
     }
 
     fn paginated_execute<T>(self) -> Result<Vec<(HeaderMap, StatusCode, T)>>
@@ -126,8 +127,8 @@ where Self: Sized + 'a
             })
         };
 
-        let request = self.request()?;
         let mut core_ref = self.core_ref()?;
+        let request = self.request()?;
 
         let /* mut */ req = clone_req(&request);
         println!("Cloned req: {:#?}", req); // XXX

@@ -183,16 +183,16 @@ macro_rules! new_type {
 macro_rules! exec {
     ($t: ident) => {
         impl<'g> Executor<'g> for $t<'g> {
-            fn request(&self) -> Result<Request<Body>>
+            fn request(self) -> Result<Request<Body>>
             {
                 Ok(self.request?.into_inner())
             }
-            fn core_ref(self) -> Result<RefMut<'g, Core>> {
+            fn core_ref(&self) -> Result<RefMut<'g, Core>> {
                 self.core.try_borrow_mut().map_err(|e| e.into())
             }
-            fn client(&self) -> &Rc<Client<HttpsConnector>>
+            fn client(&self) -> Rc<Client<HttpsConnector>>
             {
-                self.client
+                self.client.clone()
             }
         }
     };
