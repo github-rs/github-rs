@@ -99,10 +99,10 @@ where Self: Sized + 'a
         T: DeserializeOwned
     {
         let client = self.client();
-        let work = client.request(self.request()?).and_then(|res| {
-            deserialize_response(res)
-        });
-        self.core_ref().run(work).map_err(|e| e.into())?
+        let work = client.request(self.request()?)
+                         .map_err(|e| e.into())
+                         .and_then(deserialize_response);
+        self.core_ref()?.run(work)?
     }
 
     fn paginated_execute<T>(self) -> Result<Vec<(HeaderMap, StatusCode, T)>>
