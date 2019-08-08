@@ -177,7 +177,7 @@ where Self: Sized + 'a
                 results.push((headers.clone(), status, body));
                 if let Some(mut link_vec) = try_get_links(&headers) {
                     let mut links = link_vec.drain(..);
-                    next = links.next().next().unwrap();
+                    next = links.next().unwrap().next().unwrap();
                 }
                 else { break; }
             }
