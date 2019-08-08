@@ -121,7 +121,6 @@ where Self: Sized + 'a
         };
 
         let next_req = |mut builder: request::Builder, next_uri: &str| -> Request<Body> {
-            println!("Using next URI: {:#?}", next_uri);
             builder.uri(Uri::from_str(&next_uri).unwrap());
             builder.body(hyper::Body::empty()).unwrap()
 
@@ -167,7 +166,6 @@ where Self: Sized + 'a
         let (headers, status, body) = core_ref.run(work(request))??;
         results.push((headers.clone(), status, body));
         if let Some(links) = try_get_links(&headers) {
-            println!("First links header: {:#?}", &links);
             let mut next = links["next"].clone();
             while !next.is_empty() {
                 let req = next_req(req_builder, &next);
@@ -175,7 +173,6 @@ where Self: Sized + 'a
                 let (headers, status, body) = core_ref.run(work(req))??;
                 results.push((headers.clone(), status, body));
                 if let Some(links) = try_get_links(&headers) {
-                    println!("next links header: {:#?}", &links);
                     // XXX surely there's a better way to access an optional entry in a `String`
                     // map
                     next = links.get("next").unwrap_or(&String::new()).clone();
