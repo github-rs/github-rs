@@ -167,15 +167,16 @@ where Self: Sized + 'a
         results.push((headers.clone(), status, body));
         if let Some(links) = try_get_links(&headers) {
             let mut next = links["next"].clone();
-            while !next.is_empty() {
+            loop {
                 let req = next_req(req_builder, &next);
                 req_builder = make_req_builder(&req);
                 let (headers, status, body) = core_ref.run(work(req))??;
                 results.push((headers.clone(), status, body));
                 if let Some(links) = try_get_links(&headers) {
-                    // XXX surely there's a better way to access an optional entry in a `String`
-                    // map
-                    next = links.get("next").unwrap_or(&String::new()).clone();
+                    next = match links.get("next") {
+                        Some(n) => n.clone(),
+                        _ => break
+                    }
                 }
                 else { break; }
             }
