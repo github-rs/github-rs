@@ -135,6 +135,8 @@ where Self: Sized + 'a
                 Some(header) =>
                     Some(header.to_str().unwrap()
                                .split(",")
+                               // TODO: This would actually be much more useful as a
+                               // 'next/prev/last/' *map*.
                                .map(|s| s.split(";").next().unwrap())
                                .map(|u| u.trim_start_matches("<").trim_end_matches(">").to_owned())
                                .collect()),
@@ -175,7 +177,7 @@ where Self: Sized + 'a
                 results.push((headers.clone(), status, body));
                 if let Some(mut link_vec) = try_get_links(&headers) {
                     let mut links = link_vec.drain(..);
-                    next = links.next().unwrap();
+                    next = links.next().next().unwrap();
                 }
                 else { break; }
             }
