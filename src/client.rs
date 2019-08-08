@@ -31,6 +31,7 @@ use crate::users;
 use crate::util::url_join;
 
 use std::cell::{RefCell, RefMut};
+use std::collections::HashMap;
 use std::rc::Rc;
 use std::str::FromStr;
 
@@ -126,7 +127,7 @@ where Self: Sized + 'a
 
         };
 
-        let try_get_links = |headers: &HeaderMap| -> Option<Vec<String>> {
+        let try_get_links = |headers: &HeaderMap| -> Option<HashMap<String, String>> {
             // TODO: Parsing this value here is not very clean; use a utility, preferably from
             // `http` itself
             let link_header = headers.get(LINK);
@@ -135,10 +136,12 @@ where Self: Sized + 'a
                 Some(header) =>
                     Some(header.to_str().unwrap()
                                .split(",")
-                               // TODO: This would actually be much more useful as a
-                               // 'next/prev/last/' *map*.
-                               .map(|s| s.split(";").next().unwrap())
-                               .map(|u| u.trim().trim_start_matches("<").trim_end_matches(">").to_owned())
+                               .map(|s| s.split(";"))
+                               .map(|mut sp| {
+                                   let url = sp.next().unwrap();
+                                   let key = sp.next().unwrap();
+                                   (key.to_owned(), url.trim().trim_start_matches("<").trim_end_matches(">").to_owned())
+                               })
                                .collect()),
                 _ => None
             }
@@ -161,24 +164,17 @@ where Self: Sized + 'a
         let mut req_builder = make_req_builder(&request);
         let (headers, status, body) = core_ref.run(work(request))??;
         results.push((headers.clone(), status, body));
-        if let Some(mut link_vec) = try_get_links(&headers) {
-            let mut links = link_vec.drain(..);
-            // We know the values because this is how github does pagination
-            // so as long as we have a link header using `unwrap` is fine here
-            let mut next = links.next().unwrap();
-            let last = links.next().unwrap().split("page=").last()
-                .unwrap().parse::<i32>().unwrap();
-            // XXX see below; this should be a 'while' based on whether there's a 'next' link
-            for _ in 0 .. last {
+        if let Some(links) = try_get_links(&headers) {
+            let mut next = links["next"].clone();
+            while !next.is_empty() {
                 let req = next_req(req_builder, &next);
                 req_builder = make_req_builder(&req);
                 let (headers, status, body) = core_ref.run(work(req))??;
                 results.push((headers.clone(), status, body));
-                if let Some(mut link_vec) = try_get_links(&headers) {
-                    // XXX this 'skip(1)' isn't correct; when you hit the last page, there's no
-                    // 'next'.
-                    let mut links = link_vec.drain(..).skip(1);
-                    next = links.next().unwrap();
+                if let Some(links) = try_get_links(&headers) {
+                    // XXX surely there's a better way to access an optional entry in a `String`
+                    // map
+                    next = links.get("next").unwrap_or(&String::new()).clone();
                 }
                 else { break; }
             }
