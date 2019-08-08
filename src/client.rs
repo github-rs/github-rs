@@ -119,15 +119,14 @@ where Self: Sized + 'a
             req_builder.body(hyper::Body::empty()).unwrap()
         };
 
-        let try_get_links = |headers: &HeaderMap| -> Option<Vec<_>> {
+        let try_get_links = |headers: HeaderMap| {
             // TODO: Parsing this value here is not very clean; use a utility, preferably from
             // `http` itself
             match headers.get(LINK) {
                 Some(header) =>
                     Some(header.to_str().unwrap()
-                            .split(",")
-                            .map(|s| s.split(";").next().unwrap())
-                            .collect()),
+                               .split(",")
+                               .map(|s| s.split(";").next().unwrap().to_owned())),
                 _ => None
             }
         };
@@ -148,21 +147,21 @@ where Self: Sized + 'a
 
         let (headers, status, body) = core_ref.run(work(request))??;
         results.push((headers.clone(), status, body));
-        if let Some(links) = try_get_links(&headers) {
+        if let Some(mut links) = try_get_links(headers) {
             // We know the values because this is how github does pagination
-            // so as long as we have a link header using indexing is fine here
-            let mut next = links[0].to_string();
-            let last = links[1].trim_end_matches(">").split("page=").last()
+            // so as long as we have a link header using `unwrap` is fine here
+            let mut next = links.next().unwrap();
+            let last = links.next().unwrap().trim_end_matches(">").split("page=").last()
                 .unwrap().parse::<i32>().unwrap();
             // XXX shouldn't this be `2 .. last`?
-            // (Are we requesting the first page *three times*, once above, twice here?)
+            // (Are we requesting the first page multiple times?)
             for _ in 0 .. last {
                 let mut req = clone_req(&request);
-                req.set_uri(Uri::from_str(&next).unwrap());
+                *req.uri_mut() = Uri::from_str(&next).unwrap();
                 let (headers, status, body) = core_ref.run(work(req))??;
                 results.push((headers.clone(), status, body));
-                if let Some(links) = try_get_links(&headers) {
-                    next = links[0].to_string();
+                if let Some(links) = try_get_links(headers) {
+                    next = links.next().unwrap();
                 }
             }
         }
