@@ -158,7 +158,7 @@ where Self: Sized + 'a
         let (headers, status, body) = core_ref.run(work(request))??;
         results.push((headers.clone(), status, body));
         if let Some(mut link_vec) = try_get_links(&headers) {
-            println("Initial response links header: {:#?}", &link_vec);
+            println!("Initial response links header: {:#?}", &link_vec);
             let mut links = link_vec.drain(..);
             // We know the values because this is how github does pagination
             // so as long as we have a link header using `unwrap` is fine here
