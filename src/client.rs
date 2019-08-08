@@ -120,6 +120,7 @@ where Self: Sized + 'a
         };
 
         let next_req = |mut builder: request::Builder, next_uri: &str| -> Request<Body> {
+            println!("Using next URI: {:#?}", next_uri);
             builder.uri(Uri::from_str(&next_uri).unwrap());
             builder.body(hyper::Body::empty()).unwrap()
 
