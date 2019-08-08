@@ -136,9 +136,13 @@ where Self: Sized + 'a
                                .split(",")
                                .map(|s| s.split(";"))
                                .map(|mut sp| {
-                                   let url = sp.next().unwrap().split('"').skip(1).next().unwrap().to_owned();
-                                   let key = sp.next().unwrap();
-                                   (key.to_owned(), url.trim().trim_start_matches("<").trim_end_matches(">").to_owned())
+                                   let url = sp.next().unwrap()
+                                               .trim().trim_start_matches("<").trim_end_matches(">")
+                                               .to_owned();
+                                   let key = sp.next().unwrap().split('"')
+                                               .skip(1).next().unwrap()
+                                               .to_owned();
+                                   (key, url)
                                })
                                .collect()),
                 _ => None
