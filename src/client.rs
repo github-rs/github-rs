@@ -1,13 +1,13 @@
 // Tokio/Future Imports
-use futures::future::ok;
 use futures::{Future, Stream};
 use tokio_core::reactor::Core;
 
 // Hyper Imports
-use hyper::header::{HeaderName, HeaderValue, IF_NONE_MATCH};
-use hyper::StatusCode;
-use hyper::{self, Body, HeaderMap};
-use hyper::{Client, Request};
+use hyper::header::{HeaderName, HeaderValue, IF_NONE_MATCH, LINK};
+use hyper::{self, Body, HeaderMap, StatusCode};
+use hyper::{Client, Response, Request};
+use hyper::Uri;
+use hyper::http::request;
 #[cfg(feature = "rustls")]
 type HttpsConnector = hyper_rustls::HttpsConnector<hyper::client::HttpConnector>;
 #[cfg(feature = "rust-native-tls")]
@@ -30,8 +30,10 @@ use crate::repos;
 use crate::users;
 use crate::util::url_join;
 
-use std::cell::RefCell;
+use std::cell::{RefCell, RefMut};
+use std::collections::HashMap;
 use std::rc::Rc;
+use std::str::FromStr;
 
 /// Struct used to make calls to the Github API.
 pub struct Github {
@@ -64,10 +66,130 @@ new_type!(CustomQuery);
 
 exec!(CustomQuery);
 
-pub trait Executor {
+/// Helper methods for the `Executor` trait
+fn deserialize_response<T>(response: Response<Body>) -> impl Future<Item = Result<(HeaderMap, StatusCode, Option<T>)>, Error = Error>
+where
+    T: DeserializeOwned,
+{
+    let header = response.headers().clone();
+    let status = response.status();
+    response.into_body()
+        .concat2()
+        .map(move |payload| {
+            if payload.is_empty() {
+                Ok((header, status, None))
+            } else {
+                Ok((header, status, Some(serde_json::from_slice(&payload)?)))
+            }
+        })
+    .map_err(|e| e.into())
+}
+
+pub trait Executor<'a>
+where Self: Sized + 'a
+{
+    fn request(self) -> Result<Request<Body>>;
+    fn core_ref(&self) -> Result<RefMut<'a, Core>>;
+    fn client(&self) -> Rc<Client<HttpsConnector>>;
+
+    /// Execute the query by sending the built up request to GitHub.
+    /// The value returned is either an error or the Status Code and
+    /// Json after it has been deserialized. Please take a look at
+    /// the GitHub documentation to see what value you should receive
+    /// back for good or bad requests.
     fn execute<T>(self) -> Result<(HeaderMap, StatusCode, Option<T>)>
     where
-        T: DeserializeOwned;
+        T: DeserializeOwned
+    {
+        let client = self.client();
+        let mut core_ref = self.core_ref()?;
+        let work = client.request(self.request()?)
+                         .map_err(|e| e.into())
+                         .and_then(deserialize_response);
+        core_ref.run(work)?
+    }
+
+    fn execute_all_pages<T>(self) -> Result<Vec<(HeaderMap, StatusCode, T)>>
+    where
+        T: DeserializeOwned
+    {
+        let make_req_builder = |req: &Request<Body>| -> request::Builder {
+            let mut req_builder = Request::builder();
+            req_builder.method(req.method().to_owned());
+            *req_builder.headers_mut().unwrap() = req.headers().to_owned();
+            req_builder
+        };
+
+        let next_req = |mut builder: request::Builder, next_uri: &str| -> Request<Body> {
+            builder.uri(Uri::from_str(&next_uri).unwrap());
+            builder.body(hyper::Body::empty()).unwrap()
+
+        };
+
+        let try_get_links = |headers: &HeaderMap| -> Option<HashMap<String, String>> {
+            // TODO: Parsing this value here is not very clean; use a utility, preferably from
+            // `http` itself
+            match headers.get(LINK) {
+                Some(header) =>
+                    Some(header.to_str().unwrap()
+                               .split(",")
+                               .map(|s| s.split(";"))
+                               .map(|mut sp| {
+                                   let url = sp.next().unwrap()
+                                               .trim().trim_start_matches("<").trim_end_matches(">")
+                                               .to_owned();
+                                   let key = sp.next().unwrap().split('"')
+                                               .skip(1).next().unwrap()
+                                               .to_owned();
+                                   (key, url)
+                               })
+                               .collect()),
+                _ => None
+            }
+        };
+
+        let client = self.client();
+        let work = move |req| {
+            client.request(req)
+                  .map_err(|e| e.into())
+                  .and_then(|res| {
+                deserialize_response(res)
+            })
+        };
+
+        let mut core_ref = self.core_ref()?;
+        let request = self.request()?;
+
+        let mut results = Vec::new();
+
+        let mut req_builder = make_req_builder(&request);
+        let (headers, status, body) = core_ref.run(work(request))??;
+        results.push((headers.clone(), status, body));
+        if let Some(links) = try_get_links(&headers) {
+            let mut next = links["next"].clone();
+            loop {
+                let req = next_req(req_builder, &next);
+                req_builder = make_req_builder(&req);
+                let (headers, status, body) = core_ref.run(work(req))??;
+                results.push((headers.clone(), status, body));
+                if let Some(links) = try_get_links(&headers) {
+                    next = match links.get("next") {
+                        Some(n) => n.clone(),
+                        _ => break
+                    }
+                }
+                else { break; }
+            }
+        }
+        let mut flat = Vec::new();
+        for (headers, status, json) in results {
+            for item in json {
+                flat.push((headers.clone(), status.clone(), item));
+            }
+        }
+        Ok(flat)
+    }
+
 }
 
 impl Github {

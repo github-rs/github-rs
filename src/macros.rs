@@ -179,40 +179,20 @@ macro_rules! new_type {
     );
 }
 
-/// Used to generate an execute function for a terminal type in a query
-/// pipeline. If passed a type it creates the impl as well as it needs
-/// no extra functions.
+/// Used to generate a terminal type in a query pipeline.
 macro_rules! exec {
     ($t: ident) => {
-        impl<'a> Executor for $t<'a> {
-            /// Execute the query by sending the built up request to GitHub.
-            /// The value returned is either an error or the Status Code and
-            /// Json after it has been deserialized. Please take a look at
-            /// the GitHub documentation to see what value you should receive
-            /// back for good or bad requests.
-            fn execute<T>(self) -> Result<(HeaderMap, StatusCode, Option<T>)>
-            where
-                T: DeserializeOwned,
+        impl<'g> Executor<'g> for $t<'g> {
+            fn request(self) -> Result<Request<Body>>
             {
-                let mut core_ref = self.core.try_borrow_mut()?;
-                let client = self.client;
-                let work = client.request(self.request?.into_inner()).and_then(|res| {
-                    let header = res.headers().clone();
-                    let status = res.status();
-                    res.into_body()
-                        .fold(Vec::new(), |mut v, chunk| {
-                            v.extend(&chunk[..]);
-                            ok::<_, hyper::Error>(v)
-                        })
-                        .map(move |chunks| {
-                            if chunks.is_empty() {
-                                Ok((header, status, None))
-                            } else {
-                                Ok((header, status, Some(serde_json::from_slice(&chunks)?)))
-                            }
-                        })
-                });
-                core_ref.run(work)?
+                Ok(self.request?.into_inner())
+            }
+            fn core_ref(&self) -> Result<RefMut<'g, Core>> {
+                self.core.try_borrow_mut().map_err(|e| e.into())
+            }
+            fn client(&self) -> Rc<Client<HttpsConnector>>
+            {
+                self.client.clone()
             }
         }
     };
@@ -311,15 +291,10 @@ macro_rules! imports {
         type HttpsConnector = hyper_tls::HttpsConnector<hyper::client::HttpConnector>;
         use crate::errors::*;
         use crate::util::url_join;
-        use futures::future::ok;
-        use futures::{Future, Stream};
         use hyper::client::Client;
         use hyper::Request;
-        use hyper::StatusCode;
-        use hyper::{self, Body, HeaderMap};
-        use serde::de::DeserializeOwned;
-        use serde_json;
-        use std::cell::RefCell;
+        use hyper::{self, Body};
+        use std::cell::{RefCell, RefMut};
         use std::rc::Rc;
 
         use $crate::client::Executor;

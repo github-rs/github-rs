@@ -5,7 +5,7 @@ use github_rs::client::{Executor, Github};
 use github_rs::StatusCode;
 use serde_json::Value;
 
-trait TryExecute: Executor {
+trait TryExecute<'a>: Executor<'a> {
     fn try_execute(self) -> Result<Value, String>
     where
         Self: Sized,
@@ -26,7 +26,7 @@ trait TryExecute: Executor {
     }
 }
 
-impl<'a> TryExecute for ::github_rs::users::get::User<'a> {}
+impl<'a> TryExecute<'a> for ::github_rs::users::get::User<'a> {}
 
 fn main() {
     let client = Github::new("API TOKEN").unwrap();
