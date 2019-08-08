@@ -138,7 +138,7 @@ where Self: Sized + 'a
                                // TODO: This would actually be much more useful as a
                                // 'next/prev/last/' *map*.
                                .map(|s| s.split(";").next().unwrap())
-                               .map(|u| u.trim_start_matches("<").trim_end_matches(">").to_owned())
+                               .map(|u| u.trim().trim_start_matches("<").trim_end_matches(">").to_owned())
                                .collect()),
                 _ => None
             }
