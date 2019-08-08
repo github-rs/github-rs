@@ -129,7 +129,9 @@ where Self: Sized + 'a
         let try_get_links = |headers: &HeaderMap| -> Option<Vec<String>> {
             // TODO: Parsing this value here is not very clean; use a utility, preferably from
             // `http` itself
-            match headers.get(LINK) {
+            let link_header = headers.get(LINK);
+            println!("next links header: {:#?}", &link_header);
+            match link_header {
                 Some(header) =>
                     Some(header.to_str().unwrap()
                                .split(",")
@@ -158,7 +160,6 @@ where Self: Sized + 'a
         let (headers, status, body) = core_ref.run(work(request))??;
         results.push((headers.clone(), status, body));
         if let Some(mut link_vec) = try_get_links(&headers) {
-            println!("Initial response links header: {:#?}", &link_vec);
             let mut links = link_vec.drain(..);
             // We know the values because this is how github does pagination
             // so as long as we have a link header using `unwrap` is fine here
@@ -173,7 +174,6 @@ where Self: Sized + 'a
                 let (headers, status, body) = core_ref.run(work(req))??;
                 results.push((headers.clone(), status, body));
                 if let Some(mut link_vec) = try_get_links(&headers) {
-                    println!("next links header: {:#?}", &link_vec);
                     let mut links = link_vec.drain(..);
                     next = links.next().unwrap();
                 }
