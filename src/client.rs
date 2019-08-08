@@ -6,7 +6,7 @@ use tokio_core::reactor::Core;
 use hyper::header::{HeaderName, HeaderValue, IF_NONE_MATCH, LINK};
 use hyper::{self, Body, HeaderMap, StatusCode};
 use hyper::{Client, Response, Request};
-// use hyper::Uri;
+use hyper::Uri;
 #[cfg(feature = "rustls")]
 type HttpsConnector = hyper_rustls::HttpsConnector<hyper::client::HttpConnector>;
 #[cfg(feature = "rust-native-tls")]
@@ -31,7 +31,7 @@ use crate::util::url_join;
 
 use std::cell::{RefCell, RefMut};
 use std::rc::Rc;
-// use std::str::FromStr;
+use std::str::FromStr;
 
 /// Struct used to make calls to the Github API.
 pub struct Github {
@@ -64,7 +64,8 @@ new_type!(CustomQuery);
 
 exec!(CustomQuery);
 
-pub fn deserialize_response<T>(response: Response<Body>) -> impl Future<Item = Result<(HeaderMap, StatusCode, Option<T>)>, Error = Error>
+/// Helper methods for the `Executor` trait
+fn deserialize_response<T>(response: Response<Body>) -> impl Future<Item = Result<(HeaderMap, StatusCode, Option<T>)>, Error = Error>
 where
     T: DeserializeOwned,
 {
@@ -118,6 +119,19 @@ where Self: Sized + 'a
             req_builder.body(hyper::Body::empty()).unwrap()
         };
 
+        let try_get_links = |headers: &HeaderMap| -> Option<Vec<_>> {
+            // TODO: Parsing this value here is not very clean; use a utility, preferably from
+            // `http` itself
+            match headers.get(LINK) {
+                Some(header) =>
+                    Some(header.to_str().unwrap()
+                            .split(",")
+                            .map(|s| s.split(";").next().unwrap())
+                            .collect()),
+                _ => None
+            }
+        };
+
         let client = self.client();
         let work = move |req| {
             client.request(req)
@@ -130,30 +144,27 @@ where Self: Sized + 'a
         let mut core_ref = self.core_ref()?;
         let request = self.request()?;
 
-        let /* mut */ req = clone_req(&request);
-        println!("Cloned req: {:#?}", req); // XXX
         let mut results = Vec::new();
 
         let (headers, status, body) = core_ref.run(work(request))??;
         results.push((headers.clone(), status, body));
-        if let Some(link) = headers.get(LINK) {
-            println!("Got link: {:#?}", link);  // XXX
-            /*  XXX
+        if let Some(links) = try_get_links(&headers) {
             // We know the values because this is how github does pagination
             // so as long as we have a link header using indexing is fine here
-            let mut next = link.values()[0].link().to_string();
-            let last = link.values()[1].link().split("page=").last()
+            let mut next = links[0].to_string();
+            let last = links[1].trim_end_matches(">").split("page=").last()
                 .unwrap().parse::<i32>().unwrap();
+            // XXX shouldn't this be `2 .. last`?
+            // (Are we requesting the first page *three times*, once above, twice here?)
             for _ in 0 .. last {
-                let mut request = clone_req(&req);
-                let (headers, status, body) = core_ref.run(work(request))??;
-                results.push((headers.clone(), status, body));
-                if let Some(link) = headers.get(LINK) {
-                    next = link.values()[0].link().to_string();
-                }
+                let mut req = clone_req(&request);
                 req.set_uri(Uri::from_str(&next).unwrap());
+                let (headers, status, body) = core_ref.run(work(req))??;
+                results.push((headers.clone(), status, body));
+                if let Some(links) = try_get_links(&headers) {
+                    next = links[0].to_string();
+                }
             }
-            */
         }
         let mut flat = Vec::new();
         for (headers, status, json) in results {

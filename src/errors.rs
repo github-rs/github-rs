@@ -5,6 +5,7 @@ error_chain! {
         Hyper(::hyper::Error);
         Http(::hyper::http::Error);
         HeaderValue(::hyper::header::InvalidHeaderValue);
+        HeaderValueToStr(::hyper::header::ToStrError);
         Uri(::hyper::http::uri::InvalidUriParts);
         HyperTls(::native_tls::Error) #[cfg(feature = "rust-native-tls")];
         Io(::std::io::Error);
