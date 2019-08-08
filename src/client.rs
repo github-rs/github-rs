@@ -7,6 +7,7 @@ use hyper::header::{HeaderName, HeaderValue, IF_NONE_MATCH, LINK};
 use hyper::{self, Body, HeaderMap, StatusCode};
 use hyper::{Client, Response, Request};
 use hyper::Uri;
+use hyper::http::request;
 #[cfg(feature = "rustls")]
 type HttpsConnector = hyper_rustls::HttpsConnector<hyper::client::HttpConnector>;
 #[cfg(feature = "rust-native-tls")]
@@ -107,26 +108,32 @@ where Self: Sized + 'a
         core_ref.run(work)?
     }
 
-    fn paginated_execute<T>(self) -> Result<Vec<(HeaderMap, StatusCode, T)>>
+    fn execute_all_pages<T>(self) -> Result<Vec<(HeaderMap, StatusCode, T)>>
     where
         T: DeserializeOwned
     {
-        let clone_req = |req: &Request<Body>| -> Request<Body> {
+        let make_req_builder = |req: &Request<Body>| -> request::Builder {
             let mut req_builder = Request::builder();
-            req_builder.method(req.method().to_owned())
-                        .uri(req.uri().to_owned());
+            req_builder.method(req.method().to_owned());
             *req_builder.headers_mut().unwrap() = req.headers().to_owned();
-            req_builder.body(hyper::Body::empty()).unwrap()
+            req_builder
         };
 
-        let try_get_links = |headers: HeaderMap| {
+        let next_req = |mut builder: request::Builder, next_uri: &str| -> Request<Body> {
+            builder.uri(Uri::from_str(&next_uri).unwrap());
+            builder.body(hyper::Body::empty()).unwrap()
+
+        };
+
+        let try_get_links = |headers: &HeaderMap| -> Option<Vec<String>> {
             // TODO: Parsing this value here is not very clean; use a utility, preferably from
             // `http` itself
             match headers.get(LINK) {
                 Some(header) =>
                     Some(header.to_str().unwrap()
                                .split(",")
-                               .map(|s| s.split(";").next().unwrap().to_owned())),
+                               .map(|s| s.split(";").next().unwrap().to_owned())
+                               .collect()),
                 _ => None
             }
         };
@@ -145,24 +152,28 @@ where Self: Sized + 'a
 
         let mut results = Vec::new();
 
+        let mut req_builder = make_req_builder(&request);
         let (headers, status, body) = core_ref.run(work(request))??;
         results.push((headers.clone(), status, body));
-        if let Some(mut links) = try_get_links(headers) {
+        if let Some(mut link_vec) = try_get_links(&headers) {
+            let mut links = link_vec.drain(..);
             // We know the values because this is how github does pagination
             // so as long as we have a link header using `unwrap` is fine here
             let mut next = links.next().unwrap();
             let last = links.next().unwrap().trim_end_matches(">").split("page=").last()
                 .unwrap().parse::<i32>().unwrap();
-            // XXX shouldn't this be `2 .. last`?
-            // (Are we requesting the first page multiple times?)
+            // XXX shouldn't this be `2 .. last`, or just a `while`?
+            // What happens on the final iterations?
             for _ in 0 .. last {
-                let mut req = clone_req(&request);
-                *req.uri_mut() = Uri::from_str(&next).unwrap();
+                let req = next_req(req_builder, &next);
+                req_builder = make_req_builder(&req);
                 let (headers, status, body) = core_ref.run(work(req))??;
                 results.push((headers.clone(), status, body));
-                if let Some(links) = try_get_links(headers) {
+                if let Some(mut link_vec) = try_get_links(&headers) {
+                    let mut links = link_vec.drain(..);
                     next = links.next().unwrap();
                 }
+                else { break; }
             }
         }
         let mut flat = Vec::new();
