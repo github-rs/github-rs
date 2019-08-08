@@ -168,14 +168,15 @@ where Self: Sized + 'a
             let mut next = links.next().unwrap();
             let last = links.next().unwrap().split("page=").last()
                 .unwrap().parse::<i32>().unwrap();
-            // XXX shouldn't this be `2 .. last`, or just a `while`?
-            // What happens on the final iterations?
+            // XXX see below; this should be a 'while' based on whether there's a 'next' link
             for _ in 0 .. last {
                 let req = next_req(req_builder, &next);
                 req_builder = make_req_builder(&req);
                 let (headers, status, body) = core_ref.run(work(req))??;
                 results.push((headers.clone(), status, body));
                 if let Some(mut link_vec) = try_get_links(&headers) {
+                    // XXX this 'skip(1)' isn't correct; when you hit the last page, there's no
+                    // 'next'.
                     let mut links = link_vec.drain(..).skip(1);
                     next = links.next().unwrap();
                 }
