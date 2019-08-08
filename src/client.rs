@@ -133,7 +133,8 @@ where Self: Sized + 'a
                 Some(header) =>
                     Some(header.to_str().unwrap()
                                .split(",")
-                               .map(|s| s.split(";").next().unwrap().to_owned())
+                               .map(|s| s.split(";").next().unwrap())
+                               .map(|u| u.trim_start_matches("<").trim_end_matches(">").to_owned())
                                .collect()),
                 _ => None
             }
@@ -161,7 +162,7 @@ where Self: Sized + 'a
             // We know the values because this is how github does pagination
             // so as long as we have a link header using `unwrap` is fine here
             let mut next = links.next().unwrap();
-            let last = links.next().unwrap().trim_end_matches(">").split("page=").last()
+            let last = links.next().unwrap().split("page=").last()
                 .unwrap().parse::<i32>().unwrap();
             // XXX shouldn't this be `2 .. last`, or just a `while`?
             // What happens on the final iterations?
