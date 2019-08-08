@@ -176,8 +176,8 @@ where Self: Sized + 'a
                 let (headers, status, body) = core_ref.run(work(req))??;
                 results.push((headers.clone(), status, body));
                 if let Some(mut link_vec) = try_get_links(&headers) {
-                    let mut links = link_vec.drain(..);
-                    next = links.next().unwrap().next().unwrap();
+                    let mut links = link_vec.drain(..).skip(1);
+                    next = links.next().unwrap();
                 }
                 else { break; }
             }
